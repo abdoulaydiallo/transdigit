@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Goulotech | Bootcamp de développement web",
-  description: "Goulotech est un bootcamp de développement web qui vous forme aux compétences les plus demandées sur le marché du travail.",
+  title: "Goulotech | Bootcamp de compétences tech en Guinée",
+  description: "Goulotech est un bootcamp de compétences tech qui vous forme aux compétences les plus demandées sur le marché du travail.",
 };
 
 export default function RootLayout({
@@ -23,11 +25,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="fr">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <Navbar />
+        <div className="">
+          {children}
+        </div>
+        <Footer />
       </body>
     </html>
   );
