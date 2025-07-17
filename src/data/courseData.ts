@@ -25,9 +25,9 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
       title: "Introduction",
       subtitle: "Sculptez votre avenir en 9 semaines de code",
       description:
-        "Devenez développeur web full-stack et maîtrisez l’intégration de l’IA avec Goulotech à Conakry. Ce bootcamp unique vous prépare à créer des solutions pour des entreprises locales comme Orange Guinée ou des projets comme le Marché de Madina.",
+        "Devenez développeur web full-stack et maîtrisez l'intégration de l'IA avec Goulotech à Conakry. Ce bootcamp unique vous prépare à créer des solutions pour des entreprises locales comme Orange Guinée ou des projets comme le Marché de Madina.",
       items: [
-        "Maîtrisez les bases du web et de l’IA",
+        "Maîtrisez les bases du web et de l'IA",
         "Créez des applications dynamiques",
         "Développez des projets full-stack avec IA",
         "Construisez un portfolio percutant",
@@ -44,20 +44,20 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
     },
     curriculum: {
       title: "Curriculum",
-      subtitle: "Le seul bootcamp qui enseigne le développement web et l’intégration de l’IA",
+      subtitle: "Le seul bootcamp qui enseigne le développement web et l'intégration de l'IA",
       description:
-        "Contrairement aux bootcamps de codage traditionnels, notre curriculum éprouvé intègre l’intelligence artificielle comme composante centrale, adapté à l’écosystème technologique guinéen.",
+        "Contrairement aux bootcamps de codage traditionnels, notre curriculum éprouvé intègre l'intelligence artificielle comme composante centrale, adapté à l'écosystème technologique guinéen.",
       items: [
         "Développement web full-stack avec architecture MVC",
         "Programmation orientée objet et conception de bases de données",
-        "Intégration de l’IA avec les grands modèles de langage (LLM)",
+        "Intégration de l'IA avec les grands modèles de langage (LLM)",
         "Codage assisté par IA et collaboration stratégique",
         "Déploiement en production et optimisation",
       ],
       children: {
-        overviewTitle: "Du code à l’IA en 9 semaines intensives",
+        overviewTitle: "Du code à l'IA en 9 semaines intensives",
         overviewDescription:
-          "Maîtrisez les compétences fondamentales de l’économie numérique et les capacités d’IA qui définiront les innovations de demain. Ce cours complet vous apprend à créer des applications IA avec les technologies de ChatGPT et des startups modernes, inspirées des besoins de Conakry.",
+          "Maîtrisez les compétences fondamentales de l'économie numérique et les capacités d'IA qui définiront les innovations de demain. Ce cours complet vous apprend à créer des applications IA avec les technologies de ChatGPT et des startups modernes, inspirées des besoins de Conakry.",
         modules: [
           {
             number: 1,
@@ -84,7 +84,7 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
             title: "Architecture logicielle",
             duration: "80H",
             description:
-              "Apprenez à concevoir des applications web évolutives avec l’architecture MVC, en mettant l’accent sur un code propre, adapté aux startups guinéennes comme celles du Marché de Madina.",
+              "Apprenez à concevoir des applications web évolutives avec l'architecture MVC, en mettant l'accent sur un code propre, adapté aux startups guinéennes comme celles du Marché de Madina.",
             steps: [
               "Structurez les applications avec les principes MVC",
               "Implémentez des API RESTful",
@@ -103,7 +103,7 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
             title: "Bases de données et SQL",
             duration: "70H",
             description:
-              "Maîtrisez les bases de données relationnelles et SQL pour gérer et interroger les données efficacement, comme pour les systèmes d’inventaire d’Orange Guinée.",
+              "Maîtrisez les bases de données relationnelles et SQL pour gérer et interroger les données efficacement, comme pour les systèmes d'inventaire d'Orange Guinée.",
             steps: [
               "Concevez des schémas de bases de données relationnelles",
               "Écrivez des requêtes SQL complexes",
@@ -138,11 +138,11 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
             title: "Développement web full-stack",
             duration: "90H",
             description:
-              "Combinez front-end et back-end pour construire des applications web complètes avec intégration de l’IA, comme des plateformes e-commerce pour le Marché de Madina.",
+              "Combinez front-end et back-end pour construire des applications web complètes avec intégration de l'IA, comme des plateformes e-commerce pour le Marché de Madina.",
             steps: [
               "Intégrez le front-end et le back-end",
               "Déployez des applications en production",
-              "Implémentez l’authentification des utilisateurs",
+              "Implémentez l'authentification des utilisateurs",
               "Optimisez les performances full-stack",
             ],
             tools: [
@@ -155,12 +155,12 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
             title: "Semaine IA",
             duration: "60H",
             description:
-              "Plongez dans les concepts de l’IA et intégrez les grands modèles de langage dans des applications web pour des solutions innovantes à Conakry.",
+              "Plongez dans les concepts de l'IA et intégrez les grands modèles de langage dans des applications web pour des solutions innovantes à Conakry.",
             steps: [
-              "Comprendre les fondamentaux de l’IA",
+              "Comprendre les fondamentaux de l'IA",
               "Intégrer les LLM dans des applications",
-              "Utiliser des API d’IA pour l’automatisation",
-              "Tester les fonctionnalités pilotées par l’IA",
+              "Utiliser des API d'IA pour l'automatisation",
+              "Tester les fonctionnalités pilotées par l'IA",
             ],
             tools: [
               { src: "/img/icon-openai.webp", name: "OpenAI" },
@@ -172,12 +172,12 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
             title: "Codage assisté par IA",
             duration: "50H",
             description:
-              "Exploitez des outils d’IA comme Copilot pour améliorer l’efficacité du codage et la collaboration, préparant au développement en Guinée.",
+              "Exploitez des outils d'IA comme Copilot pour améliorer l'efficacité du codage et la collaboration, préparant au développement en Guinée.",
             steps: [
-              "Utiliser l’IA pour l’auto-complétion de code",
+              "Utiliser l'IA pour l'auto-complétion de code",
               "Automatiser les tâches répétitives",
-              "Collaborer avec des outils d’IA",
-              "Déboguer avec l’assistance de l’IA",
+              "Collaborer avec des outils d'IA",
+              "Déboguer avec l'assistance de l'IA",
             ],
             tools: [
               { src: "/img/icon-copilot.webp", name: "Copilot" },
@@ -189,11 +189,11 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
             title: "Projet final",
             duration: "100H",
             description:
-              "Construisez et déployez une application web full-stack avec des fonctionnalités d’IA, comme une plateforme pour le Marché de Madina, pour mettre en valeur vos compétences.",
+              "Construisez et déployez une application web full-stack avec des fonctionnalités d'IA, comme une plateforme pour le Marché de Madina, pour mettre en valeur vos compétences.",
             steps: [
               "Planifier un projet full-stack",
               "Développer le front-end et le back-end",
-              "Intégrer des fonctionnalités d’IA",
+              "Intégrer des fonctionnalités d'IA",
               "Déployer en production",
               "Présenter aux parties prenantes",
             ],
@@ -217,7 +217,7 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
       title: "Campus",
       subtitle: "Un espace moderne à Conakry",
       description:
-        "Notre campus à Conakry offre un espace dynamique équipé d’ordinateurs grâce à des partenariats locaux, parfait pour coder et collaborer.",
+        "Notre campus à Conakry offre un espace dynamique équipé d'ordinateurs grâce à des partenariats locaux, parfait pour coder et collaborer.",
       items: [
         "Salles de classe modernes avec ordinateurs fournis",
         "Connexion Internet fiable pour un codage sans interruption",
@@ -244,7 +244,7 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
       items: [
         "Portfolio professionnel : impressionnez les recruteurs",
         "Coaching de carrière : CV, entretiens, LinkedIn",
-        "Réseau d’employeurs : opportunités locales et mondiales",
+        "Réseau d'employeurs : opportunités locales et mondiales",
         "400 heures de formation intensive",
       ],
     },
@@ -256,12 +256,12 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
       items: [
         "Bourses pour les jeunes motivés",
         "Plans de paiement adaptés à tous les budgets",
-        "Accords de partage de revenus : payez après l’emploi",
+        "Accords de partage de revenus : payez après l'emploi",
       ],
     },
     admission: {
       title: "Admission",
-      subtitle: "Rejoignez-nous dès aujourd’hui",
+      subtitle: "Rejoignez-nous dès aujourd'hui",
       description:
         "Aucune expérience en codage requise, juste de la passion et de la motivation. Postulez maintenant pour façonner votre avenir dans la tech !",
       items: [
@@ -428,7 +428,7 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
       title: "Campus",
       subtitle: "Un espace moderne à Conakry",
       description:
-        "Notre campus à Conakry offre un espace dynamique équipé d’ordinateurs grâce à des partenariats locaux, parfait pour coder et collaborer.",
+        "Notre campus à Conakry offre un espace dynamique équipé d'ordinateurs grâce à des partenariats locaux, parfait pour coder et collaborer.",
       items: [
         "Salles de classe modernes avec ordinateurs fournis",
         "Connexion Internet fiable pour un codage sans interruption",
@@ -455,7 +455,7 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
       items: [
         "Portfolio professionnel : impressionnez les recruteurs",
         "Coaching de carrière : CV, entretiens, LinkedIn",
-        "Réseau d’employeurs : opportunités locales et mondiales",
+        "Réseau d'employeurs : opportunités locales et mondiales",
         "400 heures de formation intensive",
       ],
     },
@@ -467,12 +467,12 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
       items: [
         "Bourses pour les jeunes motivés",
         "Plans de paiement adaptés à tous les budgets",
-        "Accords de partage de revenus : payez après l’emploi",
+        "Accords de partage de revenus : payez après l'emploi",
       ],
     },
     admission: {
       title: "Admission",
-      subtitle: "Rejoignez-nous dès aujourd’hui",
+      subtitle: "Rejoignez-nous dès aujourd'hui",
       description:
         "Aucune expérience en codage requise, juste de la passion et de la motivation. Postulez maintenant pour façonner votre avenir dans la tech !",
       items: [
@@ -494,7 +494,7 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
       description:
         "Devenez expert en bureautique avec Excel, Word et PowerPoint pour répondre aux besoins des entreprises guinéennes comme Orange Guinée ou des projets comme la gestion du Marché de Madina.",
       items: [
-        "Maîtrisez Excel pour l’analyse et la gestion de données",
+        "Maîtrisez Excel pour l'analyse et la gestion de données",
         "Créez des documents professionnels avec Word",
         "Concevez des présentations percutantes avec PowerPoint",
         "Construisez un portfolio de projets bureautiques",
@@ -522,7 +522,7 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
         "Projets appliqués au contexte local",
       ],
       children: {
-        overviewTitle: "De la bureautique de base à l’expertise en 6 semaines",
+        overviewTitle: "De la bureautique de base à l'expertise en 6 semaines",
         overviewDescription:
           "Apprenez à utiliser les outils Microsoft Office pour automatiser les tâches, analyser les données et présenter des résultats, avec des projets inspirés par des besoins guinéens comme la gestion des stocks au Marché de Madina.",
         modules: [
@@ -531,7 +531,7 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
             title: "Fondations en bureautique",
             duration: "60H",
             description:
-              "Maîtrisez les bases d’Excel, Word et PowerPoint pour créer des documents et analyser des données simples.",
+              "Maîtrisez les bases d'Excel, Word et PowerPoint pour créer des documents et analyser des données simples.",
             steps: [
               "Configurez votre environnement Office",
               "Créez des documents de base avec Word",
@@ -628,7 +628,7 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
       title: "Campus",
       subtitle: "Un espace moderne à Conakry",
       description:
-        "Notre campus à Conakry offre un espace dynamique équipé d’ordinateurs grâce à des partenariats locaux, parfait pour apprendre et collaborer.",
+        "Notre campus à Conakry offre un espace dynamique équipé d'ordinateurs grâce à des partenariats locaux, parfait pour apprendre et collaborer.",
       items: [
         "Salles de classe modernes avec ordinateurs fournis",
         "Connexion Internet fiable pour un apprentissage sans interruption",
@@ -655,7 +655,7 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
       items: [
         "Portfolio professionnel : impressionnez les recruteurs",
         "Coaching de carrière : CV, entretiens, LinkedIn",
-        "Réseau d’employeurs : opportunités locales et mondiales",
+        "Réseau d'employeurs : opportunités locales et mondiales",
         "270 heures de formation intensive",
       ],
     },
@@ -667,12 +667,12 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
       items: [
         "Bourses pour les jeunes motivés",
         "Plans de paiement adaptés à tous les budgets",
-        "Accords de partage de revenus : payez après l’emploi",
+        "Accords de partage de revenus : payez après l'emploi",
       ],
     },
     admission: {
       title: "Admission",
-      subtitle: "Rejoignez-nous dès aujourd’hui",
+      subtitle: "Rejoignez-nous dès aujourd'hui",
       description:
         "Aucune expérience requise, juste de la passion et de la motivation. Postulez maintenant pour booster votre productivité !",
       items: [
@@ -697,7 +697,7 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
         "Maîtrisez Flutter pour le développement multiplateforme",
         "Créez des applications mobiles responsives",
         "Intégrez des fonctionnalités modernes",
-        "Construisez un portfolio d’applications mobiles",
+        "Construisez un portfolio d'applications mobiles",
       ],
       children: {
         title: "Les outils et langages que vous apprendrez :",
@@ -715,14 +715,14 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
       description:
         "Ce cours intensif vous apprend à créer des applications mobiles multiplateformes avec Flutter, adaptées aux besoins guinéens comme les applications pour le commerce local.",
       items: [
-        "Développement d’applications avec Flutter et Dart",
-        "Conception d’interfaces utilisateur responsives",
+        "Développement d'applications avec Flutter et Dart",
+        "Conception d'interfaces utilisateur responsives",
         "Intégration de services backend avec Firebase",
-        "Déploiement d’applications sur Android et iOS",
+        "Déploiement d'applications sur Android et iOS",
         "Projets appliqués au contexte local",
       ],
       children: {
-        overviewTitle: "Du code à l’application mobile en 9 semaines intensives",
+        overviewTitle: "Du code à l'application mobile en 9 semaines intensives",
         overviewDescription:
           "Apprenez à développer des applications mobiles performantes avec Flutter, en créant des solutions pour des besoins guinéens comme des applications pour le Marché de Madina ou Orange Guinée.",
         modules: [
@@ -736,7 +736,7 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
               "Installez et configurez Flutter et Dart",
               "Créez votre première application mobile",
               "Comprendre les widgets de base",
-              "Gérez la navigation dans l’application",
+              "Gérez la navigation dans l'application",
             ],
             tools: [
               { src: "/img/icon-flutter.svg", name: "Flutter" },
@@ -746,7 +746,7 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
           },
           {
             number: 2,
-            title: "Conception d’interfaces utilisateur",
+            title: "Conception d'interfaces utilisateur",
             duration: "80H",
             description:
               "Apprenez à concevoir des interfaces utilisateur modernes et responsives avec Flutter pour des applications engageantes.",
@@ -754,7 +754,7 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
               "Créez des mises en page responsives",
               "Utilisez des widgets avancés",
               "Implémentez des animations fluides",
-              "Testez l’interface sur Android et iOS",
+              "Testez l'interface sur Android et iOS",
             ],
             tools: [
               { src: "/img/icon-flutter.svg", name: "Flutter" },
@@ -769,7 +769,7 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
               "Intégrez des services backend comme Firebase pour gérer les données et les fonctionnalités des applications mobiles.",
             steps: [
               "Connectez votre application à Firebase",
-              "Gérez l’authentification des utilisateurs",
+              "Gérez l'authentification des utilisateurs",
               "Stockez et récupérez des données",
               "Implémentez des notifications push",
             ],
@@ -786,7 +786,7 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
               "Approfondissez vos compétences en Flutter pour créer des applications complexes avec des fonctionnalités modernes.",
             steps: [
               "Implémentez des fonctionnalités avancées",
-              "Optimisez les performances de l’application",
+              "Optimisez les performances de l'application",
               "Testez sur plusieurs appareils",
               "Intégrez des API externes",
             ],
@@ -828,7 +828,7 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
       title: "Campus",
       subtitle: "Un espace moderne à Conakry",
       description:
-        "Notre campus à Conakry offre un espace dynamique équipé d’ordinateurs grâce à des partenariats locaux, parfait pour coder et collaborer.",
+        "Notre campus à Conakry offre un espace dynamique équipé d'ordinateurs grâce à des partenariats locaux, parfait pour coder et collaborer.",
       items: [
         "Salles de classe modernes avec ordinateurs fournis",
         "Connexion Internet fiable pour un codage sans interruption",
@@ -855,7 +855,7 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
       items: [
         "Portfolio professionnel : impressionnez les recruteurs",
         "Coaching de carrière : CV, entretiens, LinkedIn",
-        "Réseau d’employeurs : opportunités locales et mondiales",
+        "Réseau d'employeurs : opportunités locales et mondiales",
         "400 heures de formation intensive",
       ],
     },
@@ -867,12 +867,12 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
       items: [
         "Bourses pour les jeunes motivés",
         "Plans de paiement adaptés à tous les budgets",
-        "Accords de partage de revenus : payez après l’emploi",
+        "Accords de partage de revenus : payez après l'emploi",
       ],
     },
     admission: {
       title: "Admission",
-      subtitle: "Rejoignez-nous dès aujourd’hui",
+      subtitle: "Rejoignez-nous dès aujourd'hui",
       description:
         "Aucune expérience en codage requise, juste de la passion et de la motivation. Postulez maintenant pour façonner votre avenir dans la tech !",
       items: [

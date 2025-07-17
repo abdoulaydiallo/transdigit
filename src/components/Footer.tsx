@@ -92,9 +92,9 @@ export const Footer = () => {
         </div>
         <div>
           <p className="text-sm font-light">
-            &copy; 2025 Goulotech, Sarl. Tous droits resérvés
+            &copy; 2025 Goulotech Academy Sarl. Tout droit resérvé.
           </p>
-          <p className="text-sm font-light">Dernière mise à jour: 21/12/2024</p>
+          <p className="text-sm font-light">Dernière mise à jour: 16/07/2025</p>
         </div>
       </Container>
     </div>

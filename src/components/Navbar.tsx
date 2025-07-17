@@ -81,10 +81,10 @@ export const Navbar = () => {
           </ul>
 
           {/* Bouton Postuler pour desktop */}
-          <Link href="/apply" className="hidden lg:block">
+          <Link href="/apply" className="hidden lg:block cursor-pointer">
             <Button
               size="lg"
-              className="bg-[#670BFF] hover:bg-[#5208CC] text-white px-4 py-2 rounded-md focus-visible:ring-[#670BFF] focus-visible:ring-2"
+              className="bg-[#670BFF] hover:bg-[#5208CC]  text-white px-4 py-2 rounded-md focus-visible:ring-[#670BFF] focus-visible:ring-2"
               aria-label="Postuler à Goulotech Conakry"
             >
               Postuler maintenant

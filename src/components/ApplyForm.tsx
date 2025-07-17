@@ -267,7 +267,7 @@ export function ApplicationForm({
         />
         <Button
           type="submit"
-          className="w-full bg-[#670BFF] hover:bg-[#5208CC] text-white px-4 py-2 rounded-md flex items-center gap-2"
+          className=" bg-[#670BFF] hover:bg-[#5208CC] text-white px-4 py-2 rounded-md flex items-center gap-2"
           aria-label="Soumettre la candidature"
         >
           Commencer <ArrowRight size={18} />

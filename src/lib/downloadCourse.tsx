@@ -286,9 +286,9 @@ class ModernPDFGenerator {
 
   private addStatsCards(course: CourseDetail) {
     const stats = [
-      { label: "Durée", value: course.title.includes("Bureautique") ? "6 semaines" : "9 semaines", color: COLORS.primary },
+      { label: "Durée", value: course.title.includes("Bureautique") ? "6 semaines" : "10 semaines", color: COLORS.primary },
       { label: "Heures/semaine", value: "20h", color: COLORS.success },
-      { label: "Participants", value: "Max 25", color: COLORS.warning },
+      { label: "Participants", value: "Max 10", color: COLORS.warning },
       { label: "Certification", value: "Incluse", color: COLORS.accent }
     ];
 
