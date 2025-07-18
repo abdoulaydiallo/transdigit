@@ -4,29 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { NewCourse, Course } from "@/lib/db/schema";
 import { CourseFilters } from "@/services/courses.service";
 import { ServiceError, ErrorCode } from "@/services/services.errors";
-import { z } from "zod";
-
-// Schéma Zod pour la création d'un cours, aligné avec NewCourse
-const NewCourseSchema = z.object({
-  key: z.string().min(1, "La clé est requise").max(100, "La clé ne doit pas dépasser 100 caractères").regex(/^[a-z0-9-]+$/, "La clé doit être alphanumérique avec des tirets"),
-  title: z.string().min(1, "Le titre est requis").max(255, "Le titre ne doit pas dépasser 255 caractères"),
-  description: z.string().optional().or(z.literal("")),
-  imageSrc: z.string().max(500, "L'URL de l'image ne doit pas dépasser 500 caractères").optional().or(z.literal("")),
-  duration: z.string().max(50, "La durée ne doit pas dépasser 50 caractères").optional().or(z.literal("")),
-  totalHours: z.number().int().positive("Le nombre d'heures doit être positif").optional().or(z.literal(null)),
-  isActive: z.boolean().default(true),
-});
-
-// Schéma Zod pour la mise à jour d'un cours, aligné avec Partial<NewCourse>
-const UpdateCourseSchema = z.object({
-  key: z.string().min(1, "La clé est requise").max(100, "La clé ne doit pas dépasser 100 caractères").regex(/^[a-z0-9-]+$/, "La clé doit être alphanumérique avec des tirets").optional(),
-  title: z.string().min(1, "Le titre est requis").max(255, "Le titre ne doit pas dépasser 255 caractères").optional(),
-  description: z.string().optional().or(z.literal("")),
-  imageSrc: z.string().max(500, "L'URL de l'image ne doit pas dépasser 500 caractères").optional().or(z.literal("")),
-  duration: z.string().max(50, "La durée ne doit pas dépasser 50 caractères").optional().or(z.literal("")),
-  totalHours: z.number().int().positive("Le nombre d'heures doit être positif").optional().or(z.literal(null)),
-  isActive: z.boolean().optional(),
-}).strict();
+import { NewCourseSchema, UpdateCourseSchema } from "@/lib/zodSchemas";
 
 // Type de réponse API
 type ApiResponse<T> =

@@ -11,7 +11,10 @@ type ApiResponse<T> =
   | { success: false; error: ReturnType<ServiceError["toJSON"]> };
 
 // GET /api/courses/:id - Get a course by ID
-export async function GET(req: NextRequest, { params }: { params: { id: string } }): Promise<NextResponse<ApiResponse<Course>>> {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> } // Note the Promise type
+): Promise<NextResponse<ApiResponse<Course>>> {
   try {
     if (req.method !== "GET") {
       throw new ServiceError(
@@ -21,7 +24,9 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       );
     }
 
-    const courseId = CourseIdSchema.parse(params.id);
+    // Await params to get the actual params object
+    const { id } = await params;
+    const courseId = CourseIdSchema.parse(id);
 
     const result = await getCourseById(courseId);
     if (!result) {
@@ -61,7 +66,10 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 }
 
 // PUT /api/courses/:id - Update a course by ID
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }): Promise<NextResponse<ApiResponse<Course>>> {
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> } // Note the Promise type
+): Promise<NextResponse<ApiResponse<Course>>> {
   try {
     if (req.method !== "PUT") {
       throw new ServiceError(
@@ -71,7 +79,9 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       );
     }
 
-    const courseId = CourseIdSchema.parse(params.id);
+    // Await params to get the actual params object
+    const { id } = await params;
+    const courseId = CourseIdSchema.parse(id);
     const body = await req.json();
     const updateData = UpdateCourseSchema.parse(body);
 
@@ -113,7 +123,10 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 }
 
 // DELETE /api/courses/:id - Delete a course by ID
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }): Promise<NextResponse<ApiResponse<{}>>> {
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> } // Note the Promise type
+): Promise<NextResponse<ApiResponse<{}>>> {
   try {
     if (req.method !== "DELETE") {
       throw new ServiceError(
@@ -123,7 +136,9 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
       );
     }
 
-    const courseId = CourseIdSchema.parse(params.id);
+    // Await params to get the actual params object
+    const { id } = await params;
+    const courseId = CourseIdSchema.parse(id);
 
     await deleteCourse(courseId);
     return NextResponse.json({ success: true, data: {} });

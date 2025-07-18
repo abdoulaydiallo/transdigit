@@ -43,7 +43,7 @@ export const courseSections = pgTable('course_sections', {
 export const courseModules = pgTable('course_modules', {
   id: serial('id').primaryKey(),
   courseId: integer('course_id').references(() => courses.id),
-  number: integer('number').notNull(),
+  number: integer('number').notNull(),// Numéro du module dans le cours
   title: varchar('title', { length: 255 }).notNull(),
   duration: varchar('duration', { length: 50 }), // ex: "90H"
   description: text('description'),

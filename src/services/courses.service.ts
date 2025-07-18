@@ -12,14 +12,20 @@ import {
   coursePartners, 
   Course,
   NewCourse,
+  CourseTab,
+  NewCourseTab,
+  CourseSection,
+  NewCourseSection,
   CourseModule,
   NewCourseModule,
-  NewPartner,
+  ModuleStep,
+  NewModuleStep,
+  Tool,
   NewTool,
   Partner,
-  Tool
+  NewPartner
 } from "@/lib/db/schema";
-import { eq, sql, and } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { ServiceError, ERROR_CODES } from "@/services/services.errors";
 
 export interface CourseFilters {
@@ -181,6 +187,206 @@ export const getAllCourses = async (
   }
 };
 
+// Create a course tab
+export const createCourseTab = async (tabData: NewCourseTab): Promise<CourseTab> => {
+  try {
+    if (!tabData.title || !tabData.key || !tabData.orderIndex) {
+      throw new ServiceError(
+        ERROR_CODES.VALIDATION_ERROR,
+        'Les champs obligatoires (title, key, orderIndex) sont requis'
+      );
+    }
+
+    const newTab = await db.insert(courseTabs).values(tabData).returning();
+    if (!newTab[0]) {
+      throw new ServiceError(ERROR_CODES.DATABASE_ERROR, 'Échec de la création de l\'onglet');
+    }
+
+    return newTab[0];
+  } catch (error) {
+    if (error instanceof ServiceError) throw error;
+    throw new ServiceError(
+      ERROR_CODES.DATABASE_ERROR,
+      'Erreur lors de la création de l\'onglet',
+      { originalError: error instanceof Error ? error.message : String(error) }
+    );
+  }
+};
+
+// Get a course tab by ID
+export const getCourseTabById = async (id: number): Promise<CourseTab> => {
+  try {
+    if (isNaN(id) || id <= 0) {
+      throw new ServiceError(ERROR_CODES.VALIDATION_ERROR, 'ID d\'onglet invalide');
+    }
+
+    const tab = await db.select().from(courseTabs).where(eq(courseTabs.id, id));
+    if (!tab[0]) {
+      throw new ServiceError(ERROR_CODES.NOT_FOUND, `Onglet avec l'ID ${id} non trouvé`);
+    }
+
+    return tab[0];
+  } catch (error) {
+    if (error instanceof ServiceError) throw error;
+    throw new ServiceError(
+      ERROR_CODES.DATABASE_ERROR,
+      'Erreur lors de la récupération de l\'onglet',
+      { originalError: error instanceof Error ? error.message : String(error) }
+    );
+  }
+};
+
+// Update a course tab
+export const updateCourseTab = async (id: number, updateData: Partial<NewCourseTab>): Promise<CourseTab> => {
+  try {
+    if (isNaN(id) || id <= 0) {
+      throw new ServiceError(ERROR_CODES.VALIDATION_ERROR, 'ID d\'onglet invalide');
+    }
+    if (Object.keys(updateData).length === 0) {
+      throw new ServiceError(ERROR_CODES.VALIDATION_ERROR, 'Aucune donnée à mettre à jour fournie');
+    }
+
+    const updatedTab = await db
+      .update(courseTabs)
+      .set({ ...updateData })
+      .where(eq(courseTabs.id, id))
+      .returning();
+    if (!updatedTab[0]) {
+      throw new ServiceError(ERROR_CODES.NOT_FOUND, `Onglet avec l'ID ${id} non trouvé`);
+    }
+
+    return updatedTab[0];
+  } catch (error) {
+    if (error instanceof ServiceError) throw error;
+    throw new ServiceError(
+      ERROR_CODES.DATABASE_ERROR,
+      'Erreur lors de la mise à jour de l\'onglet',
+      { originalError: error instanceof Error ? error.message : String(error) }
+    );
+  }
+};
+
+// Delete a course tab
+export const deleteCourseTab = async (id: number): Promise<void> => {
+  try {
+    if (isNaN(id) || id <= 0) {
+      throw new ServiceError(ERROR_CODES.VALIDATION_ERROR, 'ID d\'onglet invalide');
+    }
+
+    const deletedTab = await db.delete(courseTabs).where(eq(courseTabs.id, id)).returning();
+    if (!deletedTab[0]) {
+      throw new ServiceError(ERROR_CODES.NOT_FOUND, `Onglet avec l'ID ${id} non trouvé`);
+    }
+  } catch (error) {
+    if (error instanceof ServiceError) throw error;
+    throw new ServiceError(
+      ERROR_CODES.DATABASE_ERROR,
+      'Erreur lors de la suppression de l\'onglet',
+      { originalError: error instanceof Error ? error.message : String(error) }
+    );
+  }
+};
+
+// Create a course section
+export const createCourseSection = async (sectionData: NewCourseSection): Promise<CourseSection> => {
+  try {
+    if (!sectionData.courseId || !sectionData.tabKey || !sectionData.title) {
+      throw new ServiceError(
+        ERROR_CODES.VALIDATION_ERROR,
+        'Les champs obligatoires (courseId, tabKey, title) sont requis'
+      );
+    }
+
+    const newSection = await db.insert(courseSections).values(sectionData).returning();
+    if (!newSection[0]) {
+      throw new ServiceError(ERROR_CODES.DATABASE_ERROR, 'Échec de la création de la section');
+    }
+
+    return newSection[0];
+  } catch (error) {
+    if (error instanceof ServiceError) throw error;
+    throw new ServiceError(
+      ERROR_CODES.DATABASE_ERROR,
+      'Erreur lors de la création de la section',
+      { originalError: error instanceof Error ? error.message : String(error) }
+    );
+  }
+};
+
+// Get a course section by ID
+export const getCourseSectionById = async (id: number): Promise<CourseSection> => {
+  try {
+    if (isNaN(id) || id <= 0) {
+      throw new ServiceError(ERROR_CODES.VALIDATION_ERROR, 'ID de section invalide');
+    }
+
+    const section = await db.select().from(courseSections).where(eq(courseSections.id, id));
+    if (!section[0]) {
+      throw new ServiceError(ERROR_CODES.NOT_FOUND, `Section avec l'ID ${id} non trouvée`);
+    }
+
+    return section[0];
+  } catch (error) {
+    if (error instanceof ServiceError) throw error;
+    throw new ServiceError(
+      ERROR_CODES.DATABASE_ERROR,
+      'Erreur lors de la récupération de la section',
+      { originalError: error instanceof Error ? error.message : String(error) }
+    );
+  }
+};
+
+// Update a course section
+export const updateCourseSection = async (id: number, updateData: Partial<NewCourseSection>): Promise<CourseSection> => {
+  try {
+    if (isNaN(id) || id <= 0) {
+      throw new ServiceError(ERROR_CODES.VALIDATION_ERROR, 'ID de section invalide');
+    }
+    if (Object.keys(updateData).length === 0) {
+      throw new ServiceError(ERROR_CODES.VALIDATION_ERROR, 'Aucune donnée à mettre à jour fournie');
+    }
+
+    const updatedSection = await db
+      .update(courseSections)
+      .set({ ...updateData, updatedAt: new Date() })
+      .where(eq(courseSections.id, id))
+      .returning();
+    if (!updatedSection[0]) {
+      throw new ServiceError(ERROR_CODES.NOT_FOUND, `Section avec l'ID ${id} non trouvée`);
+    }
+
+    return updatedSection[0];
+  } catch (error) {
+    if (error instanceof ServiceError) throw error;
+    throw new ServiceError(
+      ERROR_CODES.DATABASE_ERROR,
+      'Erreur lors de la mise à jour de la section',
+      { originalError: error instanceof Error ? error.message : String(error) }
+    );
+  }
+};
+
+// Delete a course section
+export const deleteCourseSection = async (id: number): Promise<void> => {
+  try {
+    if (isNaN(id) || id <= 0) {
+      throw new ServiceError(ERROR_CODES.VALIDATION_ERROR, 'ID de section invalide');
+    }
+
+    const deletedSection = await db.delete(courseSections).where(eq(courseSections.id, id)).returning();
+    if (!deletedSection[0]) {
+      throw new ServiceError(ERROR_CODES.NOT_FOUND, `Section avec l'ID ${id} non trouvée`);
+    }
+  } catch (error) {
+    if (error instanceof ServiceError) throw error;
+    throw new ServiceError(
+      ERROR_CODES.DATABASE_ERROR,
+      'Erreur lors de la suppression de la section',
+      { originalError: error instanceof Error ? error.message : String(error) }
+    );
+  }
+};
+
 // Create a course module
 export const createCourseModule = async (moduleData: NewCourseModule): Promise<CourseModule> => {
   try {
@@ -231,6 +437,374 @@ export const getCourseModules = async (courseId: number): Promise<CourseModule[]
   }
 };
 
+// Get a course module by ID
+export const getCourseModuleById = async (id: number): Promise<CourseModule> => {
+  try {
+    if (isNaN(id) || id <= 0) {
+      throw new ServiceError(ERROR_CODES.VALIDATION_ERROR, 'ID de module invalide');
+    }
+
+    const module = await db.select().from(courseModules).where(eq(courseModules.id, id));
+    if (!module[0]) {
+      throw new ServiceError(ERROR_CODES.NOT_FOUND, `Module avec l'ID ${id} non trouvé`);
+    }
+
+    return module[0];
+  } catch (error) {
+    if (error instanceof ServiceError) throw error;
+    throw new ServiceError(
+      ERROR_CODES.DATABASE_ERROR,
+      'Erreur lors de la récupération du module',
+      { originalError: error instanceof Error ? error.message : String(error) }
+    );
+  }
+};
+
+// Update a course module
+export const updateCourseModule = async (id: number, updateData: Partial<NewCourseModule>): Promise<CourseModule> => {
+  try {
+    if (isNaN(id) || id <= 0) {
+      throw new ServiceError(ERROR_CODES.VALIDATION_ERROR, 'ID de module invalide');
+    }
+    if (Object.keys(updateData).length === 0) {
+      throw new ServiceError(ERROR_CODES.VALIDATION_ERROR, 'Aucune donnée à mettre à jour fournie');
+    }
+
+    const updatedModule = await db
+      .update(courseModules)
+      .set({ ...updateData, updatedAt: new Date() })
+      .where(eq(courseModules.id, id))
+      .returning();
+    if (!updatedModule[0]) {
+      throw new ServiceError(ERROR_CODES.NOT_FOUND, `Module avec l'ID ${id} non trouvé`);
+    }
+
+    return updatedModule[0];
+  } catch (error) {
+    if (error instanceof ServiceError) throw error;
+    throw new ServiceError(
+      ERROR_CODES.DATABASE_ERROR,
+      'Erreur lors de la mise à jour du module',
+      { originalError: error instanceof Error ? error.message : String(error) }
+    );
+  }
+};
+
+// Delete a course module
+export const deleteCourseModule = async (id: number): Promise<void> => {
+  try {
+    if (isNaN(id) || id <= 0) {
+      throw new ServiceError(ERROR_CODES.VALIDATION_ERROR, 'ID de module invalide');
+    }
+
+    const deletedModule = await db.delete(courseModules).where(eq(courseModules.id, id)).returning();
+    if (!deletedModule[0]) {
+      throw new ServiceError(ERROR_CODES.NOT_FOUND, `Module avec l'ID ${id} non trouvé`);
+    }
+  } catch (error) {
+    if (error instanceof ServiceError) throw error;
+    throw new ServiceError(
+      ERROR_CODES.DATABASE_ERROR,
+      'Erreur lors de la suppression du module',
+      { originalError: error instanceof Error ? error.message : String(error) }
+    );
+  }
+};
+
+// Create a module step
+export const createModuleStep = async (stepData: NewModuleStep): Promise<ModuleStep> => {
+  try {
+    if (!stepData.moduleId || !stepData.title || !stepData.orderIndex) {
+      throw new ServiceError(
+        ERROR_CODES.VALIDATION_ERROR,
+        'Les champs obligatoires (moduleId, title, orderIndex) sont requis'
+      );
+    }
+
+    const newStep = await db.insert(moduleSteps).values(stepData).returning();
+    if (!newStep[0]) {
+      throw new ServiceError(ERROR_CODES.DATABASE_ERROR, 'Échec de la création de l\'étape');
+    }
+
+    return newStep[0];
+  } catch (error) {
+    if (error instanceof ServiceError) throw error;
+    throw new ServiceError(
+      ERROR_CODES.DATABASE_ERROR,
+      'Erreur lors de la création de l\'étape',
+      { originalError: error instanceof Error ? error.message : String(error) }
+    );
+  }
+};
+
+// Get a module step by ID
+export const getModuleStepById = async (id: number): Promise<ModuleStep> => {
+  try {
+    if (isNaN(id) || id <= 0) {
+      throw new ServiceError(ERROR_CODES.VALIDATION_ERROR, 'ID d\'étape invalide');
+    }
+
+    const step = await db.select().from(moduleSteps).where(eq(moduleSteps.id, id));
+    if (!step[0]) {
+      throw new ServiceError(ERROR_CODES.NOT_FOUND, `Étape avec l'ID ${id} non trouvée`);
+    }
+
+    return step[0];
+  } catch (error) {
+    if (error instanceof ServiceError) throw error;
+    throw new ServiceError(
+      ERROR_CODES.DATABASE_ERROR,
+      'Erreur lors de la récupération de l\'étape',
+      { originalError: error instanceof Error ? error.message : String(error) }
+    );
+  }
+};
+
+// Update a module step
+export const updateModuleStep = async (id: number, updateData: Partial<NewModuleStep>): Promise<ModuleStep> => {
+  try {
+    if (isNaN(id) || id <= 0) {
+      throw new ServiceError(ERROR_CODES.VALIDATION_ERROR, 'ID d\'étape invalide');
+    }
+    if (Object.keys(updateData).length === 0) {
+      throw new ServiceError(ERROR_CODES.VALIDATION_ERROR, 'Aucune donnée à mettre à jour fournie');
+    }
+
+    const updatedStep = await db
+      .update(moduleSteps)
+      .set({ ...updateData })
+      .where(eq(moduleSteps.id, id))
+      .returning();
+    if (!updatedStep[0]) {
+      throw new ServiceError(ERROR_CODES.NOT_FOUND, `Étape avec l'ID ${id} non trouvée`);
+    }
+
+    return updatedStep[0];
+  } catch (error) {
+    if (error instanceof ServiceError) throw error;
+    throw new ServiceError(
+      ERROR_CODES.DATABASE_ERROR,
+      'Erreur lors de la mise à jour de l\'étape',
+      { originalError: error instanceof Error ? error.message : String(error) }
+    );
+  }
+};
+
+// Delete a module step
+export const deleteModuleStep = async (id: number): Promise<void> => {
+  try {
+    if (isNaN(id) || id <= 0) {
+      throw new ServiceError(ERROR_CODES.VALIDATION_ERROR, 'ID d\'étape invalide');
+    }
+
+    const deletedStep = await db.delete(moduleSteps).where(eq(moduleSteps.id, id)).returning();
+    if (!deletedStep[0]) {
+      throw new ServiceError(ERROR_CODES.NOT_FOUND, `Étape avec l'ID ${id} non trouvée`);
+    }
+  } catch (error) {
+    if (error instanceof ServiceError) throw error;
+    throw new ServiceError(
+      ERROR_CODES.DATABASE_ERROR,
+      'Erreur lors de la suppression de l\'étape',
+      { originalError: error instanceof Error ? error.message : String(error) }
+    );
+  }
+};
+
+// Create a module tool association
+export const createModuleTool = async (moduleId: number, toolId: number): Promise<void> => {
+  try {
+    if (isNaN(moduleId) || moduleId <= 0 || isNaN(toolId) || toolId <= 0) {
+      throw new ServiceError(ERROR_CODES.VALIDATION_ERROR, 'IDs invalides');
+    }
+
+    await db.insert(moduleTools).values({ moduleId, toolId }).returning();
+  } catch (error) {
+    if (error instanceof ServiceError) throw error;
+    throw new ServiceError(
+      ERROR_CODES.DATABASE_ERROR,
+      'Erreur lors de l\'association de l\'outil au module',
+      { originalError: error instanceof Error ? error.message : String(error) }
+    );
+  }
+};
+
+// Get a module tool association by ID
+export const getModuleToolById = async (id: number): Promise<{ id: number; moduleId: number | null; toolId: number | null; createdAt: Date | null }> => {
+  try {
+    if (isNaN(id) || id <= 0) {
+      throw new ServiceError(ERROR_CODES.VALIDATION_ERROR, 'ID d\'association outil-module invalide');
+    }
+
+    const moduleTool = await db.select().from(moduleTools).where(eq(moduleTools.id, id));
+    if (!moduleTool[0]) {
+      throw new ServiceError(ERROR_CODES.NOT_FOUND, `Association outil-module avec l'ID ${id} non trouvée`);
+    }
+
+    return moduleTool[0];
+  } catch (error) {
+    if (error instanceof ServiceError) throw error;
+    throw new ServiceError(
+      ERROR_CODES.DATABASE_ERROR,
+      'Erreur lors de la récupération de l\'association outil-module',
+      { originalError: error instanceof Error ? error.message : String(error) }
+    );
+  }
+};
+
+// Update a module tool association
+export const updateModuleTool = async (id: number, updateData: { moduleId?: number; toolId?: number }): Promise<{ id: number; moduleId: number | null; toolId: number | null; createdAt: Date | null }> => {
+  try {
+    if (isNaN(id) || id <= 0) {
+      throw new ServiceError(ERROR_CODES.VALIDATION_ERROR, 'ID d\'association outil-module invalide');
+    }
+    if (Object.keys(updateData).length === 0) {
+      throw new ServiceError(ERROR_CODES.VALIDATION_ERROR, 'Aucune donnée à mettre à jour fournie');
+    }
+
+    const updatedModuleTool = await db
+      .update(moduleTools)
+      .set({ ...updateData })
+      .where(eq(moduleTools.id, id))
+      .returning();
+    if (!updatedModuleTool[0]) {
+      throw new ServiceError(ERROR_CODES.NOT_FOUND, `Association outil-module avec l'ID ${id} non trouvée`);
+    }
+
+    return updatedModuleTool[0];
+  } catch (error) {
+    if (error instanceof ServiceError) throw error;
+    throw new ServiceError(
+      ERROR_CODES.DATABASE_ERROR,
+      'Erreur lors de la mise à jour de l\'association outil-module',
+      { originalError: error instanceof Error ? error.message : String(error) }
+    );
+  }
+};
+
+// Delete a module tool association
+export const deleteModuleTool = async (id: number): Promise<void> => {
+  try {
+    if (isNaN(id) || id <= 0) {
+      throw new ServiceError(ERROR_CODES.VALIDATION_ERROR, 'ID d\'association outil-module invalide');
+    }
+
+    const deletedModuleTool = await db.delete(moduleTools).where(eq(moduleTools.id, id)).returning();
+    if (!deletedModuleTool[0]) {
+      throw new ServiceError(ERROR_CODES.NOT_FOUND, `Association outil-module avec l'ID ${id} non trouvée`);
+    }
+  } catch (error) {
+    if (error instanceof ServiceError) throw error;
+    throw new ServiceError(
+      ERROR_CODES.DATABASE_ERROR,
+      'Erreur lors de la suppression de l\'association outil-module',
+      { originalError: error instanceof Error ? error.message : String(error) }
+    );
+  }
+};
+
+// Update a course tool association
+export const updateCourseTool = async (id: number, updateData: { courseId?: number; toolId?: number }): Promise<{ id: number; courseId: number | null; toolId: number | null; createdAt: Date | null }> => {
+  try {
+    if (isNaN(id) || id <= 0) {
+      throw new ServiceError(ERROR_CODES.VALIDATION_ERROR, 'ID d\'association outil-cours invalide');
+    }
+    if (Object.keys(updateData).length === 0) {
+      throw new ServiceError(ERROR_CODES.VALIDATION_ERROR, 'Aucune donnée à mettre à jour fournie');
+    }
+
+    const updatedCourseTool = await db
+      .update(courseTools)
+      .set({ ...updateData })
+      .where(eq(courseTools.id, id))
+      .returning();
+    if (!updatedCourseTool[0]) {
+      throw new ServiceError(ERROR_CODES.NOT_FOUND, `Association outil-cours avec l'ID ${id} non trouvée`);
+    }
+
+    return updatedCourseTool[0];
+  } catch (error) {
+    if (error instanceof ServiceError) throw error;
+    throw new ServiceError(
+      ERROR_CODES.DATABASE_ERROR,
+      'Erreur lors de la mise à jour de l\'association outil-cours',
+      { originalError: error instanceof Error ? error.message : String(error) }
+    );
+  }
+};
+
+// Delete a course tool association
+export const deleteCourseTool = async (id: number): Promise<void> => {
+  try {
+    if (isNaN(id) || id <= 0) {
+      throw new ServiceError(ERROR_CODES.VALIDATION_ERROR, 'ID d\'association outil-cours invalide');
+    }
+
+    const deletedCourseTool = await db.delete(courseTools).where(eq(courseTools.id, id)).returning();
+    if (!deletedCourseTool[0]) {
+      throw new ServiceError(ERROR_CODES.NOT_FOUND, `Association outil-cours avec l'ID ${id} non trouvée`);
+    }
+  } catch (error) {
+    if (error instanceof ServiceError) throw error;
+    throw new ServiceError(
+      ERROR_CODES.DATABASE_ERROR,
+      'Erreur lors de la suppression de l\'association outil-cours',
+      { originalError: error instanceof Error ? error.message : String(error) }
+    );
+  }
+};
+
+// Update a course partner association
+export const updateCoursePartner = async (id: number, updateData: { courseId?: number; partnerId?: number }): Promise<{ id: number; courseId: number | null; partnerId: number | null; createdAt: Date | null }> => {
+  try {
+    if (isNaN(id) || id <= 0) {
+      throw new ServiceError(ERROR_CODES.VALIDATION_ERROR, 'ID d\'association partenaire-cours invalide');
+    }
+    if (Object.keys(updateData).length === 0) {
+      throw new ServiceError(ERROR_CODES.VALIDATION_ERROR, 'Aucune donnée à mettre à jour fournie');
+    }
+
+    const updatedCoursePartner = await db
+      .update(coursePartners)
+      .set({ ...updateData })
+      .where(eq(coursePartners.id, id))
+      .returning();
+    if (!updatedCoursePartner[0]) {
+      throw new ServiceError(ERROR_CODES.NOT_FOUND, `Association partenaire-cours avec l'ID ${id} non trouvée`);
+    }
+
+    return updatedCoursePartner[0];
+  } catch (error) {
+    if (error instanceof ServiceError) throw error;
+    throw new ServiceError(
+      ERROR_CODES.DATABASE_ERROR,
+      'Erreur lors de la mise à jour de l\'association partenaire-cours',
+      { originalError: error instanceof Error ? error.message : String(error) }
+    );
+  }
+};
+
+// Delete a course partner association
+export const deleteCoursePartner = async (id: number): Promise<void> => {
+  try {
+    if (isNaN(id) || id <= 0) {
+      throw new ServiceError(ERROR_CODES.VALIDATION_ERROR, 'ID d\'association partenaire-cours invalide');
+    }
+
+    const deletedCoursePartner = await db.delete(coursePartners).where(eq(coursePartners.id, id)).returning();
+    if (!deletedCoursePartner[0]) {
+      throw new ServiceError(ERROR_CODES.NOT_FOUND, `Association partenaire-cours avec l'ID ${id} non trouvée`);
+    }
+  } catch (error) {
+    if (error instanceof ServiceError) throw error;
+    throw new ServiceError(
+      ERROR_CODES.DATABASE_ERROR,
+      'Erreur lors de la suppression de l\'association partenaire-cours',
+      { originalError: error instanceof Error ? error.message : String(error) }
+    );
+  }
+};
+
 // Create a tool
 export const createTool = async (toolData: NewTool): Promise<Tool> => {
   try {
@@ -257,19 +831,75 @@ export const createTool = async (toolData: NewTool): Promise<Tool> => {
   }
 };
 
-// Associate a tool with a course
-export const associateToolWithCourse = async (courseId: number, toolId: number): Promise<void> => {
+// Get a tool by ID
+export const getToolById = async (id: number): Promise<Tool> => {
   try {
-    if (isNaN(courseId) || courseId <= 0 || isNaN(toolId) || toolId <= 0) {
-      throw new ServiceError(ERROR_CODES.VALIDATION_ERROR, 'IDs invalides');
+    if (isNaN(id) || id <= 0) {
+      throw new ServiceError(ERROR_CODES.VALIDATION_ERROR, 'ID d\'outil invalide');
     }
 
-    await db.insert(courseTools).values({ courseId, toolId }).returning();
+    const tool = await db.select().from(tools).where(eq(tools.id, id));
+    if (!tool[0]) {
+      throw new ServiceError(ERROR_CODES.NOT_FOUND, `Outil avec l'ID ${id} non trouvé`);
+    }
+
+    return tool[0];
   } catch (error) {
     if (error instanceof ServiceError) throw error;
     throw new ServiceError(
       ERROR_CODES.DATABASE_ERROR,
-      'Erreur lors de l\'association de l\'outil au cours',
+      'Erreur lors de la récupération de l\'outil',
+      { originalError: error instanceof Error ? error.message : String(error) }
+    );
+  }
+};
+
+// Update a tool
+export const updateTool = async (id: number, updateData: Partial<NewTool>): Promise<Tool> => {
+  try {
+    if (isNaN(id) || id <= 0) {
+      throw new ServiceError(ERROR_CODES.VALIDATION_ERROR, 'ID d\'outil invalide');
+    }
+    if (Object.keys(updateData).length === 0) {
+      throw new ServiceError(ERROR_CODES.VALIDATION_ERROR, 'Aucune donnée à mettre à jour fournie');
+    }
+
+    const updatedTool = await db
+      .update(tools)
+      .set({ ...updateData })
+      .where(eq(tools.id, id))
+      .returning();
+    if (!updatedTool[0]) {
+      throw new ServiceError(ERROR_CODES.NOT_FOUND, `Outil avec l'ID ${id} non trouvé`);
+    }
+
+    return updatedTool[0];
+  } catch (error) {
+    if (error instanceof ServiceError) throw error;
+    throw new ServiceError(
+      ERROR_CODES.DATABASE_ERROR,
+      'Erreur lors de la mise à jour de l\'outil',
+      { originalError: error instanceof Error ? error.message : String(error) }
+    );
+  }
+};
+
+// Delete a tool
+export const deleteTool = async (id: number): Promise<void> => {
+  try {
+    if (isNaN(id) || id <= 0) {
+      throw new ServiceError(ERROR_CODES.VALIDATION_ERROR, 'ID d\'outil invalide');
+    }
+
+    const deletedTool = await db.delete(tools).where(eq(tools.id, id)).returning();
+    if (!deletedTool[0]) {
+      throw new ServiceError(ERROR_CODES.NOT_FOUND, `Outil avec l'ID ${id} non trouvé`);
+    }
+  } catch (error) {
+    if (error instanceof ServiceError) throw error;
+    throw new ServiceError(
+      ERROR_CODES.DATABASE_ERROR,
+      'Erreur lors de la suppression de l\'outil',
       { originalError: error instanceof Error ? error.message : String(error) }
     );
   }
@@ -296,6 +926,98 @@ export const createPartner = async (partnerData: NewPartner): Promise<Partner> =
     throw new ServiceError(
       ERROR_CODES.DATABASE_ERROR,
       'Erreur lors de la création du partenaire',
+      { originalError: error instanceof Error ? error.message : String(error) }
+    );
+  }
+};
+
+// Get a partner by ID
+export const getPartnerById = async (id: number): Promise<Partner> => {
+  try {
+    if (isNaN(id) || id <= 0) {
+      throw new ServiceError(ERROR_CODES.VALIDATION_ERROR, 'ID de partenaire invalide');
+    }
+
+    const partner = await db.select().from(partners).where(eq(partners.id, id));
+    if (!partner[0]) {
+      throw new ServiceError(ERROR_CODES.NOT_FOUND, `Partenaire avec l'ID ${id} non trouvé`);
+    }
+
+    return partner[0];
+  } catch (error) {
+    if (error instanceof ServiceError) throw error;
+    throw new ServiceError(
+      ERROR_CODES.DATABASE_ERROR,
+      'Erreur lors de la récupération du partenaire',
+      { originalError: error instanceof Error ? error.message : String(error) }
+    );
+  }
+};
+
+// Update a partner
+export const updatePartner = async (id: number, updateData: Partial<NewPartner>): Promise<Partner> => {
+  try {
+    if (isNaN(id) || id <= 0) {
+      throw new ServiceError(ERROR_CODES.VALIDATION_ERROR, 'ID de partenaire invalide');
+    }
+    if (Object.keys(updateData).length === 0) {
+      throw new ServiceError(ERROR_CODES.VALIDATION_ERROR, 'Aucune donnée à mettre à jour fournie');
+    }
+
+    const updatedPartner = await db
+      .update(partners)
+      .set({ ...updateData })
+      .where(eq(partners.id, id))
+      .returning();
+    if (!updatedPartner[0]) {
+      throw new ServiceError(ERROR_CODES.NOT_FOUND, `Partenaire avec l'ID ${id} non trouvé`);
+    }
+
+    return updatedPartner[0];
+  } catch (error) {
+    if (error instanceof ServiceError) throw error;
+    throw new ServiceError(
+      ERROR_CODES.DATABASE_ERROR,
+      'Erreur lors de la mise à jour du partenaire',
+      { originalError: error instanceof Error ? error.message : String(error) }
+    );
+  }
+};
+
+// Delete a partner
+export const deletePartner = async (id: number): Promise<void> => {
+  try {
+    if (isNaN(id) || id <= 0) {
+      throw new ServiceError(ERROR_CODES.VALIDATION_ERROR, 'ID de partenaire invalide');
+    }
+
+    const deletedPartner = await db.delete(partners).where(eq(partners.id, id)).returning();
+    if (!deletedPartner[0]) {
+      throw new ServiceError(ERROR_CODES.NOT_FOUND, `Partenaire avec l'ID ${id} non trouvé`);
+    }
+  } catch (error) {
+    if (error instanceof ServiceError) throw error;
+    throw new ServiceError(
+      ERROR_CODES.DATABASE_ERROR,
+      'Erreur lors de la suppression du partenaire',
+      { originalError: error instanceof Error ? error.message : String(error) }
+    );
+  }
+};
+
+// Associate a tool with a course
+export const associateToolWithCourse = async (courseId: number, toolId: number): Promise<void> => {
+  try {
+    if (isNaN(courseId) || courseId <= 0 || isNaN(toolId) || toolId <= 0) {
+      throw new ServiceError(ERROR_CODES.VALIDATION_ERROR, 'IDs invalides');
+    }
+
+    await db.insert(courseTools).values({ courseId, toolId }).returning();
+  } catch (error) {
+    if (error instanceof ServiceError) throw error;
+    throw new ServiceError(
+      ERROR_CODES.DATABASE_ERROR,
+      'Erreur lors de l\'association de l\'outil au cours',
       { originalError: error instanceof Error ? error.message : String(error) }
     );
   }
