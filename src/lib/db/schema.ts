@@ -18,6 +18,7 @@ export const courses = pgTable('courses', {
 // Table des onglets/sections de cours
 export const courseTabs = pgTable('course_tabs', {
   id: serial('id').primaryKey(),
+  courseId: integer('course_id').references(() => courses.id),
   key: varchar('key', { length: 100 }).notNull(),
   title: varchar('title', { length: 255 }).notNull(),
   isActive: boolean('is_active').default(false),

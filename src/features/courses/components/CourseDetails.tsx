@@ -8,27 +8,29 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { 
-  Loader2, 
-  Edit, 
-  Trash, 
-  ArrowLeft, 
-  Clock, 
-  BookOpen, 
-  Calendar, 
-  CheckCircle, 
+import {
+  Loader2,
+  Edit,
+  Trash,
+  ArrowLeft,
+  Clock,
+  BookOpen,
+  Calendar,
+  CheckCircle,
   XCircle,
   AlertCircle,
   GraduationCap,
   List,
-  Plus
+  Plus,
 } from "lucide-react";
 import { NewCourse, Course, CourseModule } from "@/lib/db/schema";
 import { useCourses } from "@/features/courses/hooks/useCourses";
 import { useModules } from "@/features/modules/hooks/useModules";
+import { useCourseTabs } from "@/features/tabs/hooks/useTabs";
+import { CourseTabs } from "@/features/tabs/components/CourseTabs";
 import { CourseForm } from "./CourseForm";
-import Image from "next/image";
 import { CourseModules } from "@/features/modules/components/CourseModules";
+import Image from "next/image";
 
 // Interfaces pour typage
 interface CourseDetailsProps {
@@ -36,9 +38,13 @@ interface CourseDetailsProps {
 }
 
 // Sous-composant : En-tête du cours
-function CourseHeader({ course, imageError, setImageError }: { 
-  course: Course; 
-  imageError: boolean; 
+function CourseHeader({
+  course,
+  imageError,
+  setImageError,
+}: {
+  course: Course;
+  imageError: boolean;
   setImageError: (value: boolean) => void;
 }) {
   return (
@@ -62,9 +68,7 @@ function CourseHeader({ course, imageError, setImageError }: {
           </div>
         )}
         <div className="absolute bottom-6 left-6 text-primary-foreground">
-          <h1 className="text-4xl font-bold tracking-tight drop-shadow-lg">
-            {course.title}
-          </h1>
+          <h1 className="text-4xl font-bold tracking-tight drop-shadow-lg">{course.title}</h1>
           <p className="text-lg opacity-90 drop-shadow-md">{course.key}</p>
         </div>
       </div>
@@ -81,9 +85,7 @@ function CourseStats({ course }: { course: Course }) {
           <Clock className="h-8 w-8 text-primary" />
           <div>
             <p className="text-sm text-muted-foreground">Durée</p>
-            <p className="text-lg font-semibold">
-              {course.duration || "Non spécifiée"}
-            </p>
+            <p className="text-lg font-semibold">{course.duration || "Non spécifiée"}</p>
           </div>
         </div>
       </div>
@@ -132,9 +134,7 @@ function CourseStats({ course }: { course: Course }) {
 function CourseDescription({ course }: { course: Course }) {
   return (
     <div className="rounded-lg border bg-card p-8">
-      <h2 className="mb-4 text-2xl font-bold tracking-tight">
-        Description du cours
-      </h2>
+      <h2 className="mb-4 text-2xl font-bold tracking-tight">Description du cours</h2>
       <p className="text-muted-foreground leading-relaxed">
         {course.description || "Aucune description disponible pour ce cours."}
       </p>
@@ -143,13 +143,13 @@ function CourseDescription({ course }: { course: Course }) {
 }
 
 // Sous-composant : Navigation
-function CourseNavigation({ 
-  course, 
-  onEdit, 
-  onDelete 
-}: { 
-  course: Course; 
-  onEdit: () => void; 
+function CourseNavigation({
+  course,
+  onEdit,
+  onDelete,
+}: {
+  course: Course;
+  onEdit: () => void;
   onDelete: () => void;
 }) {
   const router = useRouter();
@@ -179,20 +179,20 @@ function CourseNavigation({
             </Badge>
           </div>
           <div className="flex items-center gap-2">
-            <Button 
-              onClick={onEdit} 
-              variant="outline" 
-              size="sm" 
-              className="gap-2" 
+            <Button
+              onClick={onEdit}
+              variant="outline"
+              size="sm"
+              className="gap-2"
               aria-label="Modifier le cours"
             >
               <Edit className="h-4 w-4" />
               Modifier
             </Button>
-            <Button 
-              onClick={onDelete} 
-              variant="destructive" 
-              size="sm" 
+            <Button
+              onClick={onDelete}
+              variant="destructive"
+              size="sm"
               className="gap-2"
               aria-label="Supprimer le cours"
             >
@@ -210,10 +210,14 @@ function CourseNavigation({
 export default function CourseDetails({ courseId }: CourseDetailsProps) {
   const router = useRouter();
   const { getCourseById, updateCourse, deleteCourse, isLoading, error } = useCourses({ courseId });
-  const { modules, getModuleById, isLoading: isLoadingModules, error: errorModules } = useModules({ courseId });
+  const { modules, getModuleById, isLoading: isLoadingModules, error: errorModules } = useModules({
+    courseId,
+  });
+  const { tabs, isLoading: isLoadingTabs, error: errorTabs } = useCourseTabs({ courseId });
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<Partial<NewCourse>>({});
   const [imageError, setImageError] = useState(false);
+  const [activeTabKey, setActiveTabKey] = useState<string | undefined>(undefined);
 
   const course = getCourseById.data as Course | null;
 
@@ -221,6 +225,14 @@ export default function CourseDetails({ courseId }: CourseDetailsProps) {
   useEffect(() => {
     setImageError(false);
   }, [course?.imageSrc]);
+
+  // Set the first active tab as default when tabs are loaded
+  useEffect(() => {
+    if (tabs && tabs.length > 0 && !activeTabKey) {
+      const firstActiveTab = tabs.find((tab) => tab.isActive);
+      setActiveTabKey(firstActiveTab?.key);
+    }
+  }, [tabs, activeTabKey]);
 
   const handleEditToggle = () => {
     if (!course) return;
@@ -256,6 +268,10 @@ export default function CourseDetails({ courseId }: CourseDetailsProps) {
     }
   };
 
+  const handleTabChange = (tabKey: string) => {
+    setActiveTabKey(tabKey);
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center">
@@ -279,9 +295,7 @@ export default function CourseDetails({ courseId }: CourseDetailsProps) {
       <Alert className="mx-auto mt-8 max-w-md">
         <AlertCircle className="h-4 w-4" />
         <AlertTitle>Cours non trouvé</AlertTitle>
-        <AlertDescription>
-          Le cours avec l'ID {courseId} n'existe pas.
-        </AlertDescription>
+        <AlertDescription>Le cours avec l'ID {courseId} n'existe pas.</AlertDescription>
       </Alert>
     );
   }
@@ -294,7 +308,17 @@ export default function CourseDetails({ courseId }: CourseDetailsProps) {
           <CourseHeader course={course} imageError={imageError} setImageError={setImageError} />
           <CourseStats course={course} />
           <CourseDescription course={course} />
-          <CourseModules courseId={courseId} modules={modules as CourseModule[]} isLoadingModules={isLoadingModules} errorModules={errorModules} />
+          <CourseTabs
+            courseId={courseId}
+            activeTabKey={activeTabKey}
+            onTabChange={handleTabChange}
+          />
+          <CourseModules
+            courseId={courseId}
+            modules={modules as CourseModule[]}
+            isLoadingModules={isLoadingModules}
+            errorModules={errorModules}
+          />
         </div>
       </div>
       <Dialog open={isEditing} onOpenChange={setIsEditing}>
