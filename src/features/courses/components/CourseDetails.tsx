@@ -19,18 +19,18 @@ import {
   CheckCircle,
   XCircle,
   AlertCircle,
-  GraduationCap,
-  List,
-  Plus,
 } from "lucide-react";
 import { NewCourse, Course, CourseModule } from "@/lib/db/schema";
 import { useCourses } from "@/features/courses/hooks/useCourses";
 import { useModules } from "@/features/modules/hooks/useModules";
-import { useCourseTabs } from "@/features/tabs/hooks/useTabs";
-import { CourseTabs } from "@/features/tabs/components/CourseTabs";
 import { CourseForm } from "./CourseForm";
 import { CourseModules } from "@/features/modules/components/CourseModules";
 import Image from "next/image";
+import { useCourseTabs } from "@/features/tabs/hooks/useTabs";
+import { CourseTabs } from "@/features/tabs/components/CourseTabs";
+import { CourseSections } from "@/features/sections/components/CourseSections";
+import { useCourseSections } from "@/features/sections/hooks/useCourseSections";
+import { CourseManager } from "./CourseManager";
 
 // Interfaces pour typage
 interface CourseDetailsProps {
@@ -214,6 +214,9 @@ export default function CourseDetails({ courseId }: CourseDetailsProps) {
     courseId,
   });
   const { tabs, isLoading: isLoadingTabs, error: errorTabs } = useCourseTabs({ courseId });
+  const { sections, isLoading: isLoadingSections, error: errorSections } = useCourseSections({
+    courseId,
+  });
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<Partial<NewCourse>>({});
   const [imageError, setImageError] = useState(false);
@@ -308,11 +311,7 @@ export default function CourseDetails({ courseId }: CourseDetailsProps) {
           <CourseHeader course={course} imageError={imageError} setImageError={setImageError} />
           <CourseStats course={course} />
           <CourseDescription course={course} />
-          <CourseTabs
-            courseId={courseId}
-            activeTabKey={activeTabKey}
-            onTabChange={handleTabChange}
-          />
+          <CourseManager courseId={courseId} />
           <CourseModules
             courseId={courseId}
             modules={modules as CourseModule[]}

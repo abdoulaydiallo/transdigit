@@ -142,7 +142,7 @@ export function CourseTabs({ courseId, activeTabKey, onTabChange }: CourseTabsPr
         ) : (
           <div className="p-4">
             <Tabs value={activeTabKey} onValueChange={onTabChange} className="w-full">
-              <TabsList className="grid w-full grid-cols-auto">
+              <TabsList className="grid w-full grid-cols-6 gap-2">
                 {activeTabs.map((tab) => (
                   <TabsTrigger key={tab.key} value={tab.key} className="flex items-center gap-2">
                     {tab.title}
