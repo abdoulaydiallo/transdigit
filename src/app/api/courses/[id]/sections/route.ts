@@ -1,8 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { ServiceError, ERROR_CODES } from '@/services/services.errors';
-import { NewCourseSectionSchema } from '@/lib/validations/courseSections';
 import { z } from 'zod';
 import type { CourseSection } from '@/lib/db/schema';
+import { NextRequest, NextResponse } from 'next/server';
+
+import { ServiceError, ERROR_CODES } from '@/services/services.errors';
+import { NewCourseSectionSchema } from '@/lib/validations/courseSections';
 import { createCourseSection } from '@/services/courses.service';
 import { getCourseSections } from '@/services/sections.service';
 

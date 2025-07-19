@@ -68,21 +68,22 @@ export async function GET(
 }
 
 // POST /api/courses/:id/modules - Create a new module for a course
-export async function POST(req: NextRequest, { params }: { params: { id: string } }): Promise<NextResponse<ApiResponse<CourseModule>>> {
-  try {
+export async function POST(
+    req: NextRequest,
+    { params }: { params: Promise<{ id: string }> } 
+  ): Promise<NextResponse<ApiResponse<CourseModule>>> {
+    try {
     if (req.method !== "POST") {
       throw new ServiceError(ERROR_CODES.METHOD_NOT_ALLOWED, "Méthode non autorisée");
     }
-
-    const courseId = CourseIdSchema.parse(params.id);
+    // Await params to get the actual params object
+    const { id } = await params;
+    const courseId = CourseIdSchema.parse(id);
     const body = await req.json();
-    const parsedBody = { ...body, courseId, number: typeof body.number === "string" ? Number(body.number) : body.number };
+    const parsedBody = { ...body, courseId };
     const moduleData = NewCourseModuleSchema.parse(parsedBody);
 
-    // Ensure 'number' is a number before passing to createCourseModule
-    const moduleDataWithNumber = { ...moduleData, number: Number(moduleData.number) };
-
-    const result = await createCourseModule(moduleDataWithNumber);
+    const result = await createCourseModule(moduleData);
     return NextResponse.json({ success: true, data: result }, { status: 201 });
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {

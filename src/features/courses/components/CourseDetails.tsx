@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
@@ -27,8 +27,6 @@ import { CourseForm } from "./CourseForm";
 import { CourseModules } from "@/features/modules/components/CourseModules";
 import Image from "next/image";
 import { useCourseTabs } from "@/features/tabs/hooks/useTabs";
-import { CourseTabs } from "@/features/tabs/components/CourseTabs";
-import { CourseSections } from "@/features/sections/components/CourseSections";
 import { useCourseSections } from "@/features/sections/hooks/useCourseSections";
 import { CourseManager } from "./CourseManager";
 
@@ -85,7 +83,7 @@ function CourseStats({ course }: { course: Course }) {
           <Clock className="h-8 w-8 text-primary" />
           <div>
             <p className="text-sm text-muted-foreground">Durée</p>
-            <p className="text-lg font-semibold">{course.duration || "Non spécifiée"}</p>
+            <p className="text-base font-semibold">{course.duration || "Non spécifiée"}</p>
           </div>
         </div>
       </div>
@@ -94,7 +92,7 @@ function CourseStats({ course }: { course: Course }) {
           <BookOpen className="h-8 w-8 text-primary" />
           <div>
             <p className="text-sm text-muted-foreground">Heures totales</p>
-            <p className="text-lg font-semibold">
+            <p className="text-base font-semibold">
               {course.totalHours ? `${course.totalHours}h` : "Non spécifié"}
             </p>
           </div>
@@ -105,7 +103,7 @@ function CourseStats({ course }: { course: Course }) {
           <Calendar className="h-8 w-8 text-primary" />
           <div>
             <p className="text-sm text-muted-foreground">Créé le</p>
-            <p className="text-lg font-semibold">
+            <p className="text-base font-semibold">
               {course.createdAt
                 ? format(new Date(course.createdAt), "dd/MM/yyyy", { locale: fr })
                 : "Non spécifié"}
@@ -118,7 +116,7 @@ function CourseStats({ course }: { course: Course }) {
           <Calendar className="h-8 w-8 text-primary" />
           <div>
             <p className="text-sm text-muted-foreground">Mis à jour</p>
-            <p className="text-lg font-semibold">
+            <p className="text-base font-semibold">
               {course.updatedAt
                 ? format(new Date(course.updatedAt), "dd/MM/yyyy", { locale: fr })
                 : "Non spécifié"}
@@ -277,7 +275,7 @@ export default function CourseDetails({ courseId }: CourseDetailsProps) {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center">
+      <div className="flex min-h-[80vh] items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );

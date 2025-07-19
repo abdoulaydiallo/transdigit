@@ -1,6 +1,11 @@
 // /app/api/courses/[id]/tabs/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { createCourseTab, getCourseTabs, CourseTabFilters, CourseTabPagination } from "@/services/tabs.services";
+import { 
+  createCourseTab, 
+  getCourseTabs, 
+  CourseTabFilters, 
+  CourseTabPagination
+ } from "@/services/tabs.services";
 import { ServiceError, ERROR_CODES } from "@/services/services.errors";
 import { CourseTab } from "@/lib/db/schema";
 import { z } from "zod";

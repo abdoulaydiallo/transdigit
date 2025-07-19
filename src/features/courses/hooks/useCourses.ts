@@ -31,6 +31,8 @@ export function useCourses(props: UseCoursesProps = {}) {
       if (props.filters?.isActive !== undefined) params.set("isActive", props.filters.isActive.toString());
       if (props.filters?.title) params.set("title", props.filters.title);
 
+      console.log("Fetching courses with params:", params.toString());
+
       const res = await fetch(`/api/courses?${params.toString()}`);
       const result: ApiResponse<{ courses: Course[]; total: number }> = await res.json();
       if (!result.success) {

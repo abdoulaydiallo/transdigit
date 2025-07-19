@@ -15,6 +15,13 @@
       "when": 1752847383195,
       "tag": "0001_dusty_morbius",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1752871680624,
+      "tag": "0002_exotic_boom_boom",
+      "breakpoints": true
     }
   ]
 }

@@ -170,7 +170,7 @@ export function CourseModules({
                     <div className="flex items-start gap-4 flex-1 min-w-0">
                       {/* Module Number */}
                       <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary font-bold text-lg flex-shrink-0">
-                        {module.number || index + 1}
+                        {module.orderIndex || index + 1}
                       </div>
                       
                       {/* Module Info */}
@@ -180,7 +180,7 @@ export function CourseModules({
                             {module.title}
                           </h3>
                           <Badge variant="secondary" className="text-xs">
-                            Module {module.number || index + 1}
+                            Module {module.orderIndex || index + 1}
                           </Badge>
                         </div>
                         
@@ -276,7 +276,7 @@ export function CourseModules({
 
       {/* Dialogue pour créer/modifier un module */}
       <Dialog open={isModuleDialogOpen} onOpenChange={setIsModuleDialogOpen}>
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               {selectedModule ? (

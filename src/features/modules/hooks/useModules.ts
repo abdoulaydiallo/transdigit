@@ -46,12 +46,11 @@ export function useModules(props: UseModulesProps = {}) {
       const moduleData = {
         courseId,
         title: data.title,
-        number: Number(data.number),
+        steps: data.steps ?? [],
         orderIndex: data.orderIndex,
         description: data.description ?? undefined,
         duration: data.duration ?? undefined, // Conserver comme chaîne
       };
-      console.log("Création du module avec :", { courseId, moduleData });
       const validatedData = NewCourseModuleSchema.parse(moduleData);
       const res = await fetch(`/api/courses/${courseId}/modules`, {
         method: "POST",
@@ -59,7 +58,6 @@ export function useModules(props: UseModulesProps = {}) {
         body: JSON.stringify(validatedData),
     });
     const responseBody = await res.text();
-    console.log("Statut de la réponse :", res.status, "Corps de la réponse :", responseBody);
     const result: ApiResponse<CourseModule> = JSON.parse(responseBody);
     if (!result.success) {
       throw new ServiceError(

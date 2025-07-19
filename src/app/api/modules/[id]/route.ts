@@ -10,20 +10,28 @@ type ApiResponse<T> =
   | { success: false; error: ReturnType<ServiceError["toJSON"]> };
 
 // GET /api/modules/:id - Get a module by ID
-export async function GET(req: NextRequest, { params }: { params: { id: string } }): Promise<NextResponse<ApiResponse<CourseModule>>> {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+): Promise<NextResponse<ApiResponse<CourseModule>>> {
   try {
     if (req.method !== "GET") {
       throw new ServiceError(ERROR_CODES.METHOD_NOT_ALLOWED, "Méthode non autorisée");
     }
 
-    const moduleId = ModuleIdSchema.parse(params.id);
+    // Await params to get the actual params object
+    const { id } = await params;
+    const moduleId = ModuleIdSchema.parse(id);
 
     const result = await getCourseModuleById(moduleId);
+    if (!result) {
+      throw new ServiceError(ERROR_CODES.NOT_FOUND, "Module non trouvé", { moduleId });
+    }
     return NextResponse.json({ success: true, data: result });
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-       {
+        {
           success: false,
           error: {
             code: ERROR_CODES.VALIDATION_ERROR,
@@ -55,28 +63,36 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 }
 
 // PUT /api/modules/:id - Update a module by ID
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }): Promise<NextResponse<ApiResponse<CourseModule>>> {
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+): Promise<NextResponse<ApiResponse<CourseModule>>> {
   try {
     if (req.method !== "PUT") {
       throw new ServiceError(ERROR_CODES.METHOD_NOT_ALLOWED, "Méthode non autorisée");
     }
 
-    const moduleId = ModuleIdSchema.parse(params.id);
+    // Await params to get the actual params object
+    const { id } = await params;
+    const moduleId = ModuleIdSchema.parse(id);
     const body = await req.json();
     const updateData = UpdateCourseModuleSchema.parse(body);
 
-    // Convert 'number' property from string to number if present
+    // Convert 'orderIndex' property from string to number if necessary
     const sanitizedUpdateData = {
       ...updateData,
-      number: updateData.number !== undefined ? Number(updateData.number) : undefined,
+      orderIndex: Number(updateData.orderIndex),
     };
 
     const result = await updateCourseModule(moduleId, sanitizedUpdateData);
+    if (!result) {
+      throw new ServiceError(ERROR_CODES.NOT_FOUND, "Module non trouvé", { moduleId });
+    }
     return NextResponse.json({ success: true, data: result });
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-       {
+        {
           success: false,
           error: {
             code: ERROR_CODES.VALIDATION_ERROR,
@@ -101,20 +117,25 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       error instanceof Error ? error : undefined
     );
     return NextResponse.json(
-     { success: false, error: internalError.toJSON() },
+      { success: false, error: internalError.toJSON() },
       { status: 500 }
     );
   }
 }
 
 // DELETE /api/modules/:id - Delete a module by ID
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }): Promise<NextResponse<ApiResponse<{}>>> {
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+): Promise<NextResponse<ApiResponse<{}>>> {
   try {
     if (req.method !== "DELETE") {
       throw new ServiceError(ERROR_CODES.METHOD_NOT_ALLOWED, "Méthode non autorisée");
     }
 
-    const moduleId = ModuleIdSchema.parse(params.id);
+    // Await params to get the actual params object
+    const { id } = await params;
+    const moduleId = ModuleIdSchema.parse(id);
 
     await deleteCourseModule(moduleId);
     return NextResponse.json({ success: true, data: {} });

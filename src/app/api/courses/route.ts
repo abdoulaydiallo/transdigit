@@ -78,8 +78,8 @@ export async function GET(req: NextRequest): Promise<NextResponse<ApiResponse<an
       title: params.title,
     };
     const pagination: CoursePagination = {
-      page: params.page,
-      per_page: params.per_page,
+      page: params.page ? parseInt(params.page, 10) : 1 ,
+      per_page: params.per_page ? parseInt(params.per_page, 10) : 10
     };
 
     const result = await getAllCourses(filters, pagination);
