@@ -58,27 +58,45 @@ export const UpdateCourseSchema = z
 
 // Schéma pour la création d'un module (POST)
 export const NewCourseModuleSchema = z.object({
-  id: z.number().int().positive("L'ID doit être un entier positif").optional(),
-  courseId: z.number().int().positive("L'ID du cours doit être un entier positif"),
-  title: z.string().min(1, "Le titre est requis").max(255, "Le titre ne doit pas dépasser 255 caractères"),
-  duration: z.string().max(50, "La durée ne doit pas dépasser 50 caractères").nullable().optional(),
-  description: z.string().max(65535, "La description est trop longue").nullable().optional(),
-  steps: z.array(z.string()).optional().nullable(),
-  orderIndex: z.number().int().nonnegative("L'index d'ordre doit être un entier non négatif"),
-  createdAt: z.union([z.date(), z.null()]).optional(),
-  updatedAt: z.union([z.date(), z.null()]).optional(),
+  courseId: z.number().int().positive(),
+  title: z.string().min(1).max(255),
+  orderIndex: z.number().int().nonnegative(),
+  duration: z.number().min(0).nullable(),
+  description: z.string().max(65535).nullable(),
+  steps: z.array(z.string().min(1)).default([]),
+  tools: z.object({
+    title: z.string().default(""),
+    content: z.array(
+      z.object({
+        name: z.string(),
+        src: z.string(),
+      })
+    ).default([]),
+  }).nullable(),
 }).strict();
 
-// Schéma pour la mise à jour d'un module (PUT)
 export const UpdateCourseModuleSchema = z.object({
-  courseId: z.number().optional(),
-  title: z.string().min(1).optional(),
-  orderIndex: z.number().min(0).optional(),
-  description: z.string().nullable().optional(),
-  duration: z.string().nullable().optional(),
-  steps: z.array(z.string()).optional().nullable(),
-}).partial();
-
-
+  title: z.string().min(1).max(255).optional(),
+  courseId: z.number().int().positive().optional(),
+  orderIndex: z.number().int().nonnegative().optional(),
+  duration: z.number().min(0).nullable().optional(),
+  description: z.string().max(65535).nullable().optional(),
+  steps: z.array(z.string().min(1)).optional(),
+  tools: z.union([
+    z.object({
+      title: z.string().optional(),
+      content: z.array(
+        z.object({
+          name: z.string(),
+          src: z.string(),
+        })
+      ).optional(),
+    }),
+    z.null()
+  ]).optional(),
+}).strict().refine(data => Object.keys(data).length > 0, {
+  message: "Au moins un champ doit être fourni pour la mise à jour"
+});
+  
 export type ModuleFormValues = z.infer<typeof NewCourseModuleSchema>;
 

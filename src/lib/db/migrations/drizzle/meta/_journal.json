@@ -22,6 +22,20 @@
       "when": 1752871680624,
       "tag": "0002_exotic_boom_boom",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1752887363720,
+      "tag": "0003_damp_magma",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1752932925200,
+      "tag": "0004_lame_roxanne_simpson",
+      "breakpoints": true
     }
   ]
 }

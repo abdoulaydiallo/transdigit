@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useFieldArray, useForm } from "react-hook-form";
+import { SubmitHandler, useFieldArray, useForm, Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -17,20 +17,31 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Save, Trash, X, Plus, Loader2 } from "lucide-react";
 import { useModules } from "@/features/modules/hooks/useModules";
-import { CourseModule } from "@/lib/db/schema";
-import { NewCourseModuleSchema } from "@/lib/zodSchemas";
-import { z } from "zod";
+import { ModuleFormValues, NewCourseModuleSchema } from "@/lib/zodSchemas";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { AnimatePresence, motion } from "framer-motion";
 
-// Type pour les données du formulaire
-type ModuleFormValues = Omit<
-  z.infer<typeof NewCourseModuleSchema>,
-  "id" | "createdAt" | "updatedAt"
->;
+type ResolverType = Resolver<FormValues>;
+
+type FormValues = {
+  id: number;
+  courseId: number;
+  title: string;
+  orderIndex: number;
+  duration: number | null;
+  description: string | null;
+  steps: string[];
+  tools: {
+    title: string;
+    content: Array<{
+      name: string;
+      src: string;
+    }>;
+  } | null;
+};
 
 type ModuleFormProps = {
-  module?: CourseModule | null;
+  module?: FormValues | null;
   courseId: number;
   onSuccess: () => void;
   onCancel: () => void;
@@ -39,17 +50,23 @@ type ModuleFormProps = {
 export function ModuleForm({ module, courseId, onSuccess, onCancel }: ModuleFormProps) {
   const { createModule, updateModule } = useModules({ courseId });
 
-  const form = useForm<ModuleFormValues>({
-    resolver: zodResolver(NewCourseModuleSchema),
-    defaultValues: {
-      courseId,
-      title: module?.title ?? "",
-      orderIndex: module?.orderIndex ?? 0,
-      description: module?.description ?? "",
-      duration: module?.duration ?? "",
-      steps: module?.steps as [string] ?? [],
-    },
-  });
+const form = useForm<FormValues>({
+  resolver: zodResolver(NewCourseModuleSchema) as unknown as ResolverType,
+  defaultValues: {
+    courseId,
+    title: module?.title ?? "",
+    orderIndex: module?.orderIndex ?? 0,
+    duration: module?.duration ?? null,
+    description: module?.description ?? null,
+    steps: module?.steps as any ?? [],
+    tools: module?.tools 
+      ? { 
+          title: module.tools.title ?? "", 
+          content: module.tools.content ?? [] 
+        }
+      : null
+  }
+});
 
   const { fields: stepFields, append: appendStep, remove: removeStep } = useFieldArray<
     ModuleFormValues,
@@ -60,25 +77,46 @@ export function ModuleForm({ module, courseId, onSuccess, onCancel }: ModuleForm
     name: "steps",
   });
 
-  const onSubmit = async (formData: ModuleFormValues) => {
+  const { fields: contentFields, append: appendContent, remove: removeContent } = useFieldArray<
+    ModuleFormValues,
+    "tools.content"
+  >({
+    //@ts-ignore
+    control: form.control,
+    name: "tools.content",
+  });
+
+  const onSubmit: SubmitHandler<ModuleFormValues> = async (data) => {
     try {
       const payload = {
-        courseId: formData.courseId,
-        title: formData.title,
-        orderIndex: Number(formData.orderIndex),
-        description: formData.description || null,
-        duration: formData.duration || null,
-        steps: formData.steps || null,
+        courseId: data.courseId,
+        title: data.title,
+        orderIndex: data.orderIndex,
+        description: data.description,
+        duration: data.duration,
+        steps: data.steps?.filter(step => step.trim() !== '') ?? [],
+        tools:
+          data.tools &&
+          data.tools.content.length > 0 &&
+          data.tools.title
+            ? { title: data.tools.title, content: data.tools.content }
+            : null
+
       };
 
       if (module) {
-        await updateModule({ id: module.id, data: payload });
-        toast.success(`Module "${formData.title}" mis à jour`);
+        await updateModule({
+          id: module.id,
+          data: payload,
+        });
+        toast.success(`Module "${data.title}" mis à jour`);
       } else {
-        await createModule({ courseId, data: payload });
-        toast.success(`Module "${formData.title}" créé`);
+        await createModule({
+          courseId,
+          data: payload,
+        });
+        toast.success(`Module "${data.title}" créé`);
       }
-
       onSuccess();
     } catch (error) {
       console.error("Erreur lors de la soumission:", error);
@@ -87,42 +125,43 @@ export function ModuleForm({ module, courseId, onSuccess, onCancel }: ModuleForm
   };
 
   return (
-    <TooltipProvider>
+    <TooltipProvider delayDuration={0}>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-4">
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm font-medium">Titre*</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Entrez le titre du module..."
-                        {...field}
-                        className="rounded-md border border-input bg-background px-3 py-2 text-sm focus:ring-2 focus:ring-primary"
-                        aria-label="Titre du module"
-                      />
-                    </FormControl>
-                    <FormMessage className="text-xs text-destructive" />
-                  </FormItem>
-                )}
-              />
+            <FormField
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium">Titre*</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Entrez le titre du module..."
+                      {...field}
+                      className="rounded-md border border-input bg-background px-3 py-2 text-sm focus:ring-2 focus:ring-primary"
+                      aria-label="Titre du module"
+                    />
+                  </FormControl>
+                  <FormMessage className="text-xs text-destructive" />
+                </FormItem>
+              )}
+            />
 
-              {/* Colonne 2: Durée et Ordre */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <FormField
-                control={form.control}
                 name="duration"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm font-medium">Durée</FormLabel>
+                    <FormLabel className="text-sm font-medium">Durée (heures)</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Ex: 2h30"
+                        type="number"
+                        min="0"
+                        step="0.1"
+                        placeholder="Ex: 2"
                         {...field}
                         value={field.value ?? ""}
+                        onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
                         className="rounded-md border border-input bg-background px-3 py-2 text-sm focus:ring-2 focus:ring-primary"
                         aria-label="Durée du module"
                       />
@@ -132,7 +171,6 @@ export function ModuleForm({ module, courseId, onSuccess, onCancel }: ModuleForm
                 )}
               />
               <FormField
-                control={form.control}
                 name="orderIndex"
                 render={({ field }) => (
                   <FormItem>
@@ -155,29 +193,25 @@ export function ModuleForm({ module, courseId, onSuccess, onCancel }: ModuleForm
             </div>
 
             <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm font-medium">Description</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Décrivez le contenu du module..."
-                        {...field}
-                        value={field.value ?? ""}
-                        className="rounded-md border border-input bg-background px-3 py-2 text-sm focus:ring-2 focus:ring-primary min-h-[100px]"
-                        aria-label="Description du module"
-                      />
-                    </FormControl>
-                    <FormMessage className="text-xs text-destructive" />
-                  </FormItem>
-                )}
-              />
-
-            
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium">Description</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Décrivez le contenu du module..."
+                      {...field}
+                      value={field.value ?? ""}
+                      className="rounded-md border border-input bg-background px-3 py-2 text-sm focus:ring-2 focus:ring-primary min-h-[100px]"
+                      aria-label="Description du module"
+                    />
+                  </FormControl>
+                  <FormMessage className="text-xs text-destructive" />
+                </FormItem>
+              )}
+            />
           </div>
 
-          {/* Étapes */}
           <div className="space-y-2 rounded-lg border bg-card p-4">
             <FormLabel className="text-sm font-medium flex items-center gap-2">
               Étapes
@@ -200,7 +234,6 @@ export function ModuleForm({ module, courseId, onSuccess, onCancel }: ModuleForm
                   className="flex items-center gap-2 mb-2"
                 >
                   <FormField
-                    control={form.control}
                     name={`steps.${index}`}
                     render={({ field }) => (
                       <FormItem className="flex-1">
@@ -247,7 +280,110 @@ export function ModuleForm({ module, courseId, onSuccess, onCancel }: ModuleForm
             </Button>
           </div>
 
-          {/* Boutons d'action */}
+          <div className="space-y-2 rounded-lg border bg-card p-4">
+            <FormLabel className="text-sm font-medium flex items-center gap-2">
+              Stack technique
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="text-muted-foreground text-xs cursor-help">
+                    (Technologies utilisées dans la section)
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>Ajoutez des technologies avec leurs noms et images</TooltipContent>
+              </Tooltip>
+            </FormLabel>
+            <FormField
+              name="tools.title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      placeholder="Titre du stack technique..."
+                      {...field}
+                      value={field.value ?? ""}
+                      className="rounded-md border border-input bg-background px-3 py-2 text-sm focus:ring-2 focus:ring-primary"
+                      aria-label="Titre du stack technique"
+                    />
+                  </FormControl>
+                  <FormMessage className="text-xs text-destructive" />
+                </FormItem>
+              )}
+            />
+            <div className="space-y-2">
+              <FormLabel className="text-sm font-medium">Technologies</FormLabel>
+              <AnimatePresence>
+                {contentFields.map((field, index) => (
+                  <motion.div
+                    key={field.id}
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-2"
+                  >
+                    <FormField
+                      name={`tools.content.${index}.name`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Input
+                              placeholder={`Nom de la technologie ${index + 1}...`}
+                              {...field}
+                              className="rounded-md border border-input bg-background px-3 py-2 text-sm focus:ring-2 focus:ring-primary"
+                              aria-label={`Nom de la technologie ${index + 1}`}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs text-destructive" />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      name={`tools.content.${index}.src`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Input
+                              placeholder={`Chemin de l'image ${index + 1}...`}
+                              {...field}
+                              className="rounded-md border border-input bg-background px-3 py-2 text-sm focus:ring-2 focus:ring-primary"
+                              aria-label={`Chemin de l'image ${index + 1}`}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs text-destructive" />
+                        </FormItem>
+                      )}
+                    />
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="text-destructive hover:text-destructive/80 md:col-span-2 justify-self-end"
+                          onClick={() => removeContent(index)}
+                          aria-label={`Supprimer la technologie ${index + 1}`}
+                        >
+                          <Trash className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Supprimer cette technologie</TooltipContent>
+                    </Tooltip>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="mt-2 flex items-center gap-2"
+                onClick={() => appendContent({ src: "", name: "" })}
+                aria-label="Ajouter une technologie"
+              >
+                <Plus className="h-4 w-4" />
+                Ajouter une technologie
+              </Button>
+            </div>
+          </div>
+
           <div className="flex gap-4 justify-end">
             <Tooltip>
               <TooltipTrigger asChild>

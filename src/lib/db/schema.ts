@@ -45,9 +45,10 @@ export const courseModules = pgTable('course_modules', {
   id: serial('id').primaryKey(),
   courseId: integer('course_id').references(() => courses.id),
   title: varchar('title', { length: 255 }).notNull(),
-  duration: varchar('duration', { length: 50 }), // ex: "90H"
+  duration: integer('duration'), // ex: 30
   description: text('description'),
   steps: jsonb('steps'), // Array de strings
+  tools: jsonb('tools'),
   orderIndex: integer('order_index').notNull(),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),

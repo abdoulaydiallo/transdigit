@@ -24,7 +24,7 @@ const data = {
   user: {
     name: "Abdoulaye Diallo",
     email: "contact@goulotech.com",
-    avatar: "/avatars/shadcn.jpg",
+    avatar: "/img/logo.png",
   },
   teams: [
     {

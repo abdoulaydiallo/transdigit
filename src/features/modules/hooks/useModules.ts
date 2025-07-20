@@ -43,15 +43,11 @@ export function useModules(props: UseModulesProps = {}) {
       if (!courseId) {
         throw new Error("courseId est requis pour créer un module");
       }
-      const moduleData = {
-        courseId,
-        title: data.title,
-        steps: data.steps ?? [],
-        orderIndex: data.orderIndex,
-        description: data.description ?? undefined,
-        duration: data.duration ?? undefined, // Conserver comme chaîne
-      };
-      const validatedData = NewCourseModuleSchema.parse(moduleData);
+      const validatedData = NewCourseModuleSchema.parse({
+        ...data,
+        tools: data.tools ?? { title: "", content: [] }
+      });
+      
       const res = await fetch(`/api/courses/${courseId}/modules`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

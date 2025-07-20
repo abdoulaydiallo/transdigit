@@ -44,7 +44,7 @@ export function SectionForm({ section, courseId, tabKey, onSuccess, onCancel }: 
       subtitle: section?.subtitle ?? "",
       description: section?.description ?? "",
       items: section?.items as [string] ?? [],
-      children: section?.children ?? { title: "", content: [] },
+      children: section?.children ?? null,
     },
   });
 
@@ -255,110 +255,6 @@ export function SectionForm({ section, courseId, tabKey, onSuccess, onCancel }: 
               <Plus className="h-4 w-4" />
               Ajouter un élément
             </Button>
-          </div>
-
-          {/* Stack technique */}
-          <div className="space-y-2 rounded-lg border bg-card p-4">
-            <FormLabel className="text-sm font-medium flex items-center gap-2">
-              Stack technique
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span className="text-muted-foreground text-xs cursor-help">
-                    (Technologies utilisées dans la section)
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent>Ajoutez des technologies avec leurs noms et images</TooltipContent>
-              </Tooltip>
-            </FormLabel>
-            <FormField
-              name="children.title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      placeholder="Titre du stack technique..."
-                      {...field}
-                      value={field.value ?? ""}
-                      className="rounded-md border border-input bg-background px-3 py-2 text-sm focus:ring-2 focus:ring-primary"
-                      aria-label="Titre du stack technique"
-                    />
-                  </FormControl>
-                  <FormMessage className="text-xs text-destructive" />
-                </FormItem>
-              )}
-            />
-            <div className="space-y-2">
-              <FormLabel className="text-sm font-medium">Technologies</FormLabel>
-              <AnimatePresence>
-                {contentFields.map((field, index) => (
-                  <motion.div
-                    key={field.id}
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-2"
-                  >
-                    <FormField
-                      name={`children.content.${index}.name`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Input
-                              placeholder={`Nom de la technologie ${index + 1}...`}
-                              {...field}
-                              className="rounded-md border border-input bg-background px-3 py-2 text-sm focus:ring-2 focus:ring-primary"
-                              aria-label={`Nom de la technologie ${index + 1}`}
-                            />
-                          </FormControl>
-                          <FormMessage className="text-xs text-destructive" />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      name={`children.content.${index}.src`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Input
-                              placeholder={`Chemin de l'image ${index + 1}...`}
-                              {...field}
-                              className="rounded-md border border-input bg-background px-3 py-2 text-sm focus:ring-2 focus:ring-primary"
-                              aria-label={`Chemin de l'image ${index + 1}`}
-                            />
-                          </FormControl>
-                          <FormMessage className="text-xs text-destructive" />
-                        </FormItem>
-                      )}
-                    />
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="text-destructive hover:text-destructive/80 md:col-span-2 justify-self-end"
-                          onClick={() => removeContent(index)}
-                          aria-label={`Supprimer la technologie ${index + 1}`}
-                        >
-                          <Trash className="h-4 w-4" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>Supprimer cette technologie</TooltipContent>
-                    </Tooltip>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="mt-2 flex items-center gap-2"
-                onClick={() => appendContent({ src: "", name: "" })}
-              >
-                <Plus className="h-4 w-4" />
-                Ajouter une technologie
-              </Button>
-            </div>
           </div>
 
           {/* Boutons d'action */}

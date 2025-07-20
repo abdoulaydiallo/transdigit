@@ -21,7 +21,10 @@ import {
   Trash, 
   BookOpen,
   Play,
-  MoreVertical
+  MoreVertical,
+  Users,
+  Target,
+  ChevronRight
 } from "lucide-react";
 import { ModuleForm } from "./ModuleForm";
 import { toast } from "sonner";
@@ -76,56 +79,79 @@ export function CourseModules({
     }
   };
 
-  console.log("Modules chargés :", sortedModules);
-
   return (
-    <div className="space-y-6">
-      {/* Header Section */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-6 bg-gradient-to-r from-primary/5 via-primary/3 to-transparent rounded-xl border border-primary/10">
-        <div className="flex items-center gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
-            <GraduationCap className="h-6 w-6" />
+    <div className="space-y-4 lg:space-y-6">
+      {/* Header Section - Amélioré pour mobile */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/8 via-primary/4 to-transparent border border-primary/15 backdrop-blur-sm">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-50" />
+        <div className="relative p-4 sm:p-6 lg:p-8">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex items-start gap-3 sm:gap-4">
+              <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-lg">
+                <GraduationCap className="h-5 w-5 sm:h-6 sm:w-6" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-foreground mb-1">
+                  Modules du cours
+                </h1>
+                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+                  Organisez et gérez le contenu de votre cours de manière structurée
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex items-center justify-between sm:justify-end gap-3 lg:flex-col lg:items-end lg:gap-2">
+              <div className="flex items-center gap-2">
+                <Badge 
+                  variant="secondary" 
+                  className="px-3 py-1.5 font-semibold bg-background/80 backdrop-blur text-xs sm:text-sm"
+                >
+                  {sortedModules.length} module{sortedModules.length !== 1 ? 's' : ''}
+                </Badge>
+                {sortedModules.length > 0 && (
+                  <Badge 
+                    variant="outline" 
+                    className="px-2 py-1 text-xs hidden sm:inline-flex bg-background/60"
+                  >
+                    <Target className="h-3 w-3 mr-1" />
+                    Structuré
+                  </Badge>
+                )}
+              </div>
+              
+              <Button 
+                size="sm"
+                className="gap-2 shadow-lg hover:shadow-xl transition-all duration-300 bg-primary hover:bg-primary/90 text-primary-foreground font-medium px-4 py-2 h-9 sm:h-10" 
+                onClick={() => handleOpenModuleDialog()}
+                aria-label="Ajouter un module"
+              >
+                <Plus className="h-4 w-4" />
+                <span className="hidden sm:inline">Ajouter un module</span>
+                <span className="sm:hidden">Ajouter</span>
+              </Button>
+            </div>
           </div>
-          <div>
-            <h2 className="text-2xl font-bold tracking-tight text-foreground">
-              Modules du cours
-            </h2>
-            <p className="text-sm text-muted-foreground mt-1">
-              Organisez et gérez le contenu de votre cours
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center gap-3">
-          <Badge variant="outline" className="px-3 py-1 font-medium">
-            {sortedModules.length} module{sortedModules.length !== 1 ? 's' : ''}
-          </Badge>
-          <Button 
-            size="sm" 
-            className="gap-2 shadow-sm hover:shadow-md transition-all duration-200" 
-            onClick={() => handleOpenModuleDialog()}
-            aria-label="Ajouter un module"
-          >
-            <Plus className="h-4 w-4" />
-            Ajouter un module
-          </Button>
         </div>
       </div>
 
       {/* Content Section */}
-      <div className="rounded-xl border bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-card/30">
+      <div className="rounded-xl sm:rounded-2xl border border-border/50 bg-card/30 backdrop-blur-sm shadow-sm">
         {isLoadingModules ? (
-          <div className="flex flex-col items-center justify-center py-16">
-            <div className="relative">
-              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-                <Loader2 className="h-6 w-6 animate-spin text-primary" />
+          <div className="flex flex-col items-center justify-center py-12 sm:py-16 px-6">
+            <div className="relative mb-6">
+              <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-primary/10 flex items-center justify-center">
+                <Loader2 className="h-6 w-6 sm:h-8 sm:w-8 animate-spin text-primary" />
               </div>
-              <div className="absolute -inset-2 rounded-full border-2 border-primary/20 animate-pulse"></div>
+              <div className="absolute -inset-2 sm:-inset-3 rounded-full border-2 border-primary/20 animate-pulse"></div>
             </div>
-            <span className="mt-4 text-muted-foreground font-medium">Chargement des modules...</span>
+            <div className="text-center">
+              <h3 className="font-semibold text-base sm:text-lg mb-2">Chargement en cours</h3>
+              <p className="text-sm text-muted-foreground">Récupération des modules du cours...</p>
+            </div>
           </div>
         ) : errorModules ? (
-          <div className="p-6">
-            <Alert variant="destructive" className="border-red-200 bg-red-50">
+          <div className="p-4 sm:p-6">
+            <Alert variant="destructive" className="border-red-200/80 bg-red-50/80 backdrop-blur">
               <AlertCircle className="h-4 w-4" />
               <AlertTitle>Erreur de chargement</AlertTitle>
               <AlertDescription>
@@ -134,159 +160,231 @@ export function CourseModules({
             </Alert>
           </div>
         ) : sortedModules.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
-            <div className="relative mb-6">
-              <div className="h-16 w-16 rounded-full bg-muted/50 flex items-center justify-center">
-                <BookOpen className="h-8 w-8 text-muted-foreground/60" />
+          <div className="flex flex-col items-center justify-center py-12 sm:py-16 lg:py-20 px-4 sm:px-6 text-center">
+            <div className="relative mb-8">
+              <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full bg-gradient-to-br from-muted/60 to-muted/30 flex items-center justify-center backdrop-blur">
+                <BookOpen className="h-8 w-8 sm:h-10 sm:w-10 text-muted-foreground/70" />
               </div>
-              <div className="absolute -top-1 -right-1 h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center">
-                <Plus className="h-3 w-3 text-primary" />
+              <div className="absolute -top-2 -right-2 h-8 w-8 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center border-2 border-background">
+                <Plus className="h-4 w-4 text-primary" />
               </div>
             </div>
-            <h3 className="text-xl font-semibold mb-2">Aucun module pour le moment</h3>
-            <p className="text-muted-foreground mb-6 max-w-md">
-              Commencez par créer votre premier module pour structurer le contenu de votre cours.
-            </p>
+            
+            <div className="max-w-md mx-auto">
+              <h3 className="text-lg sm:text-xl font-bold mb-3 text-foreground">
+                Créez votre premier module
+              </h3>
+              <p className="text-sm sm:text-base text-muted-foreground mb-8 leading-relaxed">
+                Commencez par structurer votre cours avec des modules organisés. 
+                Chaque module peut contenir des leçons, des exercices et du contenu interactif.
+              </p>
+            </div>
+            
             <Button 
-              size="default" 
-              className="gap-2 shadow-sm hover:shadow-md transition-all duration-200" 
+              size="lg" 
+              className="gap-2 shadow-lg hover:shadow-xl transition-all duration-300 px-6 py-3 font-semibold" 
               onClick={() => handleOpenModuleDialog()}
               aria-label="Créer le premier module"
             >
-              <Plus className="h-4 w-4" />
+              <Plus className="h-5 w-5" />
               Créer le premier module
             </Button>
           </div>
         ) : (
-          <div className="p-6">
-            <div className="grid gap-4">
+          <div className="p-3 sm:p-4 lg:p-6">
+            <div className="grid gap-3 sm:gap-4">
               {sortedModules.map((module, index) => (
                 <div
                   key={module.id}
-                  className="group relative overflow-hidden rounded-lg border bg-card p-6 hover:bg-accent/30 transition-all duration-200 hover:shadow-md hover:border-primary/20"
+                  className="group relative overflow-hidden rounded-lg sm:rounded-xl border border-border/50 bg-card/60 backdrop-blur-sm hover:bg-card/80 hover:border-primary/20 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5"
                 >
-                  {/* Module Header */}
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex items-start gap-4 flex-1 min-w-0">
-                      {/* Module Number */}
-                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary font-bold text-lg flex-shrink-0">
-                        {module.orderIndex || index + 1}
-                      </div>
-                      
-                      {/* Module Info */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-2">
-                          <h3 className="font-semibold text-lg leading-tight truncate">
-                            {module.title}
-                          </h3>
-                          <Badge variant="secondary" className="text-xs">
-                            Module {module.orderIndex || index + 1}
-                          </Badge>
+                  {/* Module Content */}
+                  <div className="p-4 sm:p-6">
+                    <div className="flex items-start justify-between gap-3 sm:gap-4">
+                      <div className="flex items-start gap-3 sm:gap-4 flex-1 min-w-0">
+                        {/* Module Number - Responsive */}
+                        <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-lg sm:rounded-xl bg-gradient-to-br from-primary/15 to-primary/5 text-primary font-bold text-sm sm:text-lg flex-shrink-0 border border-primary/10">
+                          {module.orderIndex || index + 1}
                         </div>
                         
-                        {module.description && (
-                          <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
-                            {module.description}
-                          </p>
-                        )}
-                        
-                        {/* Module Meta Info */}
-                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                          {module.duration && (
-                            <div className="flex items-center gap-1.5">
-                              <Clock className="h-3 w-3" />
-                              <span>{module.duration}</span>
+                        {/* Module Info */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2 sm:mb-3">
+                            <h3 className="font-bold text-base sm:text-lg leading-tight text-foreground line-clamp-2 sm:line-clamp-1">
+                              {module.title}
+                            </h3>
+                            <div className="flex items-center gap-2 flex-shrink-0">
+                              <Badge 
+                                variant="secondary" 
+                                className="text-xs px-2 py-1 bg-primary/10 text-primary border-primary/20"
+                              >
+                                Module {module.orderIndex || index + 1}
+                              </Badge>
+                              {/* Status badge - could be dynamic */}
+                              <Badge 
+                                variant="outline" 
+                                className="text-xs px-2 py-1 hidden sm:inline-flex"
+                              >
+                                Actif
+                              </Badge>
                             </div>
+                          </div>
+                          
+                          {module.description && (
+                            <p className="text-sm text-muted-foreground line-clamp-2 sm:line-clamp-3 mb-3 leading-relaxed">
+                              {module.description}
+                            </p>
                           )}
-                          {module.createdAt && (
-                            <div className="flex items-center gap-1.5">
-                              <Calendar className="h-3 w-3" />
-                              <span>{format(new Date(module.createdAt), "dd/MM/yyyy", { locale: fr })}</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {/* Actions */}
-                    <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 w-8 p-0 hover:bg-primary/10 hover:text-primary"
-                        onClick={() => handleOpenModuleDialog(module)}
-                        aria-label={`Modifier le module ${module.title}`}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0 hover:bg-muted"
-                            disabled={deletingModuleId === module.id}
-                          >
-                            {deletingModuleId === module.id ? (
-                              <Loader2 className="h-4 w-4 animate-spin" />
-                            ) : (
-                              <MoreVertical className="h-4 w-4" />
+                          
+                          {/* Module Meta Info - Improved responsive layout */}
+                          <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs text-muted-foreground">
+                            {module.duration && (
+                              <div className="flex items-center gap-1.5 bg-muted/50 rounded-full px-2 py-1">
+                                <Clock className="h-3 w-3 text-primary/70" />
+                                <span className="font-medium">{module.duration}</span>
+                              </div>
                             )}
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-48">
-                          <DropdownMenuItem 
-                            onClick={() => handleOpenModuleDialog(module)}
-                            className="cursor-pointer"
-                          >
-                            <Edit className="h-4 w-4 mr-2" />
-                            Modifier
-                          </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            onClick={() => {/* Add preview logic */}}
-                            className="cursor-pointer"
-                          >
-                            <Play className="h-4 w-4 mr-2" />
-                            Prévisualiser
-                          </DropdownMenuItem>
-                          <Separator />
-                          <DropdownMenuItem 
-                            onClick={() => handleDeleteModule(module.id, module.title)}
-                            className="cursor-pointer text-destructive focus:text-destructive"
-                          >
-                            <Trash className="h-4 w-4 mr-2" />
-                            Supprimer
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                            {module.createdAt && (
+                              <div className="flex items-center gap-1.5 bg-muted/50 rounded-full px-2 py-1">
+                                <Calendar className="h-3 w-3 text-primary/70" />
+                                <span className="font-medium">
+                                  {format(new Date(module.createdAt), "dd/MM/yyyy", { locale: fr })}
+                                </span>
+                              </div>
+                            )}
+                            <div className="flex items-center gap-1.5 bg-muted/50 rounded-full px-2 py-1">
+                              <Users className="h-3 w-3 text-primary/70" />
+                              <span className="font-medium">Public</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Actions - Mobile-first approach */}
+                      <div className="flex items-center gap-1 sm:gap-2">
+                        {/* Quick action button for mobile */}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 sm:h-9 sm:w-9 p-0 hover:bg-primary/10 hover:text-primary transition-colors sm:opacity-0 sm:group-hover:opacity-100"
+                          onClick={() => handleOpenModuleDialog(module)}
+                          aria-label={`Modifier le module ${module.title}`}
+                        >
+                          <Edit className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                        </Button>
+                        
+                        {/* Dropdown menu */}
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 sm:h-9 sm:w-9 p-0 hover:bg-muted transition-colors"
+                              disabled={deletingModuleId === module.id}
+                            >
+                              {deletingModuleId === module.id ? (
+                                <Loader2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 animate-spin" />
+                              ) : (
+                                <MoreVertical className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                              )}
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-52 sm:w-48">
+                            <DropdownMenuItem 
+                              onClick={() => handleOpenModuleDialog(module)}
+                              className="cursor-pointer gap-3"
+                            >
+                              <Edit className="h-4 w-4" />
+                              <span>Modifier le module</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={() => {/* Add preview logic */}}
+                              className="cursor-pointer gap-3"
+                            >
+                              <Play className="h-4 w-4" />
+                              <span>Prévisualiser</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={() => {/* Add duplicate logic */}}
+                              className="cursor-pointer gap-3"
+                            >
+                              <List className="h-4 w-4" />
+                              <span>Dupliquer</span>
+                            </DropdownMenuItem>
+                            <Separator />
+                            <DropdownMenuItem 
+                              onClick={() => handleDeleteModule(module.id, module.title)}
+                              className="cursor-pointer text-destructive focus:text-destructive gap-3"
+                            >
+                              <Trash className="h-4 w-4" />
+                              <span>Supprimer</span>
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                        
+                        {/* Visual indicator for more content */}
+                        <div className="hidden sm:flex items-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 ml-2">
+                          <ChevronRight className="h-4 w-4 text-muted-foreground/50" />
+                        </div>
+                      </div>
                     </div>
                   </div>
                   
-                  {/* Progress Bar (Optional) */}
-                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-muted">
-                    <div className="h-full bg-primary w-0 group-hover:w-full transition-all duration-500 ease-out"></div>
+                  {/* Enhanced Progress Bar */}
+                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-muted/30 to-muted/10">
+                    <div className="h-full bg-gradient-to-r from-primary to-primary/80 w-0 group-hover:w-full transition-all duration-700 ease-out shadow-sm"></div>
                   </div>
+                  
+                  {/* Subtle glow effect on hover */}
+                  <div className="absolute inset-0 rounded-lg sm:rounded-xl bg-gradient-to-r from-primary/5 via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 </div>
               ))}
             </div>
+            
+            {/* Add module card at the end */}
+            {sortedModules.length > 0 && (
+              <div className="mt-6 sm:mt-8">
+                <button
+                  onClick={() => handleOpenModuleDialog()}
+                  className="w-full p-6 sm:p-8 rounded-lg sm:rounded-xl border-2 border-dashed border-muted-foreground/25 hover:border-primary/50 bg-muted/20 hover:bg-muted/40 transition-all duration-300 group"
+                >
+                  <div className="flex flex-col items-center gap-3 text-center">
+                    <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                      <Plus className="h-6 w-6 sm:h-7 sm:w-7 text-primary" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-sm sm:text-base text-foreground mb-1">
+                        Ajouter un nouveau module
+                      </h4>
+                      <p className="text-xs sm:text-sm text-muted-foreground">
+                        Continuez à enrichir votre cours avec du contenu structuré
+                      </p>
+                    </div>
+                  </div>
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
 
-      {/* Dialogue pour créer/modifier un module */}
+      {/* Enhanced Dialog */}
       <Dialog open={isModuleDialogOpen} onOpenChange={setIsModuleDialogOpen}>
-        <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
+        <DialogContent className="sm:max-w-[700px] max-h-[85vh] overflow-y-auto rounded-xl sm:rounded-2xl">
+          <DialogHeader className="pb-4">
+            <DialogTitle className="flex items-center gap-3 text-lg sm:text-xl">
               {selectedModule ? (
                 <>
-                  <Edit className="h-5 w-5" />
+                  <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Edit className="h-4 w-4 text-primary" />
+                  </div>
                   Modifier le module
                 </>
               ) : (
                 <>
-                  <Plus className="h-5 w-5" />
+                  <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Plus className="h-4 w-4 text-primary" />
+                  </div>
                   Créer un nouveau module
                 </>
               )}
