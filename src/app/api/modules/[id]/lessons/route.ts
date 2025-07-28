@@ -1,3 +1,4 @@
+//app/api/modules/[id]/lessons
 import { NextRequest, NextResponse } from "next/server";
 import { createLesson, getLessons, LessonFilters, LessonPagination } from "@/services/lessons.service";
 import { ServiceError, ERROR_CODES } from "@/services/services.errors";

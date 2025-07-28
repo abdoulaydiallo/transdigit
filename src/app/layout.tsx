@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import QueryClientProviderWrapper from "@/providers/query-client-provider";
 import { Toaster } from "@/components/ui/sonner";
+import { TRPCProvider } from "@/providers/trpc-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,10 +36,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${inter.className} antialiased`}
       >
-        <QueryClientProviderWrapper>
+        <TRPCProvider>
+          <QueryClientProviderWrapper>
           <Toaster />
           {children}
         </QueryClientProviderWrapper>
+        </TRPCProvider>
       </body>
     </html>
   );

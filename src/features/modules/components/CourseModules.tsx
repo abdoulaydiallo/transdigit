@@ -1,15 +1,14 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal } from "react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { CourseModule, NewCourseModule, Lesson } from "@/lib/db/schema";
+import { CourseModule, NewCourseModule } from "@/lib/db/schema";
 import { useModules } from "@/features/modules/hooks/useModules";
 import { useLessons } from "@/features/lessons/hooks/useLessons";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
   GraduationCap,
   Plus,
@@ -26,14 +25,11 @@ import {
   Users,
   Target,
   ChevronRight,
-  ChevronDown,
   ChevronUp,
   FileText,
   Eye,
   EyeOff,
 } from "lucide-react";
-import { ModuleForm } from "./ModuleForm";
-import { LessonForm } from "../../lessons/components/LessonForm";
 import { toast } from "sonner";
 import {
   DropdownMenu,
@@ -44,6 +40,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ModuleDialog } from "./ModuleDialog";
 import { LessonDialog } from "@/features/lessons/components/LessonDialog";
+import { Lesson } from "@/lib/validations/courseLessons";
 
 interface CourseModulesProps {
   modules: CourseModule[];
@@ -221,7 +218,7 @@ export function CourseModules({
               {sortedModules.map((module, index) => {
                 const { lessons, isLoading: isLoadingLessons, error: errorLessons, deleteLesson, updateLesson } = useLessons({ moduleId: module.id });
 
-                const sortedLessons = useMemo(() => {
+                const sortedLessons: any[] = useMemo(() => {
                   return Array.isArray(lessons)
                     ? [...lessons].sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0))
                     : [];
@@ -242,7 +239,7 @@ export function CourseModules({
                   }
                 };
 
-                const handleToggleLessonActive = async (lesson: Lesson) => {
+                const handleToggleLessonActive = async (lesson: Omit<Lesson, "createdAt" | "updatedAt">) => {
                   try {
                     await updateLesson({ moduleId: module.id, id: lesson.id, data: { ...lesson, isActive: !lesson.isActive } });
                     toast.success(`Leçon "${lesson.title}" ${!lesson.isActive ? "activée" : "désactivée"}.`);
@@ -471,7 +468,7 @@ export function CourseModules({
                                       </div>
                                       {lesson.tags! && Array.isArray(lesson.tags) && lesson.tags.length > 0 && (
                                         <div className="flex flex-wrap gap-1 mt-1">
-                                          {lesson.tags.map((tag, idx) => (
+                                          {lesson.tags.map((tag: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined, idx: Key | null | undefined) => (
                                             <Badge key={idx} variant="secondary" className="text-xs">
                                               {tag}
                                             </Badge>
