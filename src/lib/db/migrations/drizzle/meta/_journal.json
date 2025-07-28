@@ -43,6 +43,13 @@
       "when": 1752983900849,
       "tag": "0005_slimy_odin",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1753041507628,
+      "tag": "0006_tan_zombie",
+      "breakpoints": true
     }
   ]
 }

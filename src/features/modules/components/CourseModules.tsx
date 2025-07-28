@@ -3,38 +3,47 @@
 import { useState, useMemo } from "react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { CourseModule, NewCourseModule } from "@/lib/db/schema";
+import { CourseModule, NewCourseModule, Lesson } from "@/lib/db/schema";
 import { useModules } from "@/features/modules/hooks/useModules";
+import { useLessons } from "@/features/lessons/hooks/useLessons";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { 
-  GraduationCap, 
-  Plus, 
-  Loader2, 
-  AlertCircle, 
-  List, 
-  Clock, 
-  Calendar, 
-  Edit, 
-  Trash, 
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  GraduationCap,
+  Plus,
+  Loader2,
+  AlertCircle,
+  List,
+  Clock,
+  Calendar,
+  Edit,
+  Trash,
   BookOpen,
   Play,
   MoreVertical,
   Users,
   Target,
-  ChevronRight
+  ChevronRight,
+  ChevronDown,
+  ChevronUp,
+  FileText,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { ModuleForm } from "./ModuleForm";
+import { LessonForm } from "../../lessons/components/LessonForm";
 import { toast } from "sonner";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { Separator } from "@/components/ui/separator";
+import { ModuleDialog } from "./ModuleDialog";
+import { LessonDialog } from "@/features/lessons/components/LessonDialog";
 
 interface CourseModulesProps {
   modules: CourseModule[];
@@ -43,15 +52,18 @@ interface CourseModulesProps {
   courseId: number;
 }
 
-export function CourseModules({ 
-  modules, 
-  isLoadingModules, 
-  errorModules, 
-  courseId 
+export function CourseModules({
+  modules,
+  isLoadingModules,
+  errorModules,
+  courseId,
 }: CourseModulesProps) {
   const [isModuleDialogOpen, setIsModuleDialogOpen] = useState(false);
   const [selectedModule, setSelectedModule] = useState<NewCourseModule | null>(null);
   const [deletingModuleId, setDeletingModuleId] = useState<number | null>(null);
+  const [isLessonDialogOpen, setIsLessonDialogOpen] = useState(false);
+  const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
+  const [expandedModuleId, setExpandedModuleId] = useState<number | null>(null);
   const { deleteModule } = useModules({ courseId });
 
   const sortedModules = useMemo(() => {
@@ -79,6 +91,19 @@ export function CourseModules({
     }
   };
 
+  const handleOpenLessonDialog = (lesson: Lesson | null, moduleId: number) => {
+    setSelectedLesson(
+      lesson
+        ? { ...lesson, moduleId } // Mise à jour : inclut moduleId
+        : { moduleId } as Lesson // Création : objet minimal avec moduleId
+    );
+    setIsLessonDialogOpen(true);
+  };
+
+  const toggleModuleExpansion = (moduleId: number) => {
+    setExpandedModuleId(expandedModuleId === moduleId ? null : moduleId);
+  };
+
   return (
     <div className="space-y-4 lg:space-y-6">
       {/* Header Section - Amélioré pour mobile */}
@@ -99,18 +124,18 @@ export function CourseModules({
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-center justify-between sm:justify-end gap-3 lg:flex-col lg:items-end lg:gap-2">
               <div className="flex items-center gap-2">
-                <Badge 
-                  variant="secondary" 
+                <Badge
+                  variant="secondary"
                   className="px-3 py-1.5 font-semibold bg-background/80 backdrop-blur text-xs sm:text-sm"
                 >
                   {sortedModules.length} module{sortedModules.length !== 1 ? 's' : ''}
                 </Badge>
                 {sortedModules.length > 0 && (
-                  <Badge 
-                    variant="outline" 
+                  <Badge
+                    variant="outline"
                     className="px-2 py-1 text-xs hidden sm:inline-flex bg-background/60"
                   >
                     <Target className="h-3 w-3 mr-1" />
@@ -118,10 +143,10 @@ export function CourseModules({
                   </Badge>
                 )}
               </div>
-              
-              <Button 
+
+              <Button
                 size="sm"
-                className="gap-2 shadow-lg hover:shadow-xl transition-all duration-300 bg-primary hover:bg-primary/90 text-primary-foreground font-medium px-4 py-2 h-9 sm:h-10" 
+                className="gap-2 shadow-lg hover:shadow-xl transition-all duration-300 bg-primary hover:bg-primary/90 text-primary-foreground font-medium px-4 py-2 h-9 sm:h-10"
                 onClick={() => handleOpenModuleDialog()}
                 aria-label="Ajouter un module"
               >
@@ -169,20 +194,20 @@ export function CourseModules({
                 <Plus className="h-4 w-4 text-primary" />
               </div>
             </div>
-            
+
             <div className="max-w-md mx-auto">
               <h3 className="text-lg sm:text-xl font-bold mb-3 text-foreground">
                 Créez votre premier module
               </h3>
               <p className="text-sm sm:text-base text-muted-foreground mb-8 leading-relaxed">
-                Commencez par structurer votre cours avec des modules organisés. 
+                Commencez par structurer votre cours avec des modules organisés.
                 Chaque module peut contenir des leçons, des exercices et du contenu interactif.
               </p>
             </div>
-            
-            <Button 
-              size="lg" 
-              className="gap-2 shadow-lg hover:shadow-xl transition-all duration-300 px-6 py-3 font-semibold" 
+
+            <Button
+              size="lg"
+              className="gap-2 shadow-lg hover:shadow-xl transition-all duration-300 px-6 py-3 font-semibold"
               onClick={() => handleOpenModuleDialog()}
               aria-label="Créer le premier module"
             >
@@ -193,155 +218,315 @@ export function CourseModules({
         ) : (
           <div className="p-3 sm:p-4 lg:p-6">
             <div className="grid gap-3 sm:gap-4">
-              {sortedModules.map((module, index) => (
-                <div
-                  key={module.id}
-                  className="group relative overflow-hidden rounded-lg sm:rounded-xl border border-border/50 bg-card/60 backdrop-blur-sm hover:bg-card/80 hover:border-primary/20 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5"
-                >
-                  {/* Module Content */}
-                  <div className="p-4 sm:p-6">
-                    <div className="flex items-start justify-between gap-3 sm:gap-4">
-                      <div className="flex items-start gap-3 sm:gap-4 flex-1 min-w-0">
-                        {/* Module Number - Responsive */}
-                        <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-lg sm:rounded-xl bg-gradient-to-br from-primary/15 to-primary/5 text-primary font-bold text-sm sm:text-lg flex-shrink-0 border border-primary/10">
-                          {module.orderIndex || index + 1}
-                        </div>
-                        
-                        {/* Module Info */}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2 sm:mb-3">
-                            <h3 className="font-bold text-base sm:text-lg leading-tight text-foreground line-clamp-2 sm:line-clamp-1">
-                              {module.title}
-                            </h3>
-                            <div className="flex items-center gap-2 flex-shrink-0">
-                              <Badge 
-                                variant="secondary" 
-                                className="text-xs px-2 py-1 bg-primary/10 text-primary border-primary/20"
-                              >
-                                Module {module.orderIndex || index + 1}
-                              </Badge>
-                              {/* Status badge - could be dynamic */}
-                              <Badge 
-                                variant="outline" 
-                                className="text-xs px-2 py-1 hidden sm:inline-flex"
-                              >
-                                Actif
-                              </Badge>
-                            </div>
+              {sortedModules.map((module, index) => {
+                const { lessons, isLoading: isLoadingLessons, error: errorLessons, deleteLesson, updateLesson } = useLessons({ moduleId: module.id });
+
+                const sortedLessons = useMemo(() => {
+                  return Array.isArray(lessons)
+                    ? [...lessons].sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0))
+                    : [];
+                }, [lessons]);
+
+                const activeLessons = useMemo(() => {
+                  return sortedLessons.filter((lesson) => lesson.isActive);
+                }, [sortedLessons]);
+
+                const handleDeleteLesson = async (lessonId: number, lessonTitle: string) => {
+                  if (confirm(`Voulez-vous vraiment supprimer la leçon "${lessonTitle}" ?`)) {
+                    try {
+                      await deleteLesson({ moduleId: module.id, id: lessonId });
+                      toast.success(`Leçon "${lessonTitle}" supprimée avec succès.`);
+                    } catch (error) {
+                      toast.error("Erreur lors de la suppression de la leçon");
+                    }
+                  }
+                };
+
+                const handleToggleLessonActive = async (lesson: Lesson) => {
+                  try {
+                    await updateLesson({ moduleId: module.id, id: lesson.id, data: { ...lesson, isActive: !lesson.isActive } });
+                    toast.success(`Leçon "${lesson.title}" ${!lesson.isActive ? "activée" : "désactivée"}.`);
+                  } catch (error) {
+                    toast.error("Erreur lors de la modification de la leçon");
+                  }
+                };
+
+                return (
+                  <div
+                    key={module.id}
+                    className="group relative overflow-hidden rounded-lg sm:rounded-xl border border-border/50 bg-card/60 backdrop-blur-sm hover:bg-card/80 hover:border-primary/20 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5"
+                  >
+                    {/* Module Content */}
+                    <div className="p-4 sm:p-6">
+                      <div className="flex items-start justify-between gap-3 sm:gap-4">
+                        <div className="flex items-start gap-3 sm:gap-4 flex-1 min-w-0">
+                          <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-lg sm:rounded-xl bg-gradient-to-br from-primary/15 to-primary/5 text-primary font-bold text-sm sm:text-lg flex-shrink-0 border border-primary/10">
+                            {module.orderIndex || index + 1}
                           </div>
-                          
-                          {module.description && (
-                            <p className="text-sm text-muted-foreground line-clamp-2 sm:line-clamp-3 mb-3 leading-relaxed">
-                              {module.description}
-                            </p>
-                          )}
-                          
-                          {/* Module Meta Info - Improved responsive layout */}
-                          <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs text-muted-foreground">
-                            {module.duration && (
-                              <div className="flex items-center gap-1.5 bg-muted/50 rounded-full px-2 py-1">
-                                <Clock className="h-3 w-3 text-primary/70" />
-                                <span className="font-medium">{module.duration}</span>
+
+                          <div className="flex-1 min-w-0">
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2 sm:mb-3">
+                              <h3 className="font-bold text-base sm:text-lg leading-tight text-foreground line-clamp-2 sm:line-clamp-1">
+                                {module.title}
+                              </h3>
+                              <div className="flex items-center gap-2 flex-shrink-0">
+                                <Badge
+                                  variant="secondary"
+                                  className="text-xs px-2 py-1 bg-primary/10 text-primary border-primary/20"
+                                >
+                                  Module {module.orderIndex || index + 1}
+                                </Badge>
+                                <Badge
+                                  variant="outline"
+                                  className="text-xs px-2 py-1 hidden sm:inline-flex"
+                                >
+                                  Actif
+                                </Badge>
                               </div>
-                            )}
-                            {module.createdAt && (
-                              <div className="flex items-center gap-1.5 bg-muted/50 rounded-full px-2 py-1">
-                                <Calendar className="h-3 w-3 text-primary/70" />
-                                <span className="font-medium">
-                                  {format(new Date(module.createdAt), "dd/MM/yyyy", { locale: fr })}
-                                </span>
-                              </div>
-                            )}
-                            <div className="flex items-center gap-1.5 bg-muted/50 rounded-full px-2 py-1">
-                              <Users className="h-3 w-3 text-primary/70" />
-                              <span className="font-medium">Public</span>
                             </div>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {/* Actions - Mobile-first approach */}
-                      <div className="flex items-center gap-1 sm:gap-2">
-                        {/* Quick action button for mobile */}
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 sm:h-9 sm:w-9 p-0 hover:bg-primary/10 hover:text-primary transition-colors sm:opacity-0 sm:group-hover:opacity-100"
-                          onClick={() => handleOpenModuleDialog(module)}
-                          aria-label={`Modifier le module ${module.title}`}
-                        >
-                          <Edit className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                        </Button>
-                        
-                        {/* Dropdown menu */}
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-8 w-8 sm:h-9 sm:w-9 p-0 hover:bg-muted transition-colors"
-                              disabled={deletingModuleId === module.id}
-                            >
-                              {deletingModuleId === module.id ? (
-                                <Loader2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 animate-spin" />
-                              ) : (
-                                <MoreVertical className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+
+                            {module.description && (
+                              <p className="text-sm text-muted-foreground line-clamp-2 sm:line-clamp-3 mb-3 leading-relaxed">
+                                {module.description}
+                              </p>
+                            )}
+
+                            <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs text-muted-foreground">
+                              {module.duration && (
+                                <div className="flex items-center gap-1.5 bg-muted/50 rounded-full px-2 py-1">
+                                  <Clock className="h-3 w-3 text-primary/70" />
+                                  <span className="font-medium">{module.duration}h</span>
+                                </div>
                               )}
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="w-52 sm:w-48">
-                            <DropdownMenuItem 
-                              onClick={() => handleOpenModuleDialog(module)}
-                              className="cursor-pointer gap-3"
-                            >
-                              <Edit className="h-4 w-4" />
-                              <span>Modifier le module</span>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem 
-                              onClick={() => {/* Add preview logic */}}
-                              className="cursor-pointer gap-3"
-                            >
-                              <Play className="h-4 w-4" />
-                              <span>Prévisualiser</span>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem 
-                              onClick={() => {/* Add duplicate logic */}}
-                              className="cursor-pointer gap-3"
-                            >
-                              <List className="h-4 w-4" />
-                              <span>Dupliquer</span>
-                            </DropdownMenuItem>
-                            <Separator />
-                            <DropdownMenuItem 
-                              onClick={() => handleDeleteModule(module.id, module.title)}
-                              className="cursor-pointer text-destructive focus:text-destructive gap-3"
-                            >
-                              <Trash className="h-4 w-4" />
-                              <span>Supprimer</span>
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                        
-                        {/* Visual indicator for more content */}
-                        <div className="hidden sm:flex items-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 ml-2">
-                          <ChevronRight className="h-4 w-4 text-muted-foreground/50" />
+                              {module.createdAt && (
+                                <div className="flex items-center gap-1.5 bg-muted/50 rounded-full px-2 py-1">
+                                  <Calendar className="h-3 w-3 text-primary/70" />
+                                  <span className="font-medium">
+                                    {format(new Date(module.createdAt), "dd/MM/yyyy", { locale: fr })}
+                                  </span>
+                                </div>
+                              )}
+                              <div className="flex items-center gap-1.5 bg-muted/50 rounded-full px-2 py-1">
+                                <Users className="h-3 w-3 text-primary/70" />
+                                <span className="font-medium">{activeLessons.length} leçon{activeLessons.length !== 1 ? 's' : ''}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-1 sm:gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 sm:h-9 sm:w-9 p-0 hover:bg-primary/10 hover:text-primary transition-colors sm:opacity-0 sm:group-hover:opacity-100"
+                            onClick={() => handleOpenModuleDialog(module)}
+                            aria-label={`Modifier le module ${module.title}`}
+                          >
+                            <Edit className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                          </Button>
+
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 sm:h-9 sm:w-9 p-0 hover:bg-muted transition-colors"
+                                disabled={deletingModuleId === module.id}
+                              >
+                                {deletingModuleId === module.id ? (
+                                  <Loader2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 animate-spin" />
+                                ) : (
+                                  <MoreVertical className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                                )}
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-52 sm:w-48">
+                              <DropdownMenuItem
+                                onClick={() => handleOpenModuleDialog(module)}
+                                className="cursor-pointer gap-3"
+                              >
+                                <Edit className="h-4 w-4" />
+                                <span>Modifier le module</span>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => {/* Add preview logic */}}
+                                className="cursor-pointer gap-3"
+                              >
+                                <Play className="h-4 w-4" />
+                                <span>Prévisualiser</span>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => {/* Add duplicate logic */}}
+                                className="cursor-pointer gap-3"
+                              >
+                                <List className="h-4 w-4" />
+                                <span>Dupliquer</span>
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem
+                                onClick={() => handleDeleteModule(module.id, module.title)}
+                                className="cursor-pointer text-destructive focus:text-destructive gap-3"
+                              >
+                                <Trash className="h-4 w-4" />
+                                <span>Supprimer</span>
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 sm:h-9 sm:w-9 p-0 hover:bg-primary/10 hover:text-primary transition-colors sm:opacity-0 sm:group-hover:opacity-100"
+                            onClick={() => toggleModuleExpansion(module.id)}
+                            aria-label={expandedModuleId === module.id ? "Réduire le module" : "Étendre le module"}
+                          >
+                            {expandedModuleId === module.id ? (
+                              <ChevronUp className="h-4 w-4" />
+                            ) : (
+                              <ChevronRight className="h-4 w-4" />
+                            )}
+                          </Button>
                         </div>
                       </div>
                     </div>
+
+                    {/* Lessons Section */}
+                    {expandedModuleId === module.id && (
+                      <div className="border-t border-border/50 bg-muted/20 p-4 sm:p-6">
+                        {isLoadingLessons ? (
+                          <div className="flex items-center justify-center py-8">
+                            <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                          </div>
+                        ) : errorLessons ? (
+                          <Alert variant="destructive" className="border-red-200/80 bg-red-50/80 backdrop-blur">
+                            <AlertCircle className="h-4 w-4" />
+                            <AlertTitle>Erreur de chargement</AlertTitle>
+                            <AlertDescription>
+                              Impossible de charger les leçons du module. Veuillez réessayer.
+                            </AlertDescription>
+                          </Alert>
+                        ) : sortedLessons.length === 0 ? (
+                          <div className="flex flex-col items-center justify-center py-8 text-center">
+                            <div className="rounded-full bg-muted/50 p-4 mb-4">
+                              <FileText className="h-8 w-8 text-muted-foreground" />
+                            </div>
+                            <h4 className="font-semibold mb-2">Aucune leçon créée</h4>
+                            <p className="text-sm text-muted-foreground mb-4 max-w-sm">
+                              Commencez par créer votre première leçon pour ce module.
+                            </p>
+                            <Button
+                              size="sm"
+                              className="gap-2"
+                              onClick={() => handleOpenLessonDialog(null, module.id)}
+                            >
+                              <Plus className="h-4 w-4" />
+                              Créer une leçon
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="space-y-3">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                              <h4 className="text-sm font-semibold text-foreground">Leçons ({activeLessons.length} active{activeLessons.length !== 1 ? 's' : ''})</h4>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="gap-2"
+                                onClick={() => handleOpenLessonDialog(null, module.id)}
+                              >
+                                <Plus className="h-4 w-4" />
+                                Nouvelle leçon
+                              </Button>
+                            </div>
+                            <div className="space-y-3">
+                              {sortedLessons.map((lesson, lessonIndex) => (
+                                <div
+                                  key={lesson.id}
+                                  className="group relative rounded-lg border border-border/30 bg-card/80 p-3 sm:p-4 hover:bg-card hover:border-primary/20 transition-all duration-200"
+                                >
+                                  <div className="flex items-start gap-3">
+                                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary font-semibold">
+                                      {lessonIndex + 1}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <div className="flex items-center gap-2 mb-1">
+                                        <h5 className="font-semibold text-sm truncate">{lesson.title}</h5>
+                                        <Badge variant="outline" className="text-xs">
+                                          {lesson.type}
+                                        </Badge>
+                                        <Badge variant="outline" className="text-xs">
+                                          {lesson.difficulty}
+                                        </Badge>
+                                        {lesson.isActive && (
+                                          <Badge variant="default" className="text-xs">
+                                            <Eye className="h-3 w-3 mr-1" />
+                                            Actif
+                                          </Badge>
+                                        )}
+                                      </div>
+                                      <div className="text-xs text-muted-foreground">
+                                        {lesson.estimatedTime && (
+                                          <span>Temps estimé: {lesson.estimatedTime} min | </span>
+                                        )}
+                                        Créé le {format(new Date(lesson.createdAt), "dd/MM/yyyy", { locale: fr })}
+                                      </div>
+                                      {lesson.tags! && Array.isArray(lesson.tags) && lesson.tags.length > 0 && (
+                                        <div className="flex flex-wrap gap-1 mt-1">
+                                          {lesson.tags.map((tag, idx) => (
+                                            <Badge key={idx} variant="secondary" className="text-xs">
+                                              {tag}
+                                            </Badge>
+                                          ))}
+                                        </div>
+                                      )}
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-7 w-7 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                                        onClick={() => handleOpenLessonDialog(lesson, module.id)}
+                                      >
+                                        <Edit className="h-3.5 w-3.5" />
+                                      </Button>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-7 w-7 p-0 text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                                        onClick={() => handleDeleteLesson(lesson.id, lesson.title)}
+                                      >
+                                        <Trash className="h-3.5 w-3.5" />
+                                      </Button>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-7 w-7 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                                        onClick={() => handleToggleLessonActive(lesson)}
+                                      >
+                                        {lesson.isActive ? (
+                                          <EyeOff className="h-3.5 w-3.5" />
+                                        ) : (
+                                          <Eye className="h-3.5 w-3.5" />
+                                        )}
+                                      </Button>
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-muted/30 to-muted/10">
+                      <div className="h-full bg-gradient-to-r from-primary to-primary/80 w-0 group-hover:w-full transition-all duration-700 ease-out shadow-sm"></div>
+                    </div>
+                    <div className="absolute inset-0 rounded-lg sm:rounded-xl bg-gradient-to-r from-primary/5 via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                   </div>
-                  
-                  {/* Enhanced Progress Bar */}
-                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-muted/30 to-muted/10">
-                    <div className="h-full bg-gradient-to-r from-primary to-primary/80 w-0 group-hover:w-full transition-all duration-700 ease-out shadow-sm"></div>
-                  </div>
-                  
-                  {/* Subtle glow effect on hover */}
-                  <div className="absolute inset-0 rounded-lg sm:rounded-xl bg-gradient-to-r from-primary/5 via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-                </div>
-              ))}
+                );
+              })}
             </div>
-            
-            {/* Add module card at the end */}
+
             {sortedModules.length > 0 && (
               <div className="mt-6 sm:mt-8">
                 <button
@@ -367,43 +552,28 @@ export function CourseModules({
           </div>
         )}
       </div>
+      <div>
+        <ModuleDialog
+          isOpen={isModuleDialogOpen}
+          onOpenChange={(open) => {
+            setIsModuleDialogOpen(open);
+            if (!open) setSelectedModule(null);
+          }}
+          module={selectedModule}
+          courseId={courseId}
+        />
 
-      {/* Enhanced Dialog */}
-      <Dialog open={isModuleDialogOpen} onOpenChange={setIsModuleDialogOpen}>
-        <DialogContent className="sm:max-w-[700px] max-h-[85vh] overflow-y-auto rounded-xl sm:rounded-2xl">
-          <DialogHeader className="pb-4">
-            <DialogTitle className="flex items-center gap-3 text-lg sm:text-xl">
-              {selectedModule ? (
-                <>
-                  <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <Edit className="h-4 w-4 text-primary" />
-                  </div>
-                  Modifier le module
-                </>
-              ) : (
-                <>
-                  <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <Plus className="h-4 w-4 text-primary" />
-                  </div>
-                  Créer un nouveau module
-                </>
-              )}
-            </DialogTitle>
-          </DialogHeader>
-          <ModuleForm
-            module={selectedModule as any}
-            courseId={courseId}
-            onSuccess={() => {
-              setIsModuleDialogOpen(false);
-              setSelectedModule(null);
-            }}
-            onCancel={() => {
-              setIsModuleDialogOpen(false);
-              setSelectedModule(null);
-            }}
-          />
-        </DialogContent>
-      </Dialog>
+        <LessonDialog
+          isOpen={isLessonDialogOpen}
+          onOpenChange={(open) => {
+            setIsLessonDialogOpen(open);
+            if (!open) setSelectedLesson(null);
+          }}
+          lesson={selectedLesson}
+          moduleId={selectedLesson?.moduleId || null}
+        />
+        
+    </div>
     </div>
   );
 }

@@ -24,7 +24,7 @@ export const courses = pgTable('courses', {
 // Table des onglets/sections de cours
 export const courseTabs = pgTable('course_tabs', {
   id: serial('id').primaryKey(),
-  courseId: integer('course_id').references(() => courses.id),
+  courseId: integer('course_id').references(() => courses.id, {onDelete: 'cascade'}),
   key: varchar('key', { length: 100 }).notNull(),
   title: varchar('title', { length: 255 }).notNull(),
   isActive: boolean('is_active').default(false),
@@ -35,7 +35,7 @@ export const courseTabs = pgTable('course_tabs', {
 // Table du contenu des sections par cours
 export const courseSections = pgTable('course_sections', {
   id: serial('id').primaryKey(),
-  courseId: integer('course_id').references(() => courses.id),
+  courseId: integer('course_id').references(() => courses.id, {onDelete: 'cascade'}),
   tabKey: varchar('tab_key', { length: 100 }).notNull(),
   title: varchar('title', { length: 255 }).notNull(),
   subtitle: varchar('subtitle', { length: 500 }),
@@ -49,7 +49,7 @@ export const courseSections = pgTable('course_sections', {
 // Table des modules de formation
 export const courseModules = pgTable('course_modules', {
   id: serial('id').primaryKey(),
-  courseId: integer('course_id').references(() => courses.id),
+  courseId: integer('course_id').references(() => courses.id, {onDelete: 'cascade'}),
   title: varchar('title', { length: 255 }).notNull(),
   duration: integer('duration'), // ex: 30
   description: text('description'),
@@ -73,7 +73,7 @@ export const lessons = pgTable('course_lessons', {
   orderIndex: integer('orderIndex').notNull(),
   estimatedTime: integer('estimatedTime'),
   difficulty: difficultyEnum('difficulty').default('facile'),
-  tags: jsonb('tags').default([]), // ex. : ["SQL", "bases"]
+  tags: text('tags').array().default([]), // ex. : ["SQL", "bases"]
   isActive: boolean('isActive').default(true),
   createdAt: timestamp('createdAt').notNull().defaultNow(),
   updatedAt: timestamp('updatedAt').notNull().defaultNow(),
