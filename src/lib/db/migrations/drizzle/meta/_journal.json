@@ -50,6 +50,13 @@
       "when": 1753041507628,
       "tag": "0006_tan_zombie",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1753829885809,
+      "tag": "0007_lucky_shinko_yamashiro",
+      "breakpoints": true
     }
   ]
 }

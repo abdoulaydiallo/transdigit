@@ -1,11 +1,11 @@
 "use client";
-
-import { useState, useMemo, JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal } from "react";
+import { useState, useMemo } from "react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { CourseModule, NewCourseModule } from "@/lib/db/schema";
+import { CourseModule, NewCourseModule, Question } from "@/lib/db/schema";
 import { useModules } from "@/features/modules/hooks/useModules";
 import { useLessons } from "@/features/lessons/hooks/useLessons";
+import { useQuestions } from "@/features/questions/hooks/useQuestions";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -14,21 +14,20 @@ import {
   Plus,
   Loader2,
   AlertCircle,
-  List,
   Clock,
   Calendar,
   Edit,
   Trash,
   BookOpen,
-  Play,
   MoreVertical,
   Users,
-  Target,
   ChevronRight,
   ChevronUp,
   FileText,
   Eye,
   EyeOff,
+  HelpCircle,
+  CheckSquare,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -36,11 +35,20 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ModuleDialog } from "./ModuleDialog";
 import { LessonDialog } from "@/features/lessons/components/LessonDialog";
-import { Lesson } from "@/lib/validations/courseLessons";
+import { QuestionDialog } from "@/features/questions/components/QuestionDialog";
+import { Lesson } from "@/lib/db/schema";
+
+// -----------------------------
+// TYPES
+// -----------------------------
+
+type ModuleWithLessons = CourseModule & {
+  lessons: Lesson[];
+};
 
 interface CourseModulesProps {
   modules: CourseModule[];
@@ -48,529 +56,510 @@ interface CourseModulesProps {
   errorModules: any;
   courseId: number;
 }
+// -----------------------------
+// UTILS
+// -----------------------------
+const useSortedModules = (modules: CourseModule[] = []) => {
+  return useMemo(() => {
+    return [...modules].sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
+  }, [modules]);
+};
 
+
+const useSortedLessons = (lessons: Lesson[]) => {
+  return useMemo(() => {
+    return [...lessons].sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
+  }, [lessons]);
+};
+
+const useActiveLessons = (lessons: Lesson[] = []) => {
+  return useMemo(() => lessons.filter((l) => l.isActive), [lessons]);
+};
+
+// -----------------------------
+// COMPOSANTS
+// -----------------------------
+const EmptyState = ({ onCreate }: { onCreate: () => void }) => (
+  <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
+    <div className="relative mb-8">
+      <div className="h-20 w-20 rounded-full bg-gradient-to-br from-muted/60 to-muted/30 flex items-center justify-center">
+        <BookOpen className="h-10 w-10 text-muted-foreground/70" />
+      </div>
+      <div className="absolute -top-2 -right-2 h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center border-2 border-background">
+        <Plus className="h-4 w-4 text-primary" />
+      </div>
+    </div>
+    <h3 className="text-xl font-bold mb-3">Créez votre premier module</h3>
+    <p className="text-muted-foreground mb-8 max-w-md">
+      Structurez votre cours avec des modules et ajoutez des leçons interactives.
+    </p>
+    <Button size="lg" onClick={onCreate}>
+      <Plus className="h-5 w-5 mr-2" />
+      Créer le premier module
+    </Button>
+  </div>
+);
+
+const LoadingState = () => (
+  <div className="flex flex-col items-center justify-center py-16">
+    <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
+    <p className="text-muted-foreground">Chargement des modules...</p>
+  </div>
+);
+
+const ErrorState = ({ message }: { message: string }) => (
+  <Alert variant="destructive" className="mx-4">
+    <AlertCircle className="h-4 w-4" />
+    <AlertTitle>Erreur</AlertTitle>
+    <AlertDescription>{message}</AlertDescription>
+  </Alert>
+);
+
+// Module Header
+const ModuleHeader = ({
+  module,
+  onEdit,
+  onDelete,
+  onToggleExpand,
+  isExpanded,
+  lessonCount,
+}: {
+  module: ModuleWithLessons;
+  onEdit: (m: any) => void;
+  onDelete: () => void;
+  onToggleExpand: () => void;
+  isExpanded: boolean;
+  lessonCount: number;
+}) => (
+  <div className="flex items-start justify-between gap-4">
+    <div className="flex items-start gap-4 flex-1 min-w-0">
+      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary font-bold text-lg flex-shrink-0">
+        {module.orderIndex || 1}
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-3">
+          <h3 className="font-bold text-lg truncate">{module.title}</h3>
+          <Badge variant="secondary">Module {module.orderIndex || 1}</Badge>
+        </div>
+        {module.description && (
+          <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{module.description}</p>
+        )}
+        <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
+          {module.duration && (
+            <span className="flex items-center gap-1">
+              <Clock className="h-3 w-3" /> {module.duration}h
+            </span>
+          )}
+          {module.createdAt && (
+            <span className="flex items-center gap-1">
+              <Calendar className="h-3 w-3" />{" "}
+              {format(new Date(module.createdAt), "dd/MM/yyyy", { locale: fr })}
+            </span>
+          )}
+          <span className="flex items-center gap-1">
+            <Users className="h-3 w-3" /> {lessonCount} leçon{lessonCount !== 1 ? "s" : ""}
+          </span>
+        </div>
+      </div>
+    </div>
+    <div className="flex items-center gap-2">
+      <Button variant="ghost" size="sm" onClick={onEdit}>
+        <Edit className="h-4 w-4" />
+      </Button>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="sm">
+            <MoreVertical className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem onClick={onEdit}>Modifier</DropdownMenuItem>
+          <DropdownMenuItem onClick={onDelete} className="text-destructive">
+            <Trash className="h-4 w-4 mr-2" />
+            Supprimer
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <Button variant="ghost" size="sm" onClick={onToggleExpand}>
+        {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+      </Button>
+    </div>
+  </div>
+);
+
+// Lesson Item
+const LessonItem = ({
+  lesson,
+  onEdit,
+  onDelete,
+  onToggleActive,
+  onAddQuestion,
+}: {
+  lesson: Lesson;
+  onEdit: () => void;
+  onDelete: () => void;
+  onToggleActive: () => void;
+  onAddQuestion: () => void;
+}) => {
+  const { questions, isLoading } = useQuestions({lessonId: lesson.id});
+  const questionCount = questions?.length || 0;
+  return (
+    <div className="group rounded-lg border bg-card/50 p-4 hover:bg-card transition-colors">
+      <div className="flex items-start gap-3">
+        <div className="flex h-8 w-8 items-center justify-center rounded bg-primary/10 text-primary font-semibold">
+          {lesson.orderIndex}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1">
+            <h5 className="font-semibold text-sm truncate">{lesson.title}</h5>
+            <Badge variant="outline" className="text-xs">{lesson.type}</Badge>
+            <Badge variant="outline" className="text-xs">{lesson.difficulty}</Badge>
+            {lesson.isActive && <Badge>Actif</Badge>}
+          </div>
+          <p className="text-xs text-muted-foreground">
+            {lesson.estimatedTime} min • {format(new Date(lesson.createdAt), "dd/MM/yyyy", { locale: fr })}
+          </p>
+          {lesson.tags!.length > 0 && (
+            <div className="flex flex-wrap gap-1 mt-1">
+              {lesson.tags!.map((tag, i) => (
+                <Badge key={i} variant="secondary" className="text-xs">
+                  {tag}
+                </Badge>
+              ))}
+            </div>
+          )}
+          <div className="mt-3 pt-2 border-t">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                <HelpCircle className="h-3 w-3" />
+                {questionCount} question{questionCount !== 1 ? "s" : ""}
+              </div>
+              <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100" onClick={onAddQuestion}>
+                <Plus className="h-3.5 w-3.5" />
+              </Button>
+            </div>
+            {isLoading ? (
+              <div className="text-xs text-muted-foreground mt-1">Chargement...</div>
+            ) : questionCount > 0 && (
+              <div className="mt-1 space-y-1">
+                {questions?.slice(0, 2).map((q, i) => (
+                  <div key={i} className="flex items-center gap-1 text-xs">
+                    <CheckSquare className="h-3 w-3 text-primary" />
+                    <span className="truncate">{q.questionText}</span>
+                  </div>
+                ))}
+                {questionCount > 2 && (
+                  <span className="text-xs text-muted-foreground">+ {questionCount - 2} autres</span>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100">
+          <Button variant="ghost" size="sm" onClick={onEdit}><Edit className="h-3.5 w-3.5" /></Button>
+          <Button variant="ghost" size="sm" onClick={onDelete}><Trash className="h-3.5 w-3.5" /></Button>
+          <Button variant="ghost" size="sm" onClick={onToggleActive}>
+            {lesson.isActive ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Lessons List
+const LessonsList = ({
+  lessons,
+  onCreate,
+  onEdit,
+  onDelete,
+  onToggleActive,
+  onAddQuestion,
+}: {
+  lessons: Lesson[];
+  onCreate: () => void;
+  onEdit: (l: Lesson) => void;
+  onDelete: (id: number, title: string) => void;
+  onToggleActive: (l: Lesson) => void;
+  onAddQuestion: (id: number) => void;
+}) => {
+  const sortedLessons = useSortedLessons(lessons);
+  const activeLessons = useActiveLessons(sortedLessons);
+
+  if (sortedLessons.length === 0) {
+    return (
+      <div className="text-center py-8">
+        <FileText className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+        <p className="text-sm text-muted-foreground mb-4">Aucune leçon pour ce module.</p>
+        <Button size="sm" onClick={onCreate}>Créer une leçon</Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-3">
+      <div className="flex justify-between items-center">
+        <h4 className="text-sm font-semibold">Leçons ({activeLessons.length} active{activeLessons.length !== 1 ? "s" : ""})</h4>
+        <Button size="sm" variant="outline" onClick={onCreate}>
+          <Plus className="h-4 w-4 mr-1" />
+          Nouvelle
+        </Button>
+      </div>
+      <div className="space-y-3">
+        {sortedLessons.map((lesson) => (
+          <LessonItem
+            key={lesson.id}
+            lesson={lesson}
+            onEdit={() => onEdit(lesson)}
+            onDelete={() => onDelete(lesson.id, lesson.title)}
+            onToggleActive={() => onToggleActive(lesson)}
+            onAddQuestion={() => onAddQuestion(lesson.id)}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// Module Item
+const ModuleItem = ({
+  module,
+  onDeleteModule,
+  onEditModule,
+  onCreateLesson,
+  onEditLesson,
+  onDeleteLesson,
+  onToggleLesson,
+  onAddQuestion,
+}: {
+  module: ModuleWithLessons;
+  onDeleteModule: (id: number, title: string) => void;
+  onEditModule: (m: ModuleWithLessons) => void;
+  onCreateLesson: (moduleId: number) => void;
+  onEditLesson: (l: Lesson) => void;
+  onDeleteLesson: (id: number, title: string) => void;
+  onToggleLesson: (l: Lesson) => void;
+  onAddQuestion: (lessonId: number) => void;
+}) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const { lessons, isLoading, error } = useLessons({ moduleId: module.id });
+
+  const transformedLessons: Lesson[] = lessons
+    ? lessons.map(({createdAt, updatedAt, ...rest }) => ({
+      ...rest,
+      createdAt: new Date(createdAt),
+      updatedAt: new Date(updatedAt),
+    }))
+    : []
+
+  const sortedLessons = useSortedLessons(transformedLessons);
+  const activeLessons = useActiveLessons(sortedLessons);
+
+  return (
+    <div className="rounded-xl border bg-card/60 backdrop-blur-sm overflow-hidden hover:shadow-md transition-shadow">
+      <div className="p-6">
+        <ModuleHeader
+          module={module}
+          onEdit={onEditModule}
+          onDelete={() => onDeleteModule(module.id, module.title)}
+          onToggleExpand={() => setIsExpanded(!isExpanded)}
+          isExpanded={isExpanded}
+          lessonCount={activeLessons.length}
+        />
+      </div>
+      {isExpanded && (
+        <div className="border-t  bg-muted/20 p-6  ">
+          {isLoading ? (
+            <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>
+          ) : error ? (
+            <ErrorState message="Erreur de chargement des leçons." />
+          ) : (
+            <LessonsList
+              lessons={sortedLessons}
+              onCreate={() => onCreateLesson(module.id)}
+              onEdit={onEditLesson}
+              onDelete={onDeleteLesson}
+              onToggleActive={onToggleLesson}
+              onAddQuestion={onAddQuestion}
+            />
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Add Module Button
+const AddModuleButton = ({ onClick }: { onClick: () => void }) => (
+  <div className="mt-8">
+    <button
+      onClick={onClick}
+      className="w-full p-8 rounded-2xl border-2 border-dashed border-muted-foreground/25 hover:border-primary/50 bg-muted/20 hover:bg-muted/40 transition-all"
+    >
+      <div className="flex flex-col items-center gap-3">
+        <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center">
+          <Plus className="h-7 w-7 text-primary" />
+        </div>
+        <h4 className="font-semibold">Ajouter un nouveau module</h4>
+        <p className="text-sm text-muted-foreground">Enrichissez votre cours avec un nouveau module</p>
+      </div>
+    </button>
+  </div>
+);
+
+// -----------------------------
+// COMPOSANT PRINCIPAL
+// -----------------------------
 export function CourseModules({
   modules,
   isLoadingModules,
   errorModules,
   courseId,
 }: CourseModulesProps) {
-  const [isModuleDialogOpen, setIsModuleDialogOpen] = useState(false);
+  const [isModuleOpen, setIsModuleOpen] = useState(false);
   const [selectedModule, setSelectedModule] = useState<NewCourseModule | null>(null);
-  const [deletingModuleId, setDeletingModuleId] = useState<number | null>(null);
-  const [isLessonDialogOpen, setIsLessonDialogOpen] = useState(false);
+  const [isLessonOpen, setIsLessonOpen] = useState(false);
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
+  const [isQuestionOpen, setIsQuestionOpen] = useState(false);
+  const [selectedQuestion, setSelectedQuestion] = useState<Question | null>(null);
   const [expandedModuleId, setExpandedModuleId] = useState<number | null>(null);
+
   const { deleteModule } = useModules({ courseId });
+  const sortedModules = useSortedModules(modules);
 
-  const sortedModules = useMemo(() => {
-    return Array.isArray(modules)
-      ? [...modules].sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0))
-      : [];
-  }, [modules]);
-
-  const handleOpenModuleDialog = (module: NewCourseModule | null = null) => {
+  const openModuleDialog = (module: NewCourseModule | null = null) => {
     setSelectedModule(module);
-    setIsModuleDialogOpen(true);
+    setIsModuleOpen(true);
   };
 
-  const handleDeleteModule = async (moduleId: number, moduleTitle: string) => {
-    if (confirm(`Voulez-vous vraiment supprimer le module "${moduleTitle}" ?`)) {
-      try {
-        setDeletingModuleId(moduleId);
-        await deleteModule(moduleId);
-        toast.success(`Le module "${moduleTitle}" a été supprimé avec succès.`);
-      } catch (error) {
-        toast.error("Erreur lors de la suppression du module");
-      } finally {
-        setDeletingModuleId(null);
-      }
+  const openLessonDialog = (lesson: Lesson | null, moduleId: number) => {
+    if (lesson) {
+      setSelectedLesson({
+        ...lesson,
+        moduleId,
+      });
+    } else {
+      setSelectedLesson({
+        id: 0,
+        title: "",
+        moduleId,
+        type: "video",
+        difficulty: "facile",
+        orderIndex: 0,
+        isActive: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        content: {},
+        videoUrl: null,
+        pdfUrl: null,
+        estimatedTime: null,
+        tags: [],
+      });
+    }
+    setIsLessonOpen(true);
+  };
+
+  const openQuestionDialog = (question: Question | null, lessonId: number) => {
+    setSelectedQuestion(question ? { ...question, lessonId } : ({ lessonId } as Question));
+    setIsQuestionOpen(true);
+  };
+
+  const handleDeleteModule = (id: number, title: string) => {
+    if (confirm(`Supprimer le module "${title}" ?`)) {
+      deleteModule(id)
+        .then(() => toast.success(`Module "${title}" supprimé.`))
+        .catch(() => toast.error("Échec de suppression."));
     }
   };
 
-  const handleOpenLessonDialog = (lesson: Lesson | null, moduleId: number) => {
-    setSelectedLesson(
-      lesson
-        ? { ...lesson, moduleId } // Mise à jour : inclut moduleId
-        : { moduleId } as Lesson // Création : objet minimal avec moduleId
-    );
-    setIsLessonDialogOpen(true);
-  };
-
-  const toggleModuleExpansion = (moduleId: number) => {
-    setExpandedModuleId(expandedModuleId === moduleId ? null : moduleId);
+  const handleToggleLesson = (lesson: Lesson) => {
+    // Géré via useLessons dans le composant LessonItem
   };
 
   return (
-    <div className="space-y-4 lg:space-y-6">
-      {/* Header Section - Amélioré pour mobile */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/8 via-primary/4 to-transparent border border-primary/15 backdrop-blur-sm">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-50" />
-        <div className="relative p-4 sm:p-6 lg:p-8">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <div className="flex items-start gap-3 sm:gap-4">
-              <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-lg">
-                <GraduationCap className="h-5 w-5 sm:h-6 sm:w-6" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-foreground mb-1">
-                  Modules du cours
-                </h1>
-                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                  Organisez et gérez le contenu de votre cours de manière structurée
-                </p>
-              </div>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="rounded-2xl bg-gradient-to-br from-primary/8 via-primary/4 to-transparent border border-primary/15 p-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="h-12 w-12 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center">
+              <GraduationCap className="h-6 w-6" />
             </div>
-
-            <div className="flex items-center justify-between sm:justify-end gap-3 lg:flex-col lg:items-end lg:gap-2">
-              <div className="flex items-center gap-2">
-                <Badge
-                  variant="secondary"
-                  className="px-3 py-1.5 font-semibold bg-background/80 backdrop-blur text-xs sm:text-sm"
-                >
-                  {sortedModules.length} module{sortedModules.length !== 1 ? 's' : ''}
-                </Badge>
-                {sortedModules.length > 0 && (
-                  <Badge
-                    variant="outline"
-                    className="px-2 py-1 text-xs hidden sm:inline-flex bg-background/60"
-                  >
-                    <Target className="h-3 w-3 mr-1" />
-                    Structuré
-                  </Badge>
-                )}
-              </div>
-
-              <Button
-                size="sm"
-                className="gap-2 shadow-lg hover:shadow-xl transition-all duration-300 bg-primary hover:bg-primary/90 text-primary-foreground font-medium px-4 py-2 h-9 sm:h-10"
-                onClick={() => handleOpenModuleDialog()}
-                aria-label="Ajouter un module"
-              >
-                <Plus className="h-4 w-4" />
-                <span className="hidden sm:inline">Ajouter un module</span>
-                <span className="sm:hidden">Ajouter</span>
-              </Button>
+            <div>
+              <h1 className="text-2xl font-bold">Modules du cours</h1>
+              <p className="text-muted-foreground">Organisez votre contenu pédagogique</p>
             </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Badge variant="secondary">{sortedModules.length} module{sortedModules.length !== 1 ? "s" : ""}</Badge>
+            <Button size="sm" onClick={() => openModuleDialog()}>
+              <Plus className="h-4 w-4 mr-1" />
+              Ajouter
+            </Button>
           </div>
         </div>
       </div>
 
-      {/* Content Section */}
-      <div className="rounded-xl sm:rounded-2xl border border-border/50 bg-card/30 backdrop-blur-sm shadow-sm">
+      {/* Content */}
+      <div className="rounded-2xl border bg-card/30 backdrop-blur-sm">
         {isLoadingModules ? (
-          <div className="flex flex-col items-center justify-center py-12 sm:py-16 px-6">
-            <div className="relative mb-6">
-              <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-primary/10 flex items-center justify-center">
-                <Loader2 className="h-6 w-6 sm:h-8 sm:w-8 animate-spin text-primary" />
-              </div>
-              <div className="absolute -inset-2 sm:-inset-3 rounded-full border-2 border-primary/20 animate-pulse"></div>
-            </div>
-            <div className="text-center">
-              <h3 className="font-semibold text-base sm:text-lg mb-2">Chargement en cours</h3>
-              <p className="text-sm text-muted-foreground">Récupération des modules du cours...</p>
-            </div>
-          </div>
+          <LoadingState />
         ) : errorModules ? (
-          <div className="p-4 sm:p-6">
-            <Alert variant="destructive" className="border-red-200/80 bg-red-50/80 backdrop-blur">
-              <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Erreur de chargement</AlertTitle>
-              <AlertDescription>
-                Impossible de charger les modules du cours. Veuillez réessayer plus tard.
-              </AlertDescription>
-            </Alert>
-          </div>
+          <ErrorState message="Impossible de charger les modules." />
         ) : sortedModules.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12 sm:py-16 lg:py-20 px-4 sm:px-6 text-center">
-            <div className="relative mb-8">
-              <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full bg-gradient-to-br from-muted/60 to-muted/30 flex items-center justify-center backdrop-blur">
-                <BookOpen className="h-8 w-8 sm:h-10 sm:w-10 text-muted-foreground/70" />
-              </div>
-              <div className="absolute -top-2 -right-2 h-8 w-8 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center border-2 border-background">
-                <Plus className="h-4 w-4 text-primary" />
-              </div>
-            </div>
-
-            <div className="max-w-md mx-auto">
-              <h3 className="text-lg sm:text-xl font-bold mb-3 text-foreground">
-                Créez votre premier module
-              </h3>
-              <p className="text-sm sm:text-base text-muted-foreground mb-8 leading-relaxed">
-                Commencez par structurer votre cours avec des modules organisés.
-                Chaque module peut contenir des leçons, des exercices et du contenu interactif.
-              </p>
-            </div>
-
-            <Button
-              size="lg"
-              className="gap-2 shadow-lg hover:shadow-xl transition-all duration-300 px-6 py-3 font-semibold"
-              onClick={() => handleOpenModuleDialog()}
-              aria-label="Créer le premier module"
-            >
-              <Plus className="h-5 w-5" />
-              Créer le premier module
-            </Button>
-          </div>
+          <EmptyState onCreate={() => openModuleDialog()} />
         ) : (
-          <div className="p-3 sm:p-4 lg:p-6">
-            <div className="grid gap-3 sm:gap-4">
-              {sortedModules.map((module, index) => {
-                const { lessons, isLoading: isLoadingLessons, error: errorLessons, deleteLesson, updateLesson } = useLessons({ moduleId: module.id });
-
-                const sortedLessons: any[] = useMemo(() => {
-                  return Array.isArray(lessons)
-                    ? [...lessons].sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0))
-                    : [];
-                }, [lessons]);
-
-                const activeLessons = useMemo(() => {
-                  return sortedLessons.filter((lesson) => lesson.isActive);
-                }, [sortedLessons]);
-
-                const handleDeleteLesson = async (lessonId: number, lessonTitle: string) => {
-                  if (confirm(`Voulez-vous vraiment supprimer la leçon "${lessonTitle}" ?`)) {
-                    try {
-                      await deleteLesson({ moduleId: module.id, id: lessonId });
-                      toast.success(`Leçon "${lessonTitle}" supprimée avec succès.`);
-                    } catch (error) {
-                      toast.error("Erreur lors de la suppression de la leçon");
-                    }
-                  }
-                };
-
-                const handleToggleLessonActive = async (lesson: Omit<Lesson, "createdAt" | "updatedAt">) => {
-                  try {
-                    await updateLesson({ moduleId: module.id, id: lesson.id, data: { ...lesson, isActive: !lesson.isActive } });
-                    toast.success(`Leçon "${lesson.title}" ${!lesson.isActive ? "activée" : "désactivée"}.`);
-                  } catch (error) {
-                    toast.error("Erreur lors de la modification de la leçon");
-                  }
-                };
-
-                return (
-                  <div
-                    key={module.id}
-                    className="group relative overflow-hidden rounded-lg sm:rounded-xl border border-border/50 bg-card/60 backdrop-blur-sm hover:bg-card/80 hover:border-primary/20 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5"
-                  >
-                    {/* Module Content */}
-                    <div className="p-4 sm:p-6">
-                      <div className="flex items-start justify-between gap-3 sm:gap-4">
-                        <div className="flex items-start gap-3 sm:gap-4 flex-1 min-w-0">
-                          <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-lg sm:rounded-xl bg-gradient-to-br from-primary/15 to-primary/5 text-primary font-bold text-sm sm:text-lg flex-shrink-0 border border-primary/10">
-                            {module.orderIndex || index + 1}
-                          </div>
-
-                          <div className="flex-1 min-w-0">
-                            <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2 sm:mb-3">
-                              <h3 className="font-bold text-base sm:text-lg leading-tight text-foreground line-clamp-2 sm:line-clamp-1">
-                                {module.title}
-                              </h3>
-                              <div className="flex items-center gap-2 flex-shrink-0">
-                                <Badge
-                                  variant="secondary"
-                                  className="text-xs px-2 py-1 bg-primary/10 text-primary border-primary/20"
-                                >
-                                  Module {module.orderIndex || index + 1}
-                                </Badge>
-                                <Badge
-                                  variant="outline"
-                                  className="text-xs px-2 py-1 hidden sm:inline-flex"
-                                >
-                                  Actif
-                                </Badge>
-                              </div>
-                            </div>
-
-                            {module.description && (
-                              <p className="text-sm text-muted-foreground line-clamp-2 sm:line-clamp-3 mb-3 leading-relaxed">
-                                {module.description}
-                              </p>
-                            )}
-
-                            <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs text-muted-foreground">
-                              {module.duration && (
-                                <div className="flex items-center gap-1.5 bg-muted/50 rounded-full px-2 py-1">
-                                  <Clock className="h-3 w-3 text-primary/70" />
-                                  <span className="font-medium">{module.duration}h</span>
-                                </div>
-                              )}
-                              {module.createdAt && (
-                                <div className="flex items-center gap-1.5 bg-muted/50 rounded-full px-2 py-1">
-                                  <Calendar className="h-3 w-3 text-primary/70" />
-                                  <span className="font-medium">
-                                    {format(new Date(module.createdAt), "dd/MM/yyyy", { locale: fr })}
-                                  </span>
-                                </div>
-                              )}
-                              <div className="flex items-center gap-1.5 bg-muted/50 rounded-full px-2 py-1">
-                                <Users className="h-3 w-3 text-primary/70" />
-                                <span className="font-medium">{activeLessons.length} leçon{activeLessons.length !== 1 ? 's' : ''}</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-1 sm:gap-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 sm:h-9 sm:w-9 p-0 hover:bg-primary/10 hover:text-primary transition-colors sm:opacity-0 sm:group-hover:opacity-100"
-                            onClick={() => handleOpenModuleDialog(module)}
-                            aria-label={`Modifier le module ${module.title}`}
-                          >
-                            <Edit className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                          </Button>
-
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-8 w-8 sm:h-9 sm:w-9 p-0 hover:bg-muted transition-colors"
-                                disabled={deletingModuleId === module.id}
-                              >
-                                {deletingModuleId === module.id ? (
-                                  <Loader2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 animate-spin" />
-                                ) : (
-                                  <MoreVertical className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                                )}
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-52 sm:w-48">
-                              <DropdownMenuItem
-                                onClick={() => handleOpenModuleDialog(module)}
-                                className="cursor-pointer gap-3"
-                              >
-                                <Edit className="h-4 w-4" />
-                                <span>Modifier le module</span>
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() => {/* Add preview logic */}}
-                                className="cursor-pointer gap-3"
-                              >
-                                <Play className="h-4 w-4" />
-                                <span>Prévisualiser</span>
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() => {/* Add duplicate logic */}}
-                                className="cursor-pointer gap-3"
-                              >
-                                <List className="h-4 w-4" />
-                                <span>Dupliquer</span>
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem
-                                onClick={() => handleDeleteModule(module.id, module.title)}
-                                className="cursor-pointer text-destructive focus:text-destructive gap-3"
-                              >
-                                <Trash className="h-4 w-4" />
-                                <span>Supprimer</span>
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 sm:h-9 sm:w-9 p-0 hover:bg-primary/10 hover:text-primary transition-colors sm:opacity-0 sm:group-hover:opacity-100"
-                            onClick={() => toggleModuleExpansion(module.id)}
-                            aria-label={expandedModuleId === module.id ? "Réduire le module" : "Étendre le module"}
-                          >
-                            {expandedModuleId === module.id ? (
-                              <ChevronUp className="h-4 w-4" />
-                            ) : (
-                              <ChevronRight className="h-4 w-4" />
-                            )}
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Lessons Section */}
-                    {expandedModuleId === module.id && (
-                      <div className="border-t border-border/50 bg-muted/20 p-4 sm:p-6">
-                        {isLoadingLessons ? (
-                          <div className="flex items-center justify-center py-8">
-                            <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                          </div>
-                        ) : errorLessons ? (
-                          <Alert variant="destructive" className="border-red-200/80 bg-red-50/80 backdrop-blur">
-                            <AlertCircle className="h-4 w-4" />
-                            <AlertTitle>Erreur de chargement</AlertTitle>
-                            <AlertDescription>
-                              Impossible de charger les leçons du module. Veuillez réessayer.
-                            </AlertDescription>
-                          </Alert>
-                        ) : sortedLessons.length === 0 ? (
-                          <div className="flex flex-col items-center justify-center py-8 text-center">
-                            <div className="rounded-full bg-muted/50 p-4 mb-4">
-                              <FileText className="h-8 w-8 text-muted-foreground" />
-                            </div>
-                            <h4 className="font-semibold mb-2">Aucune leçon créée</h4>
-                            <p className="text-sm text-muted-foreground mb-4 max-w-sm">
-                              Commencez par créer votre première leçon pour ce module.
-                            </p>
-                            <Button
-                              size="sm"
-                              className="gap-2"
-                              onClick={() => handleOpenLessonDialog(null, module.id)}
-                            >
-                              <Plus className="h-4 w-4" />
-                              Créer une leçon
-                            </Button>
-                          </div>
-                        ) : (
-                          <div className="space-y-3">
-                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                              <h4 className="text-sm font-semibold text-foreground">Leçons ({activeLessons.length} active{activeLessons.length !== 1 ? 's' : ''})</h4>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                className="gap-2"
-                                onClick={() => handleOpenLessonDialog(null, module.id)}
-                              >
-                                <Plus className="h-4 w-4" />
-                                Nouvelle leçon
-                              </Button>
-                            </div>
-                            <div className="space-y-3">
-                              {sortedLessons.map((lesson, lessonIndex) => (
-                                <div
-                                  key={lesson.id}
-                                  className="group relative rounded-lg border border-border/30 bg-card/80 p-3 sm:p-4 hover:bg-card hover:border-primary/20 transition-all duration-200"
-                                >
-                                  <div className="flex items-start gap-3">
-                                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary font-semibold">
-                                      {lessonIndex + 1}
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                      <div className="flex items-center gap-2 mb-1">
-                                        <h5 className="font-semibold text-sm truncate">{lesson.title}</h5>
-                                        <Badge variant="outline" className="text-xs">
-                                          {lesson.type}
-                                        </Badge>
-                                        <Badge variant="outline" className="text-xs">
-                                          {lesson.difficulty}
-                                        </Badge>
-                                        {lesson.isActive && (
-                                          <Badge variant="default" className="text-xs">
-                                            <Eye className="h-3 w-3 mr-1" />
-                                            Actif
-                                          </Badge>
-                                        )}
-                                      </div>
-                                      <div className="text-xs text-muted-foreground">
-                                        {lesson.estimatedTime && (
-                                          <span>Temps estimé: {lesson.estimatedTime} min | </span>
-                                        )}
-                                        Créé le {format(new Date(lesson.createdAt), "dd/MM/yyyy", { locale: fr })}
-                                      </div>
-                                      {lesson.tags! && Array.isArray(lesson.tags) && lesson.tags.length > 0 && (
-                                        <div className="flex flex-wrap gap-1 mt-1">
-                                          {lesson.tags.map((tag: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined, idx: Key | null | undefined) => (
-                                            <Badge key={idx} variant="secondary" className="text-xs">
-                                              {tag}
-                                            </Badge>
-                                          ))}
-                                        </div>
-                                      )}
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                      <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        className="h-7 w-7 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                                        onClick={() => handleOpenLessonDialog(lesson, module.id)}
-                                      >
-                                        <Edit className="h-3.5 w-3.5" />
-                                      </Button>
-                                      <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        className="h-7 w-7 p-0 text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
-                                        onClick={() => handleDeleteLesson(lesson.id, lesson.title)}
-                                      >
-                                        <Trash className="h-3.5 w-3.5" />
-                                      </Button>
-                                      <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        className="h-7 w-7 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                                        onClick={() => handleToggleLessonActive(lesson)}
-                                      >
-                                        {lesson.isActive ? (
-                                          <EyeOff className="h-3.5 w-3.5" />
-                                        ) : (
-                                          <Eye className="h-3.5 w-3.5" />
-                                        )}
-                                      </Button>
-                                    </div>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-muted/30 to-muted/10">
-                      <div className="h-full bg-gradient-to-r from-primary to-primary/80 w-0 group-hover:w-full transition-all duration-700 ease-out shadow-sm"></div>
-                    </div>
-                    <div className="absolute inset-0 rounded-lg sm:rounded-xl bg-gradient-to-r from-primary/5 via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-                  </div>
-                );
-              })}
+          <div className="p-6">
+            <div className="space-y-4">
+              {sortedModules.map((module) => (
+                <ModuleItem
+                  key={module.id}
+                  module={{ ...module, lessons: [] }}
+                  onDeleteModule={handleDeleteModule}
+                  onEditModule={openModuleDialog}
+                  onCreateLesson={(moduleId) => openLessonDialog(null, moduleId)}
+                  onEditLesson={(lesson) => openLessonDialog(lesson, lesson.moduleId)}
+                  onDeleteLesson={(id, title) => {
+                    // Géré dans le composant
+                  }}
+                  onToggleLesson={handleToggleLesson}
+                  onAddQuestion={(lessonId) => openQuestionDialog(null, lessonId)}
+                />
+              ))}
             </div>
-
-            {sortedModules.length > 0 && (
-              <div className="mt-6 sm:mt-8">
-                <button
-                  onClick={() => handleOpenModuleDialog()}
-                  className="w-full p-6 sm:p-8 rounded-lg sm:rounded-xl border-2 border-dashed border-muted-foreground/25 hover:border-primary/50 bg-muted/20 hover:bg-muted/40 transition-all duration-300 group"
-                >
-                  <div className="flex flex-col items-center gap-3 text-center">
-                    <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                      <Plus className="h-6 w-6 sm:h-7 sm:w-7 text-primary" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-sm sm:text-base text-foreground mb-1">
-                        Ajouter un nouveau module
-                      </h4>
-                      <p className="text-xs sm:text-sm text-muted-foreground">
-                        Continuez à enrichir votre cours avec du contenu structuré
-                      </p>
-                    </div>
-                  </div>
-                </button>
-              </div>
-            )}
+            <AddModuleButton onClick={() => openModuleDialog()} />
           </div>
         )}
       </div>
-      <div>
-        <ModuleDialog
-          isOpen={isModuleDialogOpen}
-          onOpenChange={(open) => {
-            setIsModuleDialogOpen(open);
-            if (!open) setSelectedModule(null);
-          }}
-          module={selectedModule}
-          courseId={courseId}
-        />
 
-        <LessonDialog
-          isOpen={isLessonDialogOpen}
-          onOpenChange={(open) => {
-            setIsLessonDialogOpen(open);
-            if (!open) setSelectedLesson(null);
-          }}
-          lesson={selectedLesson}
-          moduleId={selectedLesson?.moduleId || null}
-        />
-        
-    </div>
+      {/* Dialogs */}
+      <ModuleDialog
+        isOpen={isModuleOpen}
+        onOpenChange={(open) => {
+          setIsModuleOpen(open);
+          if (!open) setSelectedModule(null);
+        }}
+        module={selectedModule}
+        courseId={courseId}
+      />
+      <LessonDialog
+        isOpen={isLessonOpen}
+        onOpenChange={(open) => {
+          setIsLessonOpen(open);
+          if (!open) setSelectedLesson(null);
+        }}
+        lesson={selectedLesson}
+        moduleId={selectedLesson?.moduleId || null}
+      />
+      <QuestionDialog
+        isOpen={isQuestionOpen}
+        onOpenChange={(open) => {
+          setIsQuestionOpen(open);
+          if (!open) setSelectedQuestion(null);
+        }}
+        question={selectedQuestion}
+        lessonId={selectedQuestion?.lessonId || null}
+      />
     </div>
   );
 }

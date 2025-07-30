@@ -91,7 +91,7 @@ export const questions = pgTable('course_questions', {
   maxScore: real('maxScore').notNull().default(1),
   orderIndex: integer('orderIndex').notNull(),
   difficulty: difficultyEnum('difficulty').default('facile'),
-  tags: jsonb('tags').default([]),
+  tags: text('tags').array().default([]),
   timeLimit: integer('timeLimit'), // en secondes
   isActive: boolean('isActive').default(true),
   createdAt: timestamp('createdAt').notNull().defaultNow(),
@@ -110,7 +110,7 @@ export const exercises = pgTable('course_exercises', {
   maxScore: real('maxScore').notNull(),
   deadline: timestamp('deadline'),
   difficulty: difficultyEnum('difficulty').default('facile'),
-  tags: jsonb('tags').default([]),
+  tags: text('tags').array().default([]),
   instructions: jsonb('instructions').default({}), // ex. : {"steps": ["Étape 1", "Étape 2"]}
   feedback: text('feedback'),
   isActive: boolean('isActive').default(true),
