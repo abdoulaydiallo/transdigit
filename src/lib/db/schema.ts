@@ -108,7 +108,7 @@ export const exercises = pgTable('course_exercises', {
   submissionUrl: varchar('submissionUrl', { length: 500 }),
   score: real('score').default(0),
   maxScore: real('maxScore').notNull(),
-  deadline: timestamp('deadline'),
+  deadline: timestamp('deadline', { precision: 0 }),
   difficulty: difficultyEnum('difficulty').default('facile'),
   tags: text('tags').array().default([]),
   instructions: jsonb('instructions').default({}), // ex. : {"steps": ["Étape 1", "Étape 2"]}

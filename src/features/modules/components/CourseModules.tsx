@@ -5,6 +5,7 @@ import { fr } from "date-fns/locale";
 import { CourseModule, NewCourseModule, Question } from "@/lib/db/schema";
 import { useModules } from "@/features/modules/hooks/useModules";
 import { useLessons } from "@/features/lessons/hooks/useLessons";
+import { useExercises } from "@/features/exercises/hooks/useExercises";
 import { useQuestions } from "@/features/questions/hooks/useQuestions";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -28,6 +29,7 @@ import {
   EyeOff,
   HelpCircle,
   CheckSquare,
+  BookOpenCheck
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -40,7 +42,10 @@ import {
 import { ModuleDialog } from "./ModuleDialog";
 import { LessonDialog } from "@/features/lessons/components/LessonDialog";
 import { QuestionDialog } from "@/features/questions/components/QuestionDialog";
+import  { ExerciseDialog } from "@/features/exercises/components/ExerciseDialog";
 import { Lesson } from "@/lib/db/schema";
+import { Exercise } from "@/lib/db/schema";
+import { ExerciseList } from "@/features/exercises/components/ExerciseList";
 
 // -----------------------------
 // TYPES
@@ -71,10 +76,19 @@ const useSortedLessons = (lessons: Lesson[]) => {
     return [...lessons].sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
   }, [lessons]);
 };
+const useSortedExercises = (exercises: Exercise[]) => {
+  return useMemo(() => {
+    return [...exercises].sort((a, b) => (a.id || 0) - (b.id || 0));
+  }, [exercises]);
+};
 
 const useActiveLessons = (lessons: Lesson[] = []) => {
   return useMemo(() => lessons.filter((l) => l.isActive), [lessons]);
 };
+
+const useActiveExercises = (exercises: Exercise[] = []) => {
+  return useMemo(() => exercises.filter((e) => e.isActive), [exercises]);
+}
 
 // -----------------------------
 // COMPOSANTS
@@ -123,6 +137,7 @@ const ModuleHeader = ({
   onToggleExpand,
   isExpanded,
   lessonCount,
+  exerciseCount
 }: {
   module: ModuleWithLessons;
   onEdit: (m: any) => void;
@@ -130,6 +145,7 @@ const ModuleHeader = ({
   onToggleExpand: () => void;
   isExpanded: boolean;
   lessonCount: number;
+  exerciseCount: number;
 }) => (
   <div className="flex items-start justify-between gap-4">
     <div className="flex items-start gap-4 flex-1 min-w-0">
@@ -157,7 +173,11 @@ const ModuleHeader = ({
             </span>
           )}
           <span className="flex items-center gap-1">
-            <Users className="h-3 w-3" /> {lessonCount} leçon{lessonCount !== 1 ? "s" : ""}
+            <BookOpenCheck className="h-3 w-3" /> {lessonCount} leçon{lessonCount !== 1 ? "s" : ""}
+          </span>
+          
+          <span className="flex items-center gap-1">
+            <Users className="h-3 w-3" /> {exerciseCount} exercice{exerciseCount !== 1 ? "s" : ""}
           </span>
         </div>
       </div>
@@ -331,6 +351,13 @@ const ModuleItem = ({
   onDeleteLesson,
   onToggleLesson,
   onAddQuestion,
+
+  
+  OnCreateExercise,
+  onEditExercise,
+  onDeleteExercise,
+  onToggleExercise,
+  onAddExercise
 }: {
   module: ModuleWithLessons;
   onDeleteModule: (id: number, title: string) => void;
@@ -339,10 +366,18 @@ const ModuleItem = ({
   onEditLesson: (l: Lesson) => void;
   onDeleteLesson: (id: number, title: string) => void;
   onToggleLesson: (l: Lesson) => void;
+
+  OnCreateExercise: (moduleId: number) => void;
+  onEditExercise: (l: Exercise) => void;
+  onDeleteExercise: (id: number, title: string) => void;
+  onToggleExercise: (l: Exercise) => void;
+
   onAddQuestion: (lessonId: number) => void;
+  onAddExercise: (moduleId: number) => void;
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const { lessons, isLoading, error } = useLessons({ moduleId: module.id });
+  const { exercises, isLoading: ExerciseLioading, error: ExerciseError } = useExercises({ moduleId: module.id });
 
   const transformedLessons: Lesson[] = lessons
     ? lessons.map(({createdAt, updatedAt, ...rest }) => ({
@@ -352,8 +387,19 @@ const ModuleItem = ({
     }))
     : []
 
+    const transformedExercises: Exercise[] = exercises
+    ? exercises.map(({createdAt, updatedAt, deadline, ...rest }) => ({
+      ...rest,
+      deadline: new Date(deadline!),
+      createdAt: new Date(createdAt),
+      updatedAt: new Date(updatedAt),
+    }))
+    : []
+
   const sortedLessons = useSortedLessons(transformedLessons);
+  const sortedExercises = useSortedExercises(transformedExercises);
   const activeLessons = useActiveLessons(sortedLessons);
+  const activeExercises = useActiveExercises(sortedExercises);
 
   return (
     <div className="rounded-xl border bg-card/60 backdrop-blur-sm overflow-hidden hover:shadow-md transition-shadow">
@@ -365,6 +411,7 @@ const ModuleItem = ({
           onToggleExpand={() => setIsExpanded(!isExpanded)}
           isExpanded={isExpanded}
           lessonCount={activeLessons.length}
+          exerciseCount={activeExercises.length}
         />
       </div>
       {isExpanded && (
@@ -374,14 +421,24 @@ const ModuleItem = ({
           ) : error ? (
             <ErrorState message="Erreur de chargement des leçons." />
           ) : (
-            <LessonsList
-              lessons={sortedLessons}
-              onCreate={() => onCreateLesson(module.id)}
-              onEdit={onEditLesson}
-              onDelete={onDeleteLesson}
-              onToggleActive={onToggleLesson}
-              onAddQuestion={onAddQuestion}
-            />
+            <div className="space-y-4">
+              <LessonsList
+                lessons={sortedLessons}
+                onCreate={() => onCreateLesson(module.id)}
+                onEdit={onEditLesson}
+                onDelete={onDeleteLesson}
+                onToggleActive={onToggleLesson}
+                onAddQuestion={onAddQuestion}
+              />
+              <ExerciseList
+                exercises={sortedExercises}
+                onCreate={() => OnCreateExercise(module.id)}
+                onEdit={onEditExercise}
+                onDelete={onDeleteExercise}
+                onToggleActive={onToggleExercise}
+                onAddExercise={onAddExercise}
+              />
+            </div>
           )}
         </div>
       )}
@@ -423,6 +480,8 @@ export function CourseModules({
   const [isQuestionOpen, setIsQuestionOpen] = useState(false);
   const [selectedQuestion, setSelectedQuestion] = useState<Question | null>(null);
   const [expandedModuleId, setExpandedModuleId] = useState<number | null>(null);
+  const [isExerciseOpen, setIsExerciseOpen] = useState(false);
+  const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
 
   const { deleteModule } = useModules({ courseId });
   const sortedModules = useSortedModules(modules);
@@ -463,6 +522,11 @@ export function CourseModules({
     setSelectedQuestion(question ? { ...question, lessonId } : ({ lessonId } as Question));
     setIsQuestionOpen(true);
   };
+  
+  const openExerciseDialog = (exercise: Exercise | null, moduleId: number) => {
+    setSelectedExercise(exercise ? { ...exercise, moduleId } : ({ moduleId } as Exercise));
+    setIsExerciseOpen(true);
+  };
 
   const handleDeleteModule = (id: number, title: string) => {
     if (confirm(`Supprimer le module "${title}" ?`)) {
@@ -471,8 +535,12 @@ export function CourseModules({
         .catch(() => toast.error("Échec de suppression."));
     }
   };
+  
 
   const handleToggleLesson = (lesson: Lesson) => {
+    // Géré via useLessons dans le composant LessonItem
+  };
+  const handleToggleExercise = (exercise: Exercise) => {
     // Géré via useLessons dans le composant LessonItem
   };
 
@@ -523,7 +591,16 @@ export function CourseModules({
                     // Géré dans le composant
                   }}
                   onToggleLesson={handleToggleLesson}
+
+                  OnCreateExercise={(moduleId) => openExerciseDialog(null, moduleId)}
+                  onEditExercise={(exercise) => openExerciseDialog(exercise, exercise.moduleId)}
+                  onDeleteExercise={(id, title) => {
+                    // Géré dans le composant
+                  }}
+                  onToggleExercise={handleToggleExercise}
+
                   onAddQuestion={(lessonId) => openQuestionDialog(null, lessonId)}
+                  onAddExercise={(moduleId) => openExerciseDialog(null, moduleId)}
                 />
               ))}
             </div>
@@ -559,6 +636,15 @@ export function CourseModules({
         }}
         question={selectedQuestion}
         lessonId={selectedQuestion?.lessonId || null}
+      />
+      <ExerciseDialog
+        isOpen={isExerciseOpen}
+        onOpenChange={(open) => {
+          setIsExerciseOpen(open);
+          if (!open) setSelectedExercise(null);
+        }}
+        exercise={selectedExercise}
+        moduleId={selectedExercise?.moduleId || null}
       />
     </div>
   );

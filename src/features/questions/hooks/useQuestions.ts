@@ -18,10 +18,7 @@ export function useQuestions(props: UseQuestionsProps = {}) {
 
   // Récupérer toutes les questions d'une leçon
   const questionsQuery = trpc.questions.byLesson.useQuery(
-    {
-      lessonId: props.lessonId || 0,
-      isActive: true,
-    },
+    { lessonId: props.lessonId! },
     {
       enabled: !!props.lessonId && props.lessonId > 0,
       select: (data) => data.questions.map((question) => ({
