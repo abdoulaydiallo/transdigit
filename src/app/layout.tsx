@@ -1,9 +1,10 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
-import QueryClientProviderWrapper from "@/providers/query-client-provider";
+import type { Metadata } from "next";
 import { Toaster } from "@/components/ui/sonner";
+import { Geist, Geist_Mono, Inter } from "next/font/google";
+
 import { TRPCProvider } from "@/providers/trpc-provider";
+import QueryClientProviderWrapper from "@/providers/query-client-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,8 +23,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Goulotech | Bootcamp de compétences tech en Guinée",
-  description: "Goulotech est un bootcamp de compétences tech qui vous forme aux compétences les plus demandées sur le marché du travail.",
+  title: "Transdigit | Bootcamp de compétences tech en Guinée",
+  description: "Transdigit est un bootcamp de compétences tech qui vous forme aux compétences les plus demandées sur le marché du travail.",
 };
 
 export default function RootLayout({

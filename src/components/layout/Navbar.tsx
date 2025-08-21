@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -13,18 +12,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Home, Menu, Settings, LogOut } from "lucide-react";
+import { Settings, LogOut } from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Logo } from "../Logo";
+import { useSession, signOut } from "@/lib/auth-client";
 
 export function Navbar() {
-  const router = useRouter();
+  const { data: session } = useSession();
 
   // Données utilisateur statiques (à dynamiser avec authentification)
-  const user = {
-    name: "John Doe",
-    email: "user@example.com",
-    avatar: "/avatars/user.jpg",
+  const user =  {
+    name: session?.user?.name || "John Doe",
+    email: session?.user?.email || "user@example.com",
+    avatar: session?.user?.image || "/avatars/user.jpg",
   };
 
   return (
@@ -33,7 +33,7 @@ export function Navbar() {
      <SidebarTrigger />
 
       {/* Titre/Logo */}
-      <Logo />
+      <Logo width={32} height={32} logoName />
 
       {/* Menu Utilisateur */}
       <div className="ml-auto flex items-center gap-4">
@@ -62,11 +62,7 @@ export function Navbar() {
             </DropdownMenuItem>
             <DropdownMenuItem
               className="flex items-center gap-2"
-              onClick={() => {
-                // Placeholder pour l'authentification
-                console.log("Déconnexion");
-                router.push("/login");
-              }}
+              onClick={() => signOut()}
             >
               <LogOut className="h-4 w-4" />
               <span>Déconnexion</span>

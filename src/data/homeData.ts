@@ -2,33 +2,33 @@ import { Course, CarouselItem, ImpactStat } from "@/types/home";
 
 export const courses: Course[] = [
   {
-    title: "Développement Web",
+    title: "Dev web fullstack",
     description:
-      "Créez des sites et applications web modernes avec HTML, CSS, JavaScript et React.",
-    imageSrc: "https://picsum.photos/id/104/300/200",
+      "Créez des sites web avec HTML, CSS, JavaScript et React.",
+    imageSrc: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/photos/course-one.webp",
     imageAlt: "Illustration d'un projet de développement web",
     link: "/web-development",
   },
   {
     title: "Data Science & IA",
     description: "Devenez expert en analyse de données, machine learning.",
-    imageSrc: "https://picsum.photos/id/106/300/200",
+    imageSrc: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/photos/course-two.webp",
     imageAlt: "Illustration de l'intelligence artificielle",
     link: "/data-ai-course",
   },
   {
     title: "Pack Bureautique",
     description:
-      "Devenez expert en bureautique avec Excel, Word et PowerPoint pour booster votre productivité.",
-    imageSrc: "https://picsum.photos/id/110/300/200",
+      "Devenez expert en bureautique avec Excel, Word et PowerPoint.",
+    imageSrc: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/photos/course-tree.webp",
     imageAlt: "Illustration de la bureautique",
     link: "/bureautique-course",
   },
   {
-    title: "Développement Mobile",
+    title: "Dev React Native",
     description:
       "Apprenez à créer des applications mobiles pour Android et iOS avec Flutter.",
-    imageSrc: "https://picsum.photos/id/115/300/200",
+    imageSrc: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/photos/course-four.webp",
     imageAlt: "Illustration d'un projet de développement mobile",
     link: "/mobile-development-course",
   },
@@ -39,7 +39,7 @@ export const carouselItems: CarouselItem[] = [
     title: "Découvrez le marché tech guinéen",
     description:
       "Apprenez les compétences tech les plus demandées en Guinée grâce à nos formations pratiques et adaptées.",
-    imageSrc: "https://picsum.photos/id/108/600/470",
+    imageSrc: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/photos/carousel.webp",
     imageAlt: "Image du marché tech guinéen",
   },
   {

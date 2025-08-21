@@ -14,13 +14,13 @@ import {
   SheetClose,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { FiArrowRight } from "react-icons/fi";
 
 export const Navbar = () => {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [hash, setHash] = useState("");
 
-  // Gérer location.hash côté client pour éviter "location is not defined"
   useEffect(() => {
     setHash(window.location.hash);
     const handleHashChange = () => setHash(window.location.hash);
@@ -31,48 +31,50 @@ export const Navbar = () => {
   const links = [
     {
       title: "Formations",
-      href: "/#homeBootcourses",
-      active: pathname === "/" && hash === "#homeBootcourses",
+      href: "/",
+      active: pathname === "/" && hash === "/",
     },
     {
-      title: "Pourquoi Goulotech",
+      title: "Pourquoi nous ?",
       href: "/#homeWhyChoose",
       active: pathname === "/" && hash === "#homeWhyChoose",
     },
     {
       title: "Événements",
       href: "/events",
-      active: pathname === "/events",
+      active: pathname === "/#events",
     },
     {
       title: "Entreprise",
       href: "/business",
-      active: pathname === "/business",
+      active: pathname === "/#business",
     },
   ];
 
   return (
-    <div className="my-2">
-      <Container>
-        <div className="h-16 flex items-center justify-between">
+    <div className="sticky top-0 z-30 bg-white shadow-sm border-b border-gray-100 animate-slide-in">
+      <>
+        <div className="h-18 flex items-center justify-between px-4 sm:px-6 md:px-12">
           {/* Logo */}
-          <Logo />
+            <Logo
+              width={48}
+              height={48}
+              logoName
+            />
 
-          {/* Liens pour desktop (visible à partir de lg) */}
-          <ul className="hidden lg:flex gap-4 items-center">
+          {/* Liens pour desktop */}
+          <ul className="hidden lg:flex gap-6 items-center">
             {links.map((link) => (
               <li
                 key={link.title}
-                className={`text-base px-2 py-1.5 rounded-md transition-all duration-200 ${
-                  link.active
-                    ? "text-black font-semibold bg-[#670BFF]/10"
-                    : "text-black hover:text-[#670BFF] hover:bg-[#670BFF]/5 hover:font-semibold"
+                className={`relative text-lg font-normal transition-all duration-300 ${
+                  link.active ? "text-gray-900" : "text-gray-900 hover:text-secondary"
                 }`}
               >
                 <Link
                   href={link.href}
                   aria-current={link.active ? "page" : undefined}
-                  className="focus-visible:ring-[#670BFF] focus-visible:ring-2 focus-visible:outline-none rounded-md"
+                  className="block focus-visible:ring-secondary focus-visible:ring-2 focus-visible:outline-none rounded-md after:absolute after:bottom-[-4px] after:left-0 after:h-0.5 after:bg-secondary after:w-1/2 after:transition-all after:duration-300 hover:after:w-full"
                 >
                   {link.title}
                 </Link>
@@ -81,49 +83,51 @@ export const Navbar = () => {
           </ul>
 
           {/* Bouton Postuler pour desktop */}
-          <Link href="/apply" className="hidden lg:block cursor-pointer">
+          <Link href="/apply">
             <Button
               size="lg"
-              className="bg-[#670BFF] hover:bg-[#5208CC]  text-white px-4 py-2 rounded-md focus-visible:ring-[#670BFF] focus-visible:ring-2"
+              className="hidden lg:flex px-6 items-center gap-2 group"
               aria-label="Postuler à Goulotech Conakry"
             >
               Postuler maintenant
+              <FiArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
             </Button>
           </Link>
 
-          {/* Bouton Menu Hamburger avec Sheet pour mobile et tablette */}
+          {/* Menu Hamburger pour mobile/tablette */}
           <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
             <SheetTrigger asChild>
               <Button
                 variant="ghost"
-                className="lg:hidden p-2 focus-visible:ring-[#670BFF] focus-visible:ring-2 focus-visible:outline-none rounded-md"
+                size="lg"
+                className="lg:hidden p-2 text-gray-600 hover:text-secondary hover:bg-secondary/5 focus-visible:ring-secondary focus-visible:ring-2 focus-visible:outline-none rounded-lg"
                 aria-label={isMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
                 aria-expanded={isMenuOpen}
                 aria-controls="mobile-menu"
               >
-                {isMenuOpen ? <X size={36} /> : <MenuIcon size={36} />}
+                {isMenuOpen ? <X size={28} /> : <MenuIcon size={28} />}
               </Button>
             </SheetTrigger>
             <SheetContent
               side="right"
-              className=" bg-white p-4 sm:p-6 md:p-8 flex flex-col"
+              className="bg-white p-6 md:p-8 flex flex-col items-center justify-center"
             >
               <SheetTitle className="hidden">Menu de navigation</SheetTitle>
-              <ul className="flex flex-col gap-4 w-full">
+              <ul className="flex flex-col gap-4 w-full mb-8">
                 {links.map((link) => (
                   <li
                     key={link.title}
-                    className={`text-lg px-4 py-2 rounded-md transition-all duration-200 text-center ${
+                    className={`text-lg font-bold px-4 py-3 rounded-lg transition-all duration-300 text-center ${
                       link.active
-                        ? "text-black font-semibold bg-[#670BFF]/10"
-                        : "text-muted-foreground hover:text-[#670BFF] hover:bg-[#670BFF]/5 hover:font-semibold"
+                        ? "text-gray-900 bg-secondary/10 border border-secondary/30"
+                        : "text-gray-600 hover:text-secondary hover:bg-secondary/10"
                     }`}
                   >
                     <SheetClose asChild>
                       <Link
                         href={link.href}
                         aria-current={link.active ? "page" : undefined}
-                        className="block focus-visible:ring-[#670BFF] focus-visible:ring-2 focus-visible:outline-none rounded-md"
+                        className="block focus-visible:ring-secondary focus-visible:ring-2 focus-visible:outline-none rounded-lg"
                       >
                         {link.title}
                       </Link>
@@ -132,20 +136,21 @@ export const Navbar = () => {
                 ))}
               </ul>
               <SheetClose asChild>
-                <Link href="/apply" className="mt-6 w-full">
+                <Link href="/apply" className="w-full">
                   <Button
                     size="lg"
-                    className="w-full bg-[#670BFF] hover:bg-[#5208CC] text-white px-4 py-2 rounded-md focus-visible:ring-[#670BFF] focus-visible:ring-2"
+                    className="w-full bg-secondary hover:bg-secondary/80 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300 hover:shadow-md hover:shadow-secondary/20 hover:scale-110 flex items-center gap-2 group"
                     aria-label="Postuler à Goulotech Conakry"
                   >
                     Postuler
+                    <FiArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
                   </Button>
                 </Link>
               </SheetClose>
             </SheetContent>
           </Sheet>
         </div>
-      </Container>
+      </>
     </div>
   );
 };

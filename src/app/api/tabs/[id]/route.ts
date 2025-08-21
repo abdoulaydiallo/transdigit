@@ -14,7 +14,7 @@ type ApiResponse<T> =
 // PUT /api/tabs/[id] - Update a course tab
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<ApiResponse<CourseTab>>> {
   try {
     if (req.method !== "PUT") {
@@ -74,7 +74,7 @@ export async function PUT(
 // DELETE /api/tabs/[id] - Delete a course tab
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<ApiResponse<null>>> {
   try {
     if (req.method !== "DELETE") {

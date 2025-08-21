@@ -126,7 +126,7 @@ export async function PUT(
 export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> } // Note the Promise type
-): Promise<NextResponse<ApiResponse<{}>>> {
+) {
   try {
     if (req.method !== "DELETE") {
       throw new ServiceError(

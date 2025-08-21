@@ -5,10 +5,13 @@ import { appRouter } from "@/server/trpc/route";
 
 const handler = (req: Request) =>
   fetchRequestHandler({
-    endpoint: "/api/trpc",
     req,
     router: appRouter,
+    endpoint: "/api/trpc",
     createContext,
+    onError: ({ error }) => {
+      console.error("TRPC Error:", error);
+    },
   });
 
 export { handler as GET, handler as POST };

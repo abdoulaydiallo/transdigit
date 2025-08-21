@@ -57,14 +57,6 @@ export function SectionForm({ section, courseId, tabKey, onSuccess, onCancel }: 
     name: "items",
   });
 
-  const { fields: contentFields, append: appendContent, remove: removeContent } = useFieldArray<
-    SectionFormValues,
-    "children.content"
-  >({
-    control: form.control,
-    name: "children.content",
-  });
-
   const onSubmit = async (formData: SectionFormValues) => {
     try {
       const payload = {

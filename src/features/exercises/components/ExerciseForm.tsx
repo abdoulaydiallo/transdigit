@@ -1,9 +1,8 @@
 // features/exercises/components/ExerciseForm.tsx
 "use client";
-import { z } from "zod";
 import * as React from "react";
 import { toast } from "sonner";
-import { useForm, useFieldArray, Resolver } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import { useTransition, useMemo, useCallback, useState } from "react";
@@ -44,14 +43,9 @@ import { Progress } from "@/components/ui/progress";
 import {
   Save,
   X,
-  CheckCircle,
-  XCircle,
   List,
   FileText,
-  Clock,
-  Calendar,
   Target,
-  Tag,
   Lightbulb,
   Sparkles,
   CheckCircle2,
@@ -61,7 +55,6 @@ import {
   EyeOff,
   Settings,
   Plus,
-  Trash2,
 } from "lucide-react";
 
 // Types & Schemas
@@ -337,7 +330,7 @@ export function ExerciseForm({ exercise, moduleId, onSuccess, onCancel }: {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-base font-semibold">
-                            Titre de l'exercice *
+                            Titre de l&apos;exercice *
                           </FormLabel>
                           <FormControl>
                             <Input
@@ -359,7 +352,7 @@ export function ExerciseForm({ exercise, moduleId, onSuccess, onCancel }: {
                         name="type"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-base font-semibold">Type d'exercice *</FormLabel>
+                            <FormLabel className="text-base font-semibold">Type d&apos;exercice *</FormLabel>
                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                               <FormControl>
                                 <SelectTrigger className="h-12 border-2">
@@ -450,7 +443,7 @@ export function ExerciseForm({ exercise, moduleId, onSuccess, onCancel }: {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Lightbulb className="h-5 w-5 text-primary" />
-                      Contenu de l'exercice
+                      Contenu de l&apos;exercice
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-6">
@@ -469,7 +462,7 @@ export function ExerciseForm({ exercise, moduleId, onSuccess, onCancel }: {
                             />
                           </FormControl>
                           <FormDescription>
-                            Brève description de l'exercice
+                            Brève description de l&apos;exercice
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
@@ -635,7 +628,7 @@ export function ExerciseForm({ exercise, moduleId, onSuccess, onCancel }: {
                                           }}
                                           className="ml-1 hover:bg-white/20 rounded-full"
                                         >
-                                          ×
+                                          x
                                         </button>
                                       </Badge>
                                     ))}

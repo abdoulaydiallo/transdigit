@@ -39,7 +39,7 @@ export function CourseSections({ courseId }: CourseSectionsProps) {
       try {
         await deleteSection({ courseId, id: sectionId });
         toast.success(`La section "${sectionTitle}" a été supprimée avec succès.`);
-      } catch (error) {
+      } catch {
         toast.error("Erreur lors de la suppression de la section");
       }
     }

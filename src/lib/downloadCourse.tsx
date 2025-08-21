@@ -190,8 +190,8 @@ class ModernPDFGenerator {
     this.addSectionTitle(title);
     
     if (Array.isArray(content)) {
-      content.forEach((item, index) => {
-        this.addBulletPoint(item, index === 0);
+      content.forEach((item) => {
+        this.addBulletPoint(item);
       });
     } else {
       this.addTextContent(content);
@@ -200,7 +200,7 @@ class ModernPDFGenerator {
     this.yPosition += SPACING.md;
   }
 
-  private addBulletPoint(text: string, isFirst: boolean = false) {
+  private addBulletPoint(text: string) {
     if (this.yPosition > this.pageHeight - 30) {
       this.addPage();
     }
@@ -240,7 +240,7 @@ class ModernPDFGenerator {
       this.addPage();
     }
 
-    const tableData = modules.map((module, index) => [
+    const tableData = modules.map((module) => [
       `Module ${module.number}`,
       module.title,
       module.duration || "N/A",

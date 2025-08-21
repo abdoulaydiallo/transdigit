@@ -3,7 +3,6 @@
 import { useCourses } from "../hooks/useCourses";
 import { Course } from "@/lib/db/schema";
 import { useState } from "react";
-import { CourseForm } from "./CourseForm";
 import { CourseCard } from "./CourseCard";
 
 export function CourseList() {
@@ -14,7 +13,8 @@ export function CourseList() {
   const [editingCourse, setEditingCourse] = useState<Course | null>(null);
 
   if (isLoading) return <div>Chargement...</div>;
-  if (error) return <div>Erreur: {error.message}</div>;
+  if (error) return <div>Erreur:{error.message}</div>;
+  if(editingCourse) return console.log(editingCourse);
 
   return (
     <div className="space-y-6">

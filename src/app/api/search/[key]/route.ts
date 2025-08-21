@@ -58,7 +58,7 @@ type ApiResponse<T> =
   | { success: false; error: ReturnType<ServiceError["toJSON"]> };
 
 // GET /api/search/[key] - Get course details by key
-export async function GET(req: NextRequest, { params }: { params: { key: string } }): Promise<NextResponse<ApiResponse<CourseDetail>>> {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ key: string }> }): Promise<NextResponse<ApiResponse<CourseDetail>>> {
   try {
     if (req.method !== "GET") {
       throw new ServiceError(
@@ -69,7 +69,8 @@ export async function GET(req: NextRequest, { params }: { params: { key: string 
     }
 
     // Extraire et valider la clé du cours depuis les paramètres d'URL
-    const courseKey = params.key;
+    const awaitedParams = await params;
+    const courseKey = awaitedParams.key;
     const validatedKey = NewCourseSchema.shape.key.parse(courseKey);
 
     // Appeler la fonction pour récupérer les détails du cours

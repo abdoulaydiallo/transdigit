@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { Editor } from '@tiptap/react';
-import { Button } from '@/components/ui/button';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { NotionBlock } from '@/types/Editor';
 import { cn } from '@/lib/utils';
@@ -13,7 +12,7 @@ interface SlashMenuProps {
   show: boolean;
   position: { top: number; left: number };
   selectedBlockIndex: number;
-  setSelectedBlockIndex: (index: number | any) => void;
+  setSelectedBlockIndex: (index: number | ((prev: number) => number) ) => void;
   setShowSlashMenu: (show: boolean) => void;
   setShowImageDialog: (show: boolean) => void;
   cursorPositionRef: React.MutableRefObject<number | null>;

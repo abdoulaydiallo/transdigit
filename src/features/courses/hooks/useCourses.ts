@@ -89,7 +89,7 @@ export function useCourses(props: UseCoursesProps = {}) {
       }
       return result.data;
     },
-    onSuccess: (data, variables) => {
+    onSuccess: (variables) => {
       queryClient.invalidateQueries({ queryKey: ["courses"] });
       queryClient.invalidateQueries({ queryKey: ["course", variables.id] });
     },
@@ -101,7 +101,7 @@ export function useCourses(props: UseCoursesProps = {}) {
       const res = await fetch(`/api/courses/${id}`, {
         method: "DELETE",
       });
-      const result: ApiResponse<{}> = await res.json();
+      const result = await res.json();
       if (!result.success) {
         throw new ServiceError(
           result.error.code as ErrorCode,

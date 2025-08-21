@@ -52,11 +52,9 @@ import {
   Eye,
   EyeOff,
   Settings,
-  Tag,
   Lightbulb,
   Sparkles,
   CheckCircle2,
-  Timer,
   List, // Ajouté ici
 } from "lucide-react";
 

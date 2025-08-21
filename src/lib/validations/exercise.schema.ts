@@ -29,14 +29,14 @@ export const NewExerciseSchema = z.object({
   type: z.enum(EXERCISE_TYPES),
   submissionUrl: z
   .preprocess((val) => (typeof val === "string" ? val.trim() : val), 
-    z.string().url("URL invalide").max(500).nullable().optional()
+    z.url("URL invalide").max(500).nullable().optional()
   ),
   maxScore: z.number().positive("Le score maximum doit être positif"),
   deadline: zodDatetimeLocal(),
   difficulty: z.enum(DIFFICULTY_LEVELS),
   tags: z.array(z.string().min(1, "Les tags ne doivent pas être vides")).max(10).optional(),
   instructions: ExerciseInstructionsSchema.optional(),
-  isActive: z.boolean().default(true),
+  isActive: z.boolean().default(true).optional(),
 }).strict();
 
 // Schéma de mise à jour

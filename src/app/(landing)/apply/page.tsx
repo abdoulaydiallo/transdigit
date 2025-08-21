@@ -2,10 +2,13 @@
 
 import Image from "next/image";
 import { Container } from "@/components/Container";
-import { ApplicationForm } from "@/components/ApplyForm";
+import { ApplicationForm, formSchema } from "@/components/ApplyForm";
+import { output } from "zod";
+
 
 export default function ApplyPage() {
-  const handleSubmit = (values: any) => {
+
+  const handleSubmit = (values: output<typeof formSchema>) => {
     console.log("Formulaire soumis :", values);
   };
 
@@ -15,7 +18,7 @@ export default function ApplyPage() {
         {/* Section du formulaire (2/3 sur tablette/desktop) */}
         <div className="md:col-span-2">
           <h1 className="text-xl md:text-4xl font-bold mb-2 text-gray-900">
-            Postuler à Goulotech
+            Postuler à Transdigit
           </h1>
           <p className="text-sm text-justify text-gray-600">
             Rejoignez notre bootcamp à Conakry pour transformer votre avenir avec des compétences tech adaptées aux besoins guinéens. Restez informé des nouveaux programmes, hackathons locaux, et promotions. Cette candidature prend moins de 5 minutes. Notre équipe vous contactera pour un entretien de 30 minutes.
@@ -56,7 +59,7 @@ export default function ApplyPage() {
                 height={14}
               />
               <p className="ml-2 text-sm font-semibold text-gray-900">
-                Pas de prépaiement ni d'engagement.
+                Pas de prépaiement ni d&apos;engagement.
               </p>
             </div>
           </div>

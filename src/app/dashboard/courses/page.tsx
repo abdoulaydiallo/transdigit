@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
 import { Course } from "@/lib/db/schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,14 +25,14 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { BookOpen, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useCourses } from "@/features/courses/hooks/useCourses";
 import { CourseForm } from "@/features/courses/components/CourseForm";
 import { CourseCard } from "@/features/courses/components/CourseCard";
 
 export default function CoursesPage() {
   const [page, setPage] = React.useState(1);
-  const [perPage, setPerPage] = React.useState(10);
+  const [perPage] = React.useState(10);
   const [isActiveFilter, setIsActiveFilter] = React.useState<string | undefined>(
     undefined
   );

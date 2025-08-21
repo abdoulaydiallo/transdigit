@@ -2,10 +2,9 @@
 "use client";
 
 import { Exercise } from "@/lib/db/schema";
-import { useExercises } from "../hooks/useExercises";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Edit, Trash, Eye, EyeOff, Plus, CheckSquare, HelpCircle,} from "lucide-react";
+import { Edit, Trash, Eye, EyeOff,} from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { motion } from "framer-motion";
@@ -23,10 +22,7 @@ export function ExerciseItem({
   onEdit,
   onDelete,
   onToggleActive,
-  onAddExercise,
 }: ExerciseItemProps) {
-  const { exercises, isLoading: isLoadingExercises } = useExercises({exerciseId: exercise.id });
-  const exerciseCount = exercises?.length || 0;
 
   return (
     <motion.div

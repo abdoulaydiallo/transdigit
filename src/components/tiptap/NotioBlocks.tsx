@@ -1,10 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
 import { Editor } from '@tiptap/react';
-import { Button } from '@/components/ui/button';
-import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { Pilcrow, Heading1, Heading2, List, ListOrdered, Image as ImageIcon, Code } from 'lucide-react';
 import { NotionBlock } from '@/types/Editor';
-import { cn } from '@/lib/utils';
 
 enum BlockGroup {
   BASIC = 'Basique',

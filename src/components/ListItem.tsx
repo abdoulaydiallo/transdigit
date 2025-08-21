@@ -1,14 +1,19 @@
-import Image from "next/image";
+import { FiCheckCircle } from "react-icons/fi";
 
 type Props = {
   title: string;
+  className?: string;
 };
 
-export const ListItem = ({ title }: Props) => {
+export const ListItem = ({ title, className = "" }: Props) => {
   return (
-    <div className="flex items-start md:items-center">
-      <Image alt="Check" src="/img/check-red.svg" width={14} height={14} />
-      <p className="ml-2 text-sm font-semibold text-black/80 line-clamp-1">{title}</p>
+    <div
+      className={`flex items-center gap-3 p-2 rounded-lg transition-all duration-300 group ${className}`}
+    >
+      <FiCheckCircle className="w-5 h-5 text-secondary flex-shrink-0  transition-transform duration-300" />
+      <p className="text-base font-medium text-gray-900 line-clamp-1">
+        {title}
+      </p>
     </div>
   );
 };

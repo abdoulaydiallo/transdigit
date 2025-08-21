@@ -1,1 +1,0 @@
-ALTER TABLE "course_modules" ADD COLUMN "tools" jsonb;

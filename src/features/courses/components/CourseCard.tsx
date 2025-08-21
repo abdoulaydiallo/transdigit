@@ -47,7 +47,7 @@ export function CourseCard({ course, onEdit, onDelete }: CourseCardProps) {
       await deleteCourse(course.id);
       onDelete();
       toast.success(`Le cours "${course.title}" a été supprimé avec succès.`);
-    } catch (error) {
+    } catch {
       toast.error("Erreur lors de la suppression du cours");
     }
     setIsAlertOpen(false);
@@ -102,7 +102,7 @@ export function CourseCard({ course, onEdit, onDelete }: CourseCardProps) {
                 <AlertDialogHeader>
                   <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Voulez-vous vraiment supprimer le cours "{course.title}" ? Cette
+                    Voulez-vous vraiment supprimer le cours &quot;{course.title}&quot; ? Cette
                     action est irréversible.
                   </AlertDialogDescription>
                 </AlertDialogHeader>

@@ -70,22 +70,22 @@ export function CourseLessons({ moduleId, activeLessonId, onLessonChange }: Cour
       try {
         await deleteLesson({ moduleId, id: lessonId });
         toast.success(`Leçon "${lessonTitle}" supprimée avec succès.`);
-      } catch (error) {
+      } catch {
         toast.error("Erreur lors de la suppression de la leçon");
       }
     }
   };
 
-  const handleToggleActive = async (lesson: Lesson) => {
+  const handleToggleActive = async (lesson: Lesson | any) => {
     try {
       await updateLesson({ moduleId, id: lesson.id, data: { ...lesson, isActive: !lesson.isActive } });
       toast.success(`Leçon "${lesson.title}" ${!lesson.isActive ? "activée" : "désactivée"}.`);
-    } catch (error) {
+    } catch {
       toast.error("Erreur lors de la modification de la leçon");
     }
   };
 
-  const LessonCard = ({ lesson, index }: { lesson: Lesson; index: number }) => (
+  const LessonCard = ({ lesson, index }: { lesson: Lesson | any; index: number }) => (
     <div
       className={`group relative rounded-xl border transition-all duration-200 hover:shadow-md ${
         lesson.isActive 

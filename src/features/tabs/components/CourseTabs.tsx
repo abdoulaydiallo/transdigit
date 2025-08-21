@@ -11,7 +11,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
 import {
   FolderOpen,
   Plus,
@@ -71,7 +70,7 @@ export function CourseTabs({ courseId, activeTabKey, onTabChange }: CourseTabsPr
       try {
         await deleteTab({ courseId, id: tabId });
         toast.success(`L'onglet "${tabTitle}" a été supprimé avec succès.`);
-      } catch (error) {
+      } catch {
         toast.error("Erreur lors de la suppression de l'onglet");
       }
     }
@@ -81,7 +80,7 @@ export function CourseTabs({ courseId, activeTabKey, onTabChange }: CourseTabsPr
     try {
       await updateTab({ courseId, id: tab.id, data: { ...tab, isActive: !tab.isActive } });
       toast.success(`L'onglet "${tab.title}" a été ${!tab.isActive ? "activé" : "désactivé"}.`);
-    } catch (error) {
+    } catch {
       toast.error("Erreur lors de la modification de l'onglet");
     }
   };

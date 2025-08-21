@@ -30,7 +30,8 @@ const courseValues = courses.map((course) => course.link.replace("/", "")) as [
   string,
   ...string[]
 ];
-const formSchema = z.object({
+
+export const formSchema = z.object({
   firstName: z
     .string()
     .min(2, { message: "Le prénom doit contenir au moins 2 caractères." })
@@ -44,7 +45,7 @@ const formSchema = z.object({
     .regex(/^\+224[0-9]{8,9}$/, {
       message: "Veuillez entrer un numéro de téléphone guinéen valide (ex. +224 622 123 456).",
     }),
-  email: z.string().email({ message: "Veuillez entrer une adresse e-mail valide." }),
+  email: z.email({ message: "Veuillez entrer une adresse e-mail valide." }),
   course: z.enum(courseValues, {
     message: "Veuillez sélectionner un cours.",
   }),
@@ -59,6 +60,7 @@ interface ApplicationFormProps {
   onSubmit?: (values: z.infer<typeof formSchema>) => void;
   courseOptions?: { value: string; label: string }[];
   defaultValues?: Partial<z.infer<typeof formSchema>>;
+  courseTitle?: string
 }
 
 export function ApplicationForm({
@@ -67,8 +69,9 @@ export function ApplicationForm({
     value: course.link.replace("/", ""),
     label: course.title,
   })),
-  defaultValues = {},
+  courseTitle
 }: ApplicationFormProps) {
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -78,16 +81,15 @@ export function ApplicationForm({
       email: "",
       course: undefined,
       receiveUpdates: true,
-      acceptPrivacyPolicy: false, // Pré-coché par défaut
-      ...defaultValues,
-    } as any,
+      acceptPrivacyPolicy: true, // Pré-coché par défaut
+    },
   });
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="mt-8 space-y-2"
+        className="mt-8 space-y-3"
         aria-labelledby="application-form"
       >
         <FormField
@@ -101,13 +103,13 @@ export function ApplicationForm({
               <div className="w-full sm:w-3/4">
                 <FormControl>
                   <Input
-                    className="bg-[#f2f2f2] border-none focus-visible:ring-[#670BFF] focus-visible:ring-2"
+                    className="bg-[#f2f2f2] border-none focus-visible:ring-primary focus-visible:ring-2"
                     placeholder="Mamadou"
                     {...field}
                     aria-required="true"
                   />
                 </FormControl>
-                <FormMessage className="text-[#670BFF] text-sm mt-1" />
+                <FormMessage className="text-primary text-sm mt-1" />
               </div>
             </FormItem>
           )}
@@ -123,13 +125,13 @@ export function ApplicationForm({
               <div className="w-full sm:w-3/4">
                 <FormControl>
                   <Input
-                    className="bg-[#f2f2f2] border-none focus-visible:ring-[#670BFF] focus-visible:ring-2"
+                    className="bg-[#f2f2f2] border-none focus-visible:ring-primary focus-visible:ring-2"
                     placeholder="Diallo"
                     {...field}
                     aria-required="true"
                   />
                 </FormControl>
-                <FormMessage className="text-[#670BFF] text-sm mt-1" />
+                <FormMessage className="text-primary text-sm mt-1" />
               </div>
             </FormItem>
           )}
@@ -145,7 +147,7 @@ export function ApplicationForm({
               <div className="w-full sm:w-3/4">
                 <FormControl>
                   <PhoneInput
-                    className="bg-[#f2f2f2] border-none focus-visible:ring-[#670BFF] focus-visible:ring-2"
+                    className="bg-[#f2f2f2] border-none focus-visible:ring-primary focus-visible:ring-2"
                     placeholder="+224 600 123 456"
                     {...field}
                     aria-required="true"
@@ -153,7 +155,7 @@ export function ApplicationForm({
                     countryCallingCodeEditable={false}
                   />
                 </FormControl>
-                <FormMessage className="text-[#670BFF] text-sm mt-1" />
+                <FormMessage className="text-primary text-sm mt-1" />
               </div>
             </FormItem>
           )}
@@ -169,13 +171,13 @@ export function ApplicationForm({
               <div className="w-full sm:w-3/4">
                 <FormControl>
                   <Input
-                    className="bg-[#f2f2f2] border-none focus-visible:ring-[#670BFF] focus-visible:ring-2"
+                    className="bg-[#f2f2f2] border-none focus-visible:ring-primary focus-visible:ring-2"
                     placeholder="mamadou.diallo@exemple.com"
                     {...field}
                     aria-required="true"
                   />
                 </FormControl>
-                <FormMessage className="text-[#670BFF] text-sm mt-1" />
+                <FormMessage className="text-primary text-sm mt-1" />
               </div>
             </FormItem>
           )}
@@ -195,7 +197,7 @@ export function ApplicationForm({
                     defaultValue={field.value}
                     aria-required="true"
                   >
-                    <SelectTrigger className="bg-[#f2f2f2] border-none focus-visible:ring-[#670BFF] focus-visible:ring-2">
+                    <SelectTrigger className="bg-[#f2f2f2] border-none focus-visible:ring-primary focus-visible:ring-2">
                       <SelectValue placeholder="Sélectionnez un cours" />
                     </SelectTrigger>
                     <SelectContent>
@@ -207,7 +209,7 @@ export function ApplicationForm({
                     </SelectContent>
                   </Select>
                 </FormControl>
-                <FormMessage className="text-[#670BFF] text-sm mt-1" />
+                <FormMessage className="text-primary text-sm mt-1" />
               </div>
             </FormItem>
           )}
@@ -220,7 +222,7 @@ export function ApplicationForm({
               <FormControl>
                 <Input
                   type="checkbox"
-                  className="h-4 w-4 bg-[#f2f2f2] border-none focus-visible:ring-[#670BFF] focus-visible:ring-2"
+                  className="h-4 w-4 bg-[#f2f2f2] border-none focus-visible:ring-primary focus-visible:ring-2"
                   {...field}
                   value={field.value ? "true" : "false"}
                   onChange={(e) => field.onChange(e.target.checked)}
@@ -230,7 +232,7 @@ export function ApplicationForm({
               <FormLabel className="text-sm text-gray-900">
                 Recevoir des nouvelles sur les programmes et événements
               </FormLabel>
-              <FormMessage id="receive-updates-error" className="text-[#670BFF] text-sm mt-1" />
+              <FormMessage id="receive-updates-error" className="text-primary text-sm mt-1" />
             </FormItem>
           )}
         />
@@ -242,7 +244,7 @@ export function ApplicationForm({
               <FormControl>
                 <Input
                   type="checkbox"
-                  className="h-4 w-4 bg-[#f2f2f2] border-none focus-visible:ring-[#670BFF] focus-visible:ring-2"
+                  className="h-4 w-4 bg-[#f2f2f2] border-none focus-visible:ring-primary focus-visible:ring-2"
                   {...field}
                   value={field.value ? "true" : "false"}
                   onChange={(e) => field.onChange(e.target.checked)}
@@ -251,23 +253,24 @@ export function ApplicationForm({
                 />
               </FormControl>
               <FormLabel className="text-sm text-gray-900">
-                J'accepte la{" "}
+                J&apos;accepte la{" "}
                 <a
                   href="#privacy-policy"
-                  className="text-[#670BFF] hover:underline"
+                  className="text-primary hover:underline"
                   aria-label="Politique de confidentialité de Goulotech"
                 >
                   politique de confidentialité
                 </a>{" "}
                 *
               </FormLabel>
-              <FormMessage id="privacy-policy-error" className="text-[#670BFF] text-sm mt-1" />
+              <FormMessage id="privacy-policy-error" className="text-primary text-sm mt-1" />
             </FormItem>
           )}
         />
         <Button
           type="submit"
-          className=" bg-[#670BFF] hover:bg-[#5208CC] text-white px-4 py-2 rounded-md flex items-center gap-2"
+          size="lg"
+          className=" bg-primary cursor-pointer text-white px-4 py-2 rounded-md flex items-center gap-2"
           aria-label="Soumettre la candidature"
         >
           Commencer <ArrowRight size={18} />

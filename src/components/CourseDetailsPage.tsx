@@ -11,6 +11,19 @@ import { CourseDetail } from "@/types/course";
 import { CourseApplicationDialog } from "./ApplyDialog";
 import { Button } from "@/components/ui/button";
 import { downloadCourseByTitle } from "@/lib/downloadCourse";
+import { output } from "zod";
+import { formSchema } from "./ApplyForm";
+import { 
+  FiStar, 
+  FiDownload, 
+  FiPlay, 
+  FiClock, 
+  FiUsers, 
+  FiMapPin,
+  FiTrendingUp,
+  FiAward
+} from "react-icons/fi";
+import { FaRocket } from "react-icons/fa";
 
 interface CourseDetailPageProps {
   courseKey: string;
@@ -39,104 +52,208 @@ export default function CourseDetailPage({ courseKey }: CourseDetailPageProps) {
   if (!course) {
     const availableKeys = courseDetails.map((c) => c.key).join(", ");
     return (
-      <div className="my-8 text-center">
-        <p>
-          Cours non trouvé pour la clé : <strong>{normalizedCourseKey}</strong>
-        </p>
-        <p>Clés disponibles : {availableKeys}</p>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-white">
+        <div className="text-center p-8 bg-white rounded-2xl shadow-lg border border-gray-100 max-w-md">
+          <div className="w-16 h-16 bg-secondary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <FiTrendingUp className="w-8 h-8 text-secondary" />
+          </div>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Cours introuvable</h2>
+          <p className="text-gray-600 mb-4">
+            Cours non trouvé pour : <strong>{normalizedCourseKey}</strong>
+          </p>
+          <p className="text-sm text-gray-500">
+            Clés disponibles : {availableKeys}
+          </p>
+        </div>
       </div>
     );
   }
 
   if (!course.sectionContents[activeTab]) {
     return (
-      <div className="my-8 text-center">
-        <p>
-          Contenu non trouvé pour l'onglet : <strong>{activeTab}</strong>
-        </p>
-        <p>Clés de sections disponibles : {Object.keys(course.sectionContents).join(", ") || "Aucune"}</p>
-        <p>Clés des onglets : {course.tabs.map((tab) => tab.key).join(", ")}</p>
-        <p>Course key: {normalizedCourseKey}</p>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-white">
+        <div className="text-center p-8 bg-white rounded-2xl shadow-lg border border-gray-100 max-w-md">
+          <div className="w-16 h-16 bg-secondary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <FiPlay className="w-8 h-8 text-secondary" />
+          </div>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Contenu non disponible</h2>
+          <p className="text-gray-600 mb-4">
+            Contenu non trouvé pour l'onglet : <strong>{activeTab}</strong>
+          </p>
+          <div className="text-sm text-gray-500 space-y-1">
+            <p>Sections disponibles : {Object.keys(course.sectionContents).join(", ") || "Aucune"}</p>
+            <p>Onglets : {course.tabs.map((tab) => tab.key).join(", ")}</p>
+          </div>
+        </div>
       </div>
     );
   }
 
   console.log(`Rendering course: ${course}`);
 
-  const handleSubmit = (values: any) => {
+  const handleSubmit = (values: output<typeof formSchema>) => {
     console.log("Formulaire soumis :", values);
-    setIsDialogOpen(false); // Ferme le dialogue après soumission
+    setIsDialogOpen(false);
   };
 
   const handleDownload = async () => {
     try {
       await downloadCourseByTitle(course.title);
-      
     } catch (error) {
       console.error("Erreur lors du téléchargement :", error);
-    
     }
   };
 
   return (
-    <div className="my-4 md:my-8">
+    <div className="relative bg-gradient-to-b from-white to-gray-50/30 py-8">
+      {/* Background Effects */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-1/4 right-0 w-96 h-96 bg-secondary/3 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/4 left-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl"></div>
+      </div>
+
       <Container>
-        <div className="lg:flex gap-4 space-y-8 lg:space-y-0">
-          <div className="w-full lg:w-3/4 space-y-8 bg-[#f5f2fb] rounded-xl py-8 px-4 md:px-16">
-            <p className="text-xs">
-              ⭐️⭐️⭐️⭐️⭐️ 4.9/5 - Inspiré des meilleurs bootcamps africains
-            </p>
-            <h1 className="text-xl md:text-5xl font-bold">{course.title}</h1>
-            <div className="space-y-2">
-              <ListItem title="Un bootcamp qui illumine les carrières en Guinée" />
-              <ListItem title="9 semaines intensives à Conakry, sans prérequis" />
-              <ListItem title="Décrochez un job tech ou tissez votre startup" />
+        {/* Hero Section */}
+        <div className="grid lg:grid-cols-3 gap-8 mb-12 rounded-3xl">
+          {/* Content Column */}
+          <div className="lg:col-span-2 relative rounded-3xl overflow-hidden h-full">
+            <div className="absolute inset-0 bg-primary"></div>
+            {/* Background Effects */}
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-primary/80 to-secondary/20 z-10"></div>
+            <div className="absolute top-0 right-0 w-96 h-96 bg-secondary/10 rounded-full blur-3xl z-10"></div>
+            <div className="absolute bottom-0 left-0 w-80 h-80 bg-secondary/5 rounded-full blur-2xl z-10"></div>
+            
+            {/* Content */}
+            <div className="relative z-20 px-8 lg:px-12 py-12 lg:py-16 h-full flex flex-col justify-between">
+              <div className="max-w-2xl">
+                {/* Rating Badge */}
+                <div className="inline-flex items-center gap-2 bg-secondary/15 backdrop-blur-sm border border-secondary/25 text-secondary px-4 py-2 rounded-full mb-6">
+                  <div className="flex items-center gap-1">
+                    {[...Array(5)].map((_, i) => (
+                      <FiStar key={i} className="w-3 h-3 fill-current" />
+                    ))}
+                  </div>
+                  <span className="font-semibold text-sm">4.9/5</span>
+                  <span className="text-xs text-gray-300">• Inspiré des meilleurs bootcamps africains</span>
+                </div>
+                
+                {/* Title */}
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight mb-4">
+                  {course.title}
+                </h1>
+                
+                {/* Key Features */}
+                <div className="space-y-3 mb-6">
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 bg-secondary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <FiAward className="w-3 h-3 text-secondary" />
+                    </div>
+                    <div className="text-gray-300">Un bootcamp qui illumine les carrières en Guinée</div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 bg-secondary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <FiClock className="w-3 h-3 text-secondary" />
+                    </div>
+                    <div className="text-gray-300">9 semaines intensives à Conakry, sans prérequis</div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 bg-secondary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <FiTrendingUp className="w-3 h-3 text-secondary" />
+                    </div>
+                    <div className="text-gray-300">Décrochez un job tech ou tissez votre startup</div>
+                  </div>
+                </div>
+
+                {/* Stats */}
+                <div className="grid grid-cols-3 gap-6 mb-8 p-6 bg-gray-900/50 rounded-2xl">
+                  <div className="text-center">
+                    <div className="flex items-center justify-center mb-2">
+                      <FiUsers className="w-5 h-5 text-secondary" />
+                    </div>
+                    <div className="text-2xl font-bold text-white">200+</div>
+                    <div className="text-sm text-gray-300">Étudiants</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="flex items-center justify-center mb-2">
+                      <FiAward className="w-5 h-5 text-secondary" />
+                    </div>
+                    <div className="text-2xl font-bold text-white">85%</div>
+                    <div className="text-sm text-gray-300">Emploi</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="flex items-center justify-center mb-2">
+                      <FiMapPin className="w-5 h-5 text-secondary" />
+                    </div>
+                    <div className="text-2xl font-bold text-white">Conakry</div>
+                    <div className="text-sm text-gray-300">Campus</div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 mt-auto">
+                <CourseApplicationDialog
+                  courseKey={normalizedCourseKey}
+                  courseTitle={course.title}
+                  isOpen={isDialogOpen}
+                  setIsOpen={setIsDialogOpen}
+                  onSubmit={handleSubmit}
+                />
+                <Button
+                  variant="outline"
+                  onClick={handleDownload}
+                  size="lg"
+                  className="border-white/30 text-white hover:bg-white/10 hover:border-white/50 font-medium px-8 py-4 h-auto rounded-xl transition-all duration-300"
+                >
+                  <FiDownload className="w-5 h-5 mr-2" />
+                  Télécharger le programme
+                </Button>
+              </div>
             </div>
-            <div className="flex gap-4">
-              <CourseApplicationDialog
-                courseKey={normalizedCourseKey}
-                courseTitle={course.title}
-                isOpen={isDialogOpen}
-                setIsOpen={setIsDialogOpen}
-                onSubmit={handleSubmit}
+            
+            {/* Floating Elements */}
+            <div className="absolute top-1/4 right-8 opacity-20 z-10">
+              <div className="w-24 h-24 border-2 border-secondary/30 rounded-2xl rotate-45 animate-pulse"></div>
+            </div>
+            <div className="absolute bottom-1/3 right-1/4 opacity-10 z-10">
+              <div className="w-16 h-16 bg-secondary/20 rounded-full blur-sm animate-bounce"></div>
+            </div>
+          </div>
+          
+          {/* Image Column */}
+          <div className="lg:col-span-1 relative rounded-3xl overflow-hidden h-full">
+            <div className="relative h-full bg-gray-900 shadow-lg hover:shadow-xl transition-shadow duration-300 group">
+              <Image
+                src={course.imageSrc}
+                alt={course.imageAlt}
+                fill
+                className="object-cover transition-transform duration-700 group-hover:scale-105 opacity-90"
+                priority
               />
-              <Button
-                variant="outline"
-                onClick={handleDownload}
-                size="lg"
-                className="border-[#670BFF] text-[#670BFF] hover:bg-[#670BFF] hover:text-white"
-              >
-                Télécharger le syllabus
-              </Button>
+              
+              {/* Enhanced Play Button Overlay with Glow */}
+              <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center hover:bg-secondary/90 transition-colors cursor-pointer shadow-lg shadow-secondary/50 animate-glow">
+                  <FiPlay className="w-6 h-6 text-white ml-1" />
+                </div>
+              </div>
+              
+              {/* Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+              
+              {/* Subtle Border Glow on Hover */}
+              <div className="absolute inset-0 border-2 border-transparent group-hover:border-secondary/30 transition-all duration-300 rounded-3xl"></div>
             </div>
           </div>
-          <div className="w-full lg:w-2/4 relative aspect-video lg:h-auto rounded-xl overflow-hidden">
-            <Image
-              src={course.imageSrc}
-              alt={course.imageAlt}
-              fill
-              className="object-cover"
-              priority
-            />
-          </div>
         </div>
 
-        <div className="my-8 md:my-12">
-          <h1 className="text-sm text-center font-semibold">
-            Nos diplômés brillent auprès d'entreprises locales et globales
-          </h1>
-          <div className="w-full flex flex-wrap gap-4 md:gap-16 justify-around mt-8">
-            {course.partners.map((partner, index) => (
-              <span key={index} className="text-gray-500 text-lg font-medium">
-                {partner.name}
-              </span>
-            ))}
+        {/* Navigation & Content */}
+        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+          <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} tabs={course.tabs} />
+          <div className="p-8 lg:p-12">
+            <SectionContent {...course.sectionContents[activeTab]} />
           </div>
         </div>
-
-        <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} tabs={course.tabs} />
-
-        <SectionContent {...course.sectionContents[activeTab]} />
       </Container>
     </div>
   );

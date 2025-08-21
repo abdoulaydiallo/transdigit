@@ -65,7 +65,6 @@ import {
 import { Lesson } from "@/lib/db/schema";
 import { NewLessonSchema } from "@/lib/validations/courseLessons";
 import { useLessons } from "../hooks/useLessons";
-import {NovelEditor} from "@/components/Novel/NovelEditor";
 
 // Lazy load components avec fallback amélioré
 const RichTextEditor = dynamic(
@@ -517,7 +516,6 @@ export function LessonForm({ lesson, moduleId, onSuccess, onCancel }: LessonForm
                         <FormItem>
                           <FormControl>
                             <RichTextEditor
-                              label="Contenu principal"
                               defaultValue={field.value}
                               onChange={field.onChange}
                             />

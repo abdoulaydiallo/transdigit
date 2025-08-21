@@ -92,10 +92,10 @@ export class LessonService {
         query = query.where(eq(lessons.isActive, filters.isActive));
       }
       if (filters.type?.trim()) {
-        query = query.where(eq(lessons.type, filters.type as any));
+        query = query.where(eq(lessons.type, filters.type as "texte" | "video" | "pdf"));
       }
       if (filters.difficulty?.trim()) {
-        query = query.where(eq(lessons.difficulty, filters.difficulty as any));
+        query = query.where(eq(lessons.difficulty, filters.difficulty as "facile" | "moyen" | "difficile"));
       }
       if (filters.title?.trim()) {
         query = query.where(sql`LOWER(${lessons.title}) LIKE ${'%' + filters.title.toLowerCase() + '%'}`);

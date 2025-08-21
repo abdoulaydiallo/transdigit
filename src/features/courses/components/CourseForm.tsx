@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { Plus, Save, X } from "lucide-react";
+import { Save, X } from "lucide-react";
 import { useCourses } from "../hooks/useCourses";
 import { toast } from "sonner";
 
@@ -79,7 +79,7 @@ export function CourseForm({ course, onSuccess, onCancel }: CourseFormProps) {
         toast.success(`Le cours "${data.title}" a été créé avec succès.`);
       }
       onSuccess();
-    } catch (error) {
+    } catch {
       toast.error("Erreur lors de la sauvegarde du cours");
       form.setError("root", { message: "Erreur lors de la sauvegarde du cours" });
     }
@@ -133,7 +133,7 @@ export function CourseForm({ course, onSuccess, onCancel }: CourseFormProps) {
           name="imageSrc"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>URL de l'image</FormLabel>
+              <FormLabel>URL de l&apos;image</FormLabel>
               <FormControl>
                 <Input
                   placeholder="ex: https://example.com/image.jpg"

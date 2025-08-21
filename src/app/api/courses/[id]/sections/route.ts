@@ -14,7 +14,7 @@ type ApiResponse<T> =
 // GET /api/courses/[id]/sections - Lister les sections d’un cours
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<ApiResponse<CourseSection[]>>> {
   try {
     const awaitedParams = await params;
@@ -46,7 +46,7 @@ export async function GET(
 // POST /api/courses/[id]/sections - Créer une nouvelle section
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{id: string}> }
 ): Promise<NextResponse<ApiResponse<CourseSection>>> {
   try {
     const awaitedParams = await params;

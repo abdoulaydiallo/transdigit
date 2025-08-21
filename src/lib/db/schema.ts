@@ -1,11 +1,59 @@
-import { pgTable, text, varchar, integer, boolean, timestamp, serial, jsonb, uuid, real, pgEnum } from 'drizzle-orm/pg-core';
+import { pgTable, text, varchar, integer, boolean, timestamp, serial, jsonb, real, pgEnum } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
 // Enum Definitions
+export const userRoleEnum = pgEnum('user_role', ['student', 'teacher', 'admin']);
 export const lessonTypeEnum = pgEnum('lesson_type', ['texte', 'video', 'pdf']);
 export const questionTypeEnum = pgEnum('question_type', ['choix_multiple', 'texte_libre', 'vrai_faux']);
 export const exerciseTypeEnum = pgEnum('exercise_type', ['projet', 'quiz', 'tache']);
 export const difficultyEnum = pgEnum('difficulty', ['facile', 'moyen', 'difficile']);
+
+export const user = pgTable("user", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  email: text("email").notNull().unique(),
+  email_verified: boolean("email_verified").notNull(),
+  image: text("image"),
+  role: userRoleEnum('role').notNull().default('student'),
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow(),
+});
+
+export const session = pgTable("session", {
+  id: text("id").primaryKey(),
+  user_id: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+  token: text("token").notNull().unique(),
+  expires_at: timestamp("expires_at").notNull(),
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow(),
+});
+
+export const account = pgTable("account", {
+  id: text("id").primaryKey(),
+  accountId: text("account_id").notNull(),
+  providerId: text("provider_id").notNull(),
+  userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+  accessToken: text("access_token"),
+  refreshToken: text("refresh_token"),
+  idToken: text("id_token"),
+  accessTokenExpiresAt: timestamp("access_token_expires_at"),
+  refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
+  scope: text("scope"),
+  password: text("password"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const verification = pgTable("verification", {
+  id: text("id").primaryKey(),
+  identifier: text("identifier").notNull(),
+  value: text("value").notNull(),
+  expiresAt: timestamp("expires_at").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
 
 // Table principale des cours
 export const courses = pgTable('courses', {
@@ -119,6 +167,28 @@ export const exercises = pgTable('course_exercises', {
 });
 
 // Relations Drizzle
+
+export const usersRelations = relations(user, ({ many }) => ({
+  session: many(session),
+  account: many(account),
+  // Optionnel : ajouter la progression utilisateur
+  // userProgress: many(userProgress),
+}));
+
+export const sessionRelations = relations(session, ({ one }) => ({
+  user: one(user, {
+    fields: [session.user_id],
+    references: [user.id],
+  }),
+}));
+
+export const accountRelations = relations(account, ({ one }) => ({
+  user: one(user, {
+    fields: [account.userId],
+    references: [user.id],
+  }),
+}));
+
 export const coursesRelations = relations(courses, ({ many }) => ({
   sections: many(courseSections),
   modules: many(courseModules),

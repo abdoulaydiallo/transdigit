@@ -33,10 +33,10 @@ export default function CarouselSection({ items }: CarouselSectionProps) {
                 alt={item.imageAlt}
                 width={600}
                 height={470}
-                className="h-[240px] md:h-[470px] w-full md:w-1/3 rounded-t-xl md:rounded-l-none md:rounded-r-xl"
+                className="h-[240px] aspect-auto object-cover md:h-[470px] w-full md:w-1/3 rounded-t-xl md:rounded-l-none md:rounded-r-xl"
                 loading="lazy"
               />
-              <div className="h-full w-full md:w-2/3 p-8 md:p-12 bg-[#660bfe]/5 rounded-b-xl md:rounded-b-none md:rounded-l-xl">
+              <div className="h-full w-full md:w-2/3 p-8 md:p-12 bg-primary/5 rounded-b-xl md:rounded-b-none md:rounded-l-xl">
                 <Badge>Nouveau</Badge>
                 <h1 className="text-4xl font-bold mt-4">{item.title}</h1>
                 <p className="text-md my-4">{item.description}</p>

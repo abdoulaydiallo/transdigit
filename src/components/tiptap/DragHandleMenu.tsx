@@ -1,7 +1,6 @@
 // DragHandleMenu.tsx
-import { useState, useRef, useEffect } from 'react';
 import { Editor } from '@tiptap/react';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Popover, PopoverContent } from '@/components/ui/popover';
 
 interface DragHandleMenuProps {
   editor: Editor;
@@ -10,7 +9,7 @@ interface DragHandleMenuProps {
   onClose: () => void;
 }
 
-export function DragHandleMenu({ editor, position, blockId, onClose }: DragHandleMenuProps) {
+export function DragHandleMenu({ editor, position, onClose }: DragHandleMenuProps) {
   const colors = [
     { name: 'Default', bg: '', text: '' },
     { name: 'Gray', bg: 'bg-gray-100', text: 'text-gray-800' },
@@ -26,7 +25,7 @@ export function DragHandleMenu({ editor, position, blockId, onClose }: DragHandl
     { name: 'Bullet List', type: 'bulletList' },
   ];
 
-  const handleAction = (action: string, attrs?: any) => {
+  const handleAction = (action: string, attrs?: Record<string, any>) => {
     const { from, to } = editor.state.selection;
     switch (action) {
       case 'delete':
@@ -36,7 +35,7 @@ export function DragHandleMenu({ editor, position, blockId, onClose }: DragHandl
         editor.chain().focus().insertContentAt(to, editor.state.doc.textBetween(from, to, '\n')).run();
         break;
       case 'turnInto':
-        editor.chain().focus().setNode(attrs.type, attrs.attrs).run();
+        editor.chain().focus().setNode(attrs?.type, attrs?.attrs).run();
         break;
       // case 'color':
       // editor.chain().focus().setNodeAttrs(blockId, { class: `${attrs.bg} ${attrs.text}` }).run();

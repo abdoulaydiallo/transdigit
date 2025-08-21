@@ -28,7 +28,6 @@ import { NewCourse, Course, CourseModule } from "@/lib/db/schema";
 import { useCourseTabs } from "@/features/tabs/hooks/useTabs";
 import { useCourses } from "@/features/courses/hooks/useCourses";
 import { useModules } from "@/features/modules/hooks/useModules";
-import { useCourseSections } from "@/features/sections/hooks/useCourseSections";
 
 import { CourseForm } from "./CourseForm";
 import { CourseManager } from "./CourseManager";
@@ -308,7 +307,7 @@ function CourseNavigation({
             </div>
             
             <p className="text-gray-600 dark:text-gray-400 mb-6">
-              Êtes-vous sûr de vouloir supprimer le cours <strong>"{course.title}"</strong> ? 
+              Êtes-vous sûr de vouloir supprimer le cours <strong>{course.title}</strong> ? 
               Cette action est irréversible et supprimera toutes les données associées.
             </p>
             
@@ -339,13 +338,10 @@ function CourseNavigation({
 export default function CourseDetails({ courseId }: CourseDetailsProps) {
   const router = useRouter();
   const { getCourseById, updateCourse, deleteCourse, isLoading, error } = useCourses({ courseId });
-  const { modules, getModuleById, isLoading: isLoadingModules, error: errorModules } = useModules({
+  const { modules, isLoading: isLoadingModules, error: errorModules } = useModules({
     courseId,
   });
-  const { tabs, isLoading: isLoadingTabs, error: errorTabs } = useCourseTabs({ courseId });
-  const { sections, isLoading: isLoadingSections, error: errorSections } = useCourseSections({
-    courseId,
-  });
+  const { tabs } = useCourseTabs({ courseId });
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<Partial<NewCourse>>({});
   const [imageError, setImageError] = useState(false);
@@ -400,9 +396,6 @@ export default function CourseDetails({ courseId }: CourseDetailsProps) {
     }
   };
 
-  const handleTabChange = (tabKey: string) => {
-    setActiveTabKey(tabKey);
-  };
 
   if (isLoading) {
     return (
@@ -427,7 +420,7 @@ export default function CourseDetails({ courseId }: CourseDetailsProps) {
       <Alert className="mx-auto mt-8 max-w-md">
         <AlertCircle className="h-4 w-4" />
         <AlertTitle>Cours non trouvé</AlertTitle>
-        <AlertDescription>Le cours avec l'ID {courseId} n'existe pas.</AlertDescription>
+        <AlertDescription>Le cours avec l&apos;ID {courseId} n&apos;existe pas.</AlertDescription>
       </Alert>
     );
   }

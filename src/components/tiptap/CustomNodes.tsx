@@ -95,8 +95,8 @@ const CustomPlaceholder = Node.create({
       new Plugin({
         key: new PluginKey('placeholder'),
         props: {
-          decorations: ({ doc, selection }) => {
-            const decorations: any[] = [];
+          decorations: ({ doc }) => {
+            const decorations: Decoration[]= [];
             doc.descendants((node, pos) => {
               if (node.isTextblock && node.content.size === 0) {
                 let placeholder = '';

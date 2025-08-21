@@ -1,6 +1,6 @@
 //app/api/modules/[id]/lessons
 import { NextRequest, NextResponse } from "next/server";
-import { createLesson, getLessons, LessonFilters, LessonPagination } from "@/services/lessons.service";
+import {  LessonService, LessonFilters, LessonPagination } from "@/services/lessons.service";
 import { ServiceError, ERROR_CODES } from "@/services/services.errors";
 import { z } from "zod";
 import { Lesson, NewLessonSchema } from "@/lib/validations/courseLessons";
@@ -38,7 +38,7 @@ export async function GET(
 
     const pagination: LessonPagination = { page, per_page };
 
-    const { lessons } = await getLessons(moduleId, filters, pagination);
+    const { lessons } = await LessonService.findByModule(moduleId, filters, pagination);
 
     return NextResponse.json(
       { success: true, data: lessons },
@@ -68,7 +68,7 @@ export async function GET(
 // POST /api/modules/[id]/lessons - Créer une nouvelle leçon
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<ApiResponse<Lesson>>> {
   try {
     if (req.method !== "POST") {
@@ -85,7 +85,7 @@ export async function POST(
     const parsedBody = { ...body, moduleId };
     const lessonData = NewLessonSchema.parse(parsedBody);
 
-    const result = await createLesson(lessonData);
+    const result = await LessonService.create(lessonData);
     return NextResponse.json({ success: true, data: result }, { status: 201 });
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {

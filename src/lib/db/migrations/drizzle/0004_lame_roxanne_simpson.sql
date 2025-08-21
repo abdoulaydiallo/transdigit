@@ -1,1 +1,0 @@
-ALTER TABLE "course_modules" ALTER COLUMN "duration" SET DATA TYPE integer;

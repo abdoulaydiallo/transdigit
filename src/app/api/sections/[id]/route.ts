@@ -14,7 +14,7 @@ const CourseIdSchema = z.number().int().positive('L\'ID du cours doit être un e
 // PUT /api/sections/[id] - Mettre à jour une section
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<ApiResponse<CourseSection>>> {
   try {
     const awaitedParams = await params;
@@ -70,7 +70,7 @@ export async function PUT(
 // DELETE /api/sections/[id] - Supprimer une section
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<ApiResponse<null>>> {
   try {
     const awaitedParams = await params;

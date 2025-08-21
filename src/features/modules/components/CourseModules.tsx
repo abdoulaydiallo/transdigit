@@ -36,7 +36,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ModuleDialog } from "./ModuleDialog";
@@ -377,7 +376,7 @@ const ModuleItem = ({
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const { lessons, isLoading, error } = useLessons({ moduleId: module.id });
-  const { exercises, isLoading: ExerciseLioading, error: ExerciseError } = useExercises({ moduleId: module.id });
+  const { exercises } = useExercises({ moduleId: module.id });
 
   const transformedLessons: Lesson[] = lessons
     ? lessons.map(({createdAt, updatedAt, ...rest }) => ({
@@ -391,8 +390,8 @@ const ModuleItem = ({
     ? exercises.map(({createdAt, updatedAt, deadline, ...rest }) => ({
       ...rest,
       deadline: new Date(deadline!),
-      createdAt: new Date(createdAt),
-      updatedAt: new Date(updatedAt),
+      createdAt: new Date(createdAt!),
+      updatedAt: new Date(updatedAt!),
     }))
     : []
 
@@ -479,7 +478,6 @@ export function CourseModules({
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
   const [isQuestionOpen, setIsQuestionOpen] = useState(false);
   const [selectedQuestion, setSelectedQuestion] = useState<Question | null>(null);
-  const [expandedModuleId, setExpandedModuleId] = useState<number | null>(null);
   const [isExerciseOpen, setIsExerciseOpen] = useState(false);
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
 
@@ -537,10 +535,10 @@ export function CourseModules({
   };
   
 
-  const handleToggleLesson = (lesson: Lesson) => {
+  const handleToggleLesson = () => {
     // Géré via useLessons dans le composant LessonItem
   };
-  const handleToggleExercise = (exercise: Exercise) => {
+  const handleToggleExercise = () => {
     // Géré via useLessons dans le composant LessonItem
   };
 
@@ -587,14 +585,14 @@ export function CourseModules({
                   onEditModule={openModuleDialog}
                   onCreateLesson={(moduleId) => openLessonDialog(null, moduleId)}
                   onEditLesson={(lesson) => openLessonDialog(lesson, lesson.moduleId)}
-                  onDeleteLesson={(id, title) => {
+                  onDeleteLesson={() => {
                     // Géré dans le composant
                   }}
                   onToggleLesson={handleToggleLesson}
 
                   OnCreateExercise={(moduleId) => openExerciseDialog(null, moduleId)}
                   onEditExercise={(exercise) => openExerciseDialog(exercise, exercise.moduleId)}
-                  onDeleteExercise={(id, title) => {
+                  onDeleteExercise={() => {
                     // Géré dans le composant
                   }}
                   onToggleExercise={handleToggleExercise}

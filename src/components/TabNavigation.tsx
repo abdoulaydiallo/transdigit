@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Tab } from "@/types/course";
+import { FiDownload } from "react-icons/fi";
 
 interface TabNavigationProps {
   activeTab: string;
@@ -9,31 +10,38 @@ interface TabNavigationProps {
 
 export function TabNavigation({ activeTab, setActiveTab, tabs }: TabNavigationProps) {
   return (
-    <div className="sticky top-0 z-10 bg-white w-full flex flex-col md:flex-row gap-2 md:gap-4 items-center justify-between border-b border-b-[#670BFF] py-2 lg:sticky">
+    <div className="sticky top-0 z-20 bg-white w-full flex flex-col md:flex-row gap-4 items-center justify-between border-b border-gray-100 py-4 px-4 sm:px-6 md:px-12 animate-slide-in">
       <div className="relative flex w-full overflow-x-auto scrollbar-hidden">
-        <div className="flex flex-nowrap gap-1 sm:gap-2 lg:gap-4 items-center px-4 py-2">
+        <div className="flex flex-nowrap gap-2 sm:gap-3 lg:gap-4 items-center py-2">
           {tabs.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`text-sm sm:text-base md:font-light px-4 py-2 rounded-full transition-all duration-200 whitespace-nowrap ${
+              className={`relative text-sm sm:text-base font-semibold px-4 py-2 rounded-lg transition-all duration-300 whitespace-nowrap ${
                 activeTab === tab.key
-                  ? "bg-[#670BFF] text-white font-bold shadow-sm"
-                  : "hover:bg-[#f5f2fb] hover:text-[#670BFF] text-gray-700"
-              } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#670BFF] focus-visible:ring-offset-2`}
+                  ? "text-gray-900 bg-secondary/10 border-b-2 border-secondary shadow-sm"
+                  : "text-gray-600 hover:bg-secondary/5 hover:text-secondary hover:shadow-sm"
+              } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2`}
               aria-current={activeTab === tab.key ? "true" : "false"}
               aria-label={`Afficher la section ${tab.title}`}
             >
               {tab.title}
+              {activeTab === tab.key && (
+                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-secondary transform scale-x-100 transition-transform duration-300" />
+              )}
             </button>
           ))}
         </div>
         {/* Gradient pour indiquer le défilement sur mobile */}
-        <div className="pointer-events-none absolute right-0 top-0 h-full w-8 bg-gradient-to-l from-white to-transparent md:hidden" />
+        <div className="pointer-events-none absolute right-0 top-0 h-full w-12 bg-gradient-to-l from-white to-transparent md:hidden" />
       </div>
       <div className="w-full md:w-auto flex justify-center md:justify-end px-4 py-2">
-        <Button className="w-full md:w-auto text-xs sm:text-sm" variant="outline">
-         Programme
+        <Button
+          variant="default"
+          className="w-full md:w-auto text-sm sm:text-base bg-secondary hover:bg-secondary/80 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300 hover:shadow-md hover:shadow-secondary/20 hover:scale-105 flex items-center gap-2"
+        >
+          <FiDownload className="w-5 h-5" />
+          Programme
         </Button>
       </div>
     </div>

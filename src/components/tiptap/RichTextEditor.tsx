@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -13,7 +12,6 @@ import Strike from '@tiptap/extension-strike';
 import Placeholder from '@tiptap/extension-placeholder';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import { common, createLowlight } from 'lowlight';
-import { DragHandle } from '@tiptap/extension-drag-handle';
 import { FormItem, FormControl, FormMessage } from '@/components/ui/form';
 import { SlashMenu } from './SlashMenu';
 import { FloatingToolbar } from './FloatingToolbar';
@@ -26,7 +24,6 @@ const lowlight = createLowlight(common);
 
 // Props du composant
 interface NotionEditorProps {
-  label: string;
   defaultValue: JSONContent | null;
   onChange: (content: JSONContent) => void;
 }
@@ -37,10 +34,9 @@ interface MenuPosition {
   left: number;
 }
 
-export function RichTextEditor({ label, defaultValue = {}, onChange }: NotionEditorProps) {
+export function RichTextEditor({ defaultValue = {}, onChange }: NotionEditorProps) {
   const [mounted, setMounted] = useState<boolean>(false);
   const [showSlashMenu, setShowSlashMenu] = useState<boolean>(false);
-  const [slashQuery, setSlashQuery] = useState<string>('');
   const [slashPosition, setSlashPosition] = useState<MenuPosition>({ top: 0, left: 0 });
   const [showFloatingMenu, setShowFloatingMenu] = useState<boolean>(false);
   const [floatingMenuPosition, setFloatingMenuPosition] = useState<MenuPosition>({ top: 0, left: 0 });
@@ -53,12 +49,6 @@ export function RichTextEditor({ label, defaultValue = {}, onChange }: NotionEdi
   const floatingMenuRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<Editor | null>(null);
   const cursorPositionRef = useRef<number | null>(null);
-
-  // Validation des props
-  if (typeof onChange !== 'function') {
-    console.error('onChange must be a function');
-    return null;
-  }
 
   // Initialisation de l'éditeur avec drag-and-drop
   const editor = useEditor(
@@ -121,7 +111,7 @@ export function RichTextEditor({ label, defaultValue = {}, onChange }: NotionEdi
             class: 'bg-gray-800 text-gray-100 rounded-xl p-3 font-mono text-sm my-6 shadow-md',
           },
         }),
-        handleDragExtention
+        handleDragExtention,
       ],
       content: defaultValue,
       editorProps: {
@@ -145,7 +135,6 @@ export function RichTextEditor({ label, defaultValue = {}, onChange }: NotionEdi
             });
             view.dispatch(state.tr.delete(from - 1, from).scrollIntoView());
             setShowSlashMenu(true);
-            setSlashQuery('');
             setSelectedBlockIndex(0);
             return true;
           }
@@ -153,6 +142,10 @@ export function RichTextEditor({ label, defaultValue = {}, onChange }: NotionEdi
         },
       },
       onUpdate: ({ editor }) => {
+        if (typeof onChange !== 'function') {
+          console.error('onChange must be a function');
+          return;
+        }
         onChange(editor.getJSON());
       },
       onSelectionUpdate: ({ editor }) => {
@@ -219,7 +212,6 @@ export function RichTextEditor({ label, defaultValue = {}, onChange }: NotionEdi
       setShowImageDialog(false);
       setImageUrl('');
       setShowSlashMenu(false);
-      setSlashQuery('');
       setSelectedBlockIndex(-1);
       if (cursorPositionRef.current) {
         editor.chain().focus().setTextSelection(cursorPositionRef.current).run();
@@ -249,7 +241,7 @@ export function RichTextEditor({ label, defaultValue = {}, onChange }: NotionEdi
     return (
       <FormItem>
         <FormControl>
-          <div className=" bg-white flex items-center justify-center rounded-xl shadow-sm">
+          <div className="bg-white flex items-center justify-center rounded-xl shadow-sm">
             <div className="text-gray-400">Chargement...</div>
           </div>
         </FormControl>

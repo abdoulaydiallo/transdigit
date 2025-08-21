@@ -76,7 +76,7 @@ const exercisesQuery = trpc.exercises.byModule.useQuery(
           instructions: data.instructions
             ? ExerciseInstructionsSchema.safeParse(data.instructions).data ?? undefined
             : undefined,
-          deadline: new Date(data?.deadline!),
+          deadline: new Date(data?.deadline ?? ""),
           createdAt: new Date(data.createdAt),
           updatedAt: new Date(data.updatedAt),
         };

@@ -5,64 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1752677353386,
-      "tag": "0000_early_stark_industries",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1752847383195,
-      "tag": "0001_dusty_morbius",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1752871680624,
-      "tag": "0002_exotic_boom_boom",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1752887363720,
-      "tag": "0003_damp_magma",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1752932925200,
-      "tag": "0004_lame_roxanne_simpson",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1752983900849,
-      "tag": "0005_slimy_odin",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1753041507628,
-      "tag": "0006_tan_zombie",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "7",
-      "when": 1753829885809,
-      "tag": "0007_lucky_shinko_yamashiro",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "7",
-      "when": 1754023493638,
-      "tag": "0008_friendly_the_twelve",
+      "when": 1754198284692,
+      "tag": "0000_unique_lethal_legion",
       "breakpoints": true
     }
   ]

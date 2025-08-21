@@ -91,7 +91,7 @@ export function CourseManager({ courseId }: CourseManagerProps) {
           await deleteSection({ courseId, id: itemId });
         }
         toast.success(`${type === "tab" ? "L'onglet" : "La section"} "${itemTitle}" a été supprimée avec succès.`);
-      } catch (error) {
+      } catch {
         toast.error(`Erreur lors de la suppression ${type === "tab" ? "de l'onglet" : "de la section"}`);
       }
     }
@@ -104,7 +104,7 @@ export function CourseManager({ courseId }: CourseManagerProps) {
       if (!tab.isActive && activeTabKey === tab.key) {
         setActiveTabKey(activeTabs[0]?.key);
       }
-    } catch (error) {
+    } catch{
       toast.error("Erreur lors de la modification de l'onglet");
     }
   };
@@ -492,7 +492,7 @@ export function CourseManager({ courseId }: CourseManagerProps) {
           <div className="rounded-lg border bg-card">
             <div className="p-3 sm:p-4">
               <h3 className="text-md font-semibold mb-4 truncate">
-                Sections de l'onglet "{activeTabs.find((tab) => tab.key === activeTabKey)?.title}"
+                Sections de l&apos;onglet {activeTabs.find((tab) => tab.key === activeTabKey)?.title}
               </h3>
               {sectionsLoading ? (
                 <div className="flex items-center justify-center py-8">

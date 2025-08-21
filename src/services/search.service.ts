@@ -137,10 +137,10 @@ export const getCourseDetailsByKey = async (courseKey: string): Promise<CourseDe
         sectionContent.children.modules = modules.map((module) => ({
           number: module.orderIndex,
           title: module.title,
-          duration: module.duration,
+          duration: module.duration?.toString() ?? null,
           description: module.description,
-          steps: module.steps as any,
-          tools: module.tools as any ?? null,
+          steps: module.steps as string[] ?? null,
+          tools: module.tools as Tool[] ?? null,
         }));
       }
 

@@ -1,5 +1,4 @@
 import { DragHandle } from '@tiptap/extension-drag-handle';
-import { Node } from '@tiptap/core';
 export const handleDragExtention = DragHandle.configure({
   render: () => {
     // Créer le conteneur principal pour les deux icônes

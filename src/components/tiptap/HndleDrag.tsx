@@ -1,7 +1,7 @@
 // NotionStyleDragHandle.tsx
 import { Plus, GripVertical } from 'lucide-react';
-import { NodeViewWrapper, NodeViewContent } from '@tiptap/react';
-import { useState, useEffect } from 'react';
+import { NodeViewWrapper } from '@tiptap/react';
+import { useState } from 'react';
 
 // Définir les types pour les props si nécessaire
 // Pour l'instant, on part du principe que NodeViewWrapper gère les props nécessaires

@@ -55,7 +55,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<ApiResponse<C
 }
 
 // GET /api/courses - Get all courses with filters and pagination
-export async function GET(req: NextRequest): Promise<NextResponse<ApiResponse<any>>> {
+export async function GET(req: NextRequest){
   try {
     if (req.method !== "GET") {
       throw new ServiceError(

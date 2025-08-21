@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { updateLesson, deleteLesson, getLessonById } from "@/services/lessons.service";
+import { LessonService } from "@/services/lessons.service";
 import { ServiceError, ERROR_CODES } from "@/services/services.errors";
 import { z } from "zod";
-import { Lesson, UpdateLessonSchema } from "@/lib/validations/courseLessons";
+import { Lesson } from "@/lib/validations/courseLessons";
 
 type ApiResponse<T> =
   | { success: true; data: T }
@@ -25,7 +25,7 @@ export async function PUT(
     }
 
     const body = await req.json();
-    const updatedLesson = await updateLesson(id, body);
+    const updatedLesson = await LessonService.update(id, body);
 
     return NextResponse.json({ success: true, data: updatedLesson }, { status: 200 });
   } catch (error: unknown) {
@@ -78,7 +78,7 @@ export async function DELETE(
       throw new ServiceError(ERROR_CODES.VALIDATION_ERROR, "ID de leçon invalide");
     }
 
-    await deleteLesson(id);
+    await LessonService.delete(id);
     return NextResponse.json({ success: true, data: null }, { status: 200 });
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {

@@ -1,4 +1,4 @@
-import { Tab, Tool, Partner, SectionContentProps, CourseDetail } from "@/types/course";
+import { Tab, Partner, SectionContentProps, CourseDetail } from "@/types/course";
 import { courses } from "@/data/homeData";
 
 const tabs: Tab[] = [
@@ -12,18 +12,17 @@ const tabs: Tab[] = [
 ];
 
 const partners: Partner[] = [
-  { name: "Orange Guinée" },
-  { name: "Guinea Technology" },
-  { name: "Startups locales" },
-  { name: "Marché de Madina" },
-  { name: "Tech Innovators" },
+  { name: "Orange" },
+  { name: "Kagny" },
+  { name: "Saboutech" },
+  { name: "Leadernet Services" },
 ];
 
 const sectionContents: Record<string, Record<string, SectionContentProps>> = {
   "web-development": {
     introduction: {
       title: "Introduction",
-      subtitle: "Sculptez votre avenir en 9 semaines de code",
+      subtitle: "Sculptez votre avenir en 8 semaines de code",
       description:
         "Devenez développeur web full-stack et maîtrisez l'intégration de l'IA avec Goulotech à Conakry. Ce bootcamp unique vous prépare à créer des solutions pour des entreprises locales comme Orange Guinée ou des projets comme le Marché de Madina.",
       items: [
@@ -35,10 +34,10 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
       children: {
         title: "Les outils et langages que vous apprendrez :",
         content: [
-          { src: "/img/icon-javascript-lg.svg", name: "JavaScript" },
-          { src: "/img/icon-openai.webp", name: "OpenAI" },
-          { src: "/img/icon-github.svg", name: "GitHub" },
-          { src: "/img/icon-html.svg", name: "HTML" },
+          { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-javascript-lg.svg", name: "JavaScript" },
+          { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-openai.webp", name: "OpenAI" },
+          { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-github.svg", name: "GitHub" },
+          { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-html.svg", name: "HTML" },
         ],
       },
     },
@@ -74,9 +73,9 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
               "Concevez des composants de code modulaires et réutilisables",
             ],
             tools: [
-              { src: "/img/icon-javascript-lg.svg", name: "JavaScript" },
-              { src: "/img/icon-html.svg", name: "HTML" },
-              { src: "/img/icon-github.svg", name: "GitHub" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-javascript-lg.svg", name: "JavaScript" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-html.svg", name: "HTML" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-github.svg", name: "GitHub" },
             ],
           },
           {
@@ -93,9 +92,9 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
               "Optimisez les performances du code",
             ],
             tools: [
-              { src: "/img/icon-javascript-lg.svg", name: "JavaScript" },
-              { src: "/img/icon-sql.svg", name: "SQL" },
-              { src: "/img/icon-copilot.webp", name: "Copilot" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-javascript-lg.svg", name: "JavaScript" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-sql.svg", name: "SQL" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-copilot.webp", name: "Copilot" },
             ],
           },
           {
@@ -111,8 +110,8 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
               "Intégrez les bases de données avec des applications web",
             ],
             tools: [
-              { src: "/img/icon-sql.svg", name: "SQL" },
-              { src: "/img/icon-github.svg", name: "GitHub" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-sql.svg", name: "SQL" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-github.svg", name: "GitHub" },
             ],
           },
           {
@@ -128,9 +127,9 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
               "Optimisez les performances du front-end",
             ],
             tools: [
-              { src: "/img/icon-javascript-lg.svg", name: "JavaScript" },
-              { src: "/img/icon-html.svg", name: "HTML" },
-              { src: "/img/icon-figma.svg", name: "Figma" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-javascript-lg.svg", name: "JavaScript" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-html.svg", name: "HTML" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-figma.svg", name: "Figma" },
             ],
           },
           {
@@ -146,8 +145,8 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
               "Optimisez les performances full-stack",
             ],
             tools: [
-              { src: "/img/icon-javascript-lg.svg", name: "JavaScript" },
-              { src: "/img/icon-copilot.webp", name: "Copilot" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-javascript-lg.svg", name: "JavaScript" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-copilot.webp", name: "Copilot" },
             ],
           },
           {
@@ -163,8 +162,8 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
               "Tester les fonctionnalités pilotées par l'IA",
             ],
             tools: [
-              { src: "/img/icon-openai.webp", name: "OpenAI" },
-              { src: "/img/icon-copilot.webp", name: "Copilot" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-openai.webp", name: "OpenAI" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-copilot.webp", name: "Copilot" },
             ],
           },
           {
@@ -180,8 +179,8 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
               "Déboguer avec l'assistance de l'IA",
             ],
             tools: [
-              { src: "/img/icon-copilot.webp", name: "Copilot" },
-              { src: "/img/icon-github.svg", name: "GitHub" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-copilot.webp", name: "Copilot" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-github.svg", name: "GitHub" },
             ],
           },
           {
@@ -198,18 +197,18 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
               "Présenter aux parties prenantes",
             ],
             tools: [
-              { src: "/img/icon-javascript-lg.svg", name: "JavaScript" },
-              { src: "/img/icon-openai.webp", name: "OpenAI" },
-              { src: "/img/icon-github.svg", name: "GitHub" },
-              { src: "/img/icon-html.svg", name: "HTML" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-javascript-lg.svg", name: "JavaScript" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-openai.webp", name: "OpenAI" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-github.svg", name: "GitHub" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-html.svg", name: "HTML" },
             ],
           },
         ],
         technologies: [
-          { src: "/img/icon-javascript-lg.svg", name: "JavaScript" },
-          { src: "/img/icon-openai.webp", name: "OpenAI" },
-          { src: "/img/icon-github.svg", name: "GitHub" },
-          { src: "/img/icon-html.svg", name: "HTML" },
+          { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-javascript-lg.svg", name: "JavaScript" },
+          { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-openai.webp", name: "OpenAI" },
+          { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-github.svg", name: "GitHub" },
+          { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-html.svg", name: "HTML" },
         ],
       },
     },
@@ -291,10 +290,10 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
       children: {
         title: "Stack technique complète :",
         content: [
-          { src: "/img/tech/python.svg", name: "Python" },
-          { src: "/img/tech/pytorch.svg", name: "PyTorch" },
-          { src: "/img/tech/kubeflow.svg", name: "Kubeflow" },
-          { src: "/img/tech/snowflake.svg", name: "Snowflake" }
+          { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/tech/python.svg", name: "Python" },
+          { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/tech/pytorch.svg", name: "PyTorch" },
+          { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/tech/kubeflow.svg", name: "Kubeflow" },
+          { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/tech/snowflake.svg", name: "Snowflake" }
         ],
       },
     },
@@ -326,8 +325,8 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
               "Tests unitaires"
             ],
             tools: [
-              { src: "/img/tech/python.svg", name: "Python" },
-              { src: "/img/tech/jupyter.svg", name: "Jupyter" }
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/tech/python.svg", name: "Python" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/tech/jupyter.svg", name: "Jupyter" }
             ],
           },
           {
@@ -343,8 +342,8 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
               "Storytelling data"
             ],
             tools: [
-              { src: "/img/tech/pandas.svg", name: "Pandas" },
-              { src: "/img/tech/seaborn.svg", name: "Seaborn" }
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/tech/pandas.svg", name: "Pandas" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/tech/seaborn.svg", name: "Seaborn" }
             ],
           },
           {
@@ -360,8 +359,8 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
               "Interprétabilité"
             ],
             tools: [
-              { src: "/img/tech/scikitlearn.svg", name: "Scikit-learn" },
-              { src: "/img/tech/xgboost.svg", name: "XGBoost" }
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/tech/scikitlearn.svg", name: "Scikit-learn" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/tech/xgboost.svg", name: "XGBoost" }
             ],
           },
           {
@@ -377,8 +376,8 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
               "Optimisation GPU"
             ],
             tools: [
-              { src: "/img/tech/tensorflow.svg", name: "TensorFlow" },
-              { src: "/img/tech/pytorch.svg", name: "PyTorch" }
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/tech/tensorflow.svg", name: "TensorFlow" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/tech/pytorch.svg", name: "PyTorch" }
             ],
           },
           {
@@ -394,8 +393,8 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
               "Serving optimisé"
             ],
             tools: [
-              { src: "/img/tech/mlflow.svg", name: "MLflow" },
-              { src: "/img/tech/kubeflow.svg", name: "Kubeflow" }
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/tech/mlflow.svg", name: "MLflow" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/tech/kubeflow.svg", name: "Kubeflow" }
             ],
           },
           {
@@ -411,16 +410,16 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
               "Présentation aux experts"
             ],
             tools: [
-              { src: "/img/tech/fastapi.svg", name: "FastAPI" },
-              { src: "/img/tech/streamlit.svg", name: "Streamlit" }
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/tech/fastapi.svg", name: "FastAPI" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/tech/streamlit.svg", name: "Streamlit" }
             ],
           }
         ],
         technologies: [
-          { src: "/img/tech/spark.svg", name: "Spark" },
-          { src: "/img/tech/airflow.svg", name: "Airflow" },
-          { src: "/img/tech/databricks.svg", name: "Databricks" },
-          { src: "/img/tech/tableau.svg", name: "Tableau" }
+          { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/tech/spark.svg", name: "Spark" },
+          { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/tech/airflow.svg", name: "Airflow" },
+          { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/tech/databricks.svg", name: "Databricks" },
+          { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/tech/tableau.svg", name: "Tableau" }
         ],
       },
     },
@@ -502,10 +501,10 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
       children: {
         title: "Les outils que vous apprendrez :",
         content: [
-          { src: "/img/icon-excel.svg", name: "Excel" },
-          { src: "/img/icon-word.svg", name: "Word" },
-          { src: "/img/icon-powerpoint.svg", name: "PowerPoint" },
-          { src: "/img/icon-onedrive.svg", name: "OneDrive" },
+          { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-excel.svg", name: "Excel" },
+          { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-word.svg", name: "Word" },
+          { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-powerpoint.svg", name: "PowerPoint" },
+          { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-onedrive.svg", name: "OneDrive" },
         ],
       },
     },
@@ -539,9 +538,9 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
               "Réalisez des présentations de base avec PowerPoint",
             ],
             tools: [
-              { src: "/img/icon-excel.svg", name: "Excel" },
-              { src: "/img/icon-word.svg", name: "Word" },
-              { src: "/img/icon-powerpoint.svg", name: "PowerPoint" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-excel.svg", name: "Excel" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-word.svg", name: "Word" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-powerpoint.svg", name: "PowerPoint" },
             ],
           },
           {
@@ -557,8 +556,8 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
               "Automatisez les tâches avec des macros",
             ],
             tools: [
-              { src: "/img/icon-excel.svg", name: "Excel" },
-              { src: "/img/icon-onedrive.svg", name: "OneDrive" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-excel.svg", name: "Excel" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-onedrive.svg", name: "OneDrive" },
             ],
           },
           {
@@ -574,8 +573,8 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
               "Formatez des rapports professionnels",
             ],
             tools: [
-              { src: "/img/icon-word.svg", name: "Word" },
-              { src: "/img/icon-onedrive.svg", name: "OneDrive" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-word.svg", name: "Word" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-onedrive.svg", name: "OneDrive" },
             ],
           },
           {
@@ -591,8 +590,8 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
               "Présentez efficacement vos idées",
             ],
             tools: [
-              { src: "/img/icon-powerpoint.svg", name: "PowerPoint" },
-              { src: "/img/icon-onedrive.svg", name: "OneDrive" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-powerpoint.svg", name: "PowerPoint" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-onedrive.svg", name: "OneDrive" },
             ],
           },
           {
@@ -609,18 +608,18 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
               "Présentez aux parties prenantes",
             ],
             tools: [
-              { src: "/img/icon-excel.svg", name: "Excel" },
-              { src: "/img/icon-word.svg", name: "Word" },
-              { src: "/img/icon-powerpoint.svg", name: "PowerPoint" },
-              { src: "/img/icon-onedrive.svg", name: "OneDrive" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-excel.svg", name: "Excel" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-word.svg", name: "Word" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-powerpoint.svg", name: "PowerPoint" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-onedrive.svg", name: "OneDrive" },
             ],
           },
         ],
         technologies: [
-          { src: "/img/icon-excel.svg", name: "Excel" },
-          { src: "/img/icon-word.svg", name: "Word" },
-          { src: "/img/icon-powerpoint.svg", name: "PowerPoint" },
-          { src: "/img/icon-onedrive.svg", name: "OneDrive" },
+          { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-excel.svg", name: "Excel" },
+          { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-word.svg", name: "Word" },
+          { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-powerpoint.svg", name: "PowerPoint" },
+          { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-onedrive.svg", name: "OneDrive" },
         ],
       },
     },
@@ -702,10 +701,10 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
       children: {
         title: "Les outils et langages que vous apprendrez :",
         content: [
-          { src: "/img/icon-flutter.svg", name: "Flutter" },
-          { src: "/img/icon-dart.svg", name: "Dart" },
-          { src: "/img/icon-firebase.svg", name: "Firebase" },
-          { src: "/img/icon-github.svg", name: "GitHub" },
+          { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-flutter.svg", name: "Flutter" },
+          { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-dart.svg", name: "Dart" },
+          { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-firebase.svg", name: "Firebase" },
+          { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-github.svg", name: "GitHub" },
         ],
       },
     },
@@ -739,9 +738,9 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
               "Gérez la navigation dans l'application",
             ],
             tools: [
-              { src: "/img/icon-flutter.svg", name: "Flutter" },
-              { src: "/img/icon-dart.svg", name: "Dart" },
-              { src: "/img/icon-github.svg", name: "GitHub" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-flutter.svg", name: "Flutter" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-dart.svg", name: "Dart" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-github.svg", name: "GitHub" },
             ],
           },
           {
@@ -757,8 +756,8 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
               "Testez l'interface sur Android et iOS",
             ],
             tools: [
-              { src: "/img/icon-flutter.svg", name: "Flutter" },
-              { src: "/img/icon-dart.svg", name: "Dart" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-flutter.svg", name: "Flutter" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-dart.svg", name: "Dart" },
             ],
           },
           {
@@ -774,8 +773,8 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
               "Implémentez des notifications push",
             ],
             tools: [
-              { src: "/img/icon-firebase.svg", name: "Firebase" },
-              { src: "/img/icon-github.svg", name: "GitHub" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-firebase.svg", name: "Firebase" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-github.svg", name: "GitHub" },
             ],
           },
           {
@@ -791,8 +790,8 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
               "Intégrez des API externes",
             ],
             tools: [
-              { src: "/img/icon-flutter.svg", name: "Flutter" },
-              { src: "/img/icon-dart.svg", name: "Dart" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-flutter.svg", name: "Flutter" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-dart.svg", name: "Dart" },
             ],
           },
           {
@@ -809,18 +808,18 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
               "Présentez aux parties prenantes",
             ],
             tools: [
-              { src: "/img/icon-flutter.svg", name: "Flutter" },
-              { src: "/img/icon-dart.svg", name: "Dart" },
-              { src: "/img/icon-firebase.svg", name: "Firebase" },
-              { src: "/img/icon-github.svg", name: "GitHub" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-flutter.svg", name: "Flutter" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-dart.svg", name: "Dart" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-firebase.svg", name: "Firebase" },
+              { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-github.svg", name: "GitHub" },
             ],
           },
         ],
         technologies: [
-          { src: "/img/icon-flutter.svg", name: "Flutter" },
-          { src: "/img/icon-dart.svg", name: "Dart" },
-          { src: "/img/icon-firebase.svg", name: "Firebase" },
-          { src: "/img/icon-github.svg", name: "GitHub" },
+          { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-flutter.svg", name: "Flutter" },
+          { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-dart.svg", name: "Dart" },
+          { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-firebase.svg", name: "Firebase" },
+          { src: "https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/icon-github.svg", name: "GitHub" },
         ],
       },
     },
@@ -892,8 +891,6 @@ const sectionContents: Record<string, Record<string, SectionContentProps>> = {
 export const courseDetails: CourseDetail[] = courses.map((course) => {
   const key = course.link.replace(/^\/+/, "").toLowerCase();
   const sections = sectionContents[key] || {};
-  console.log(`Clé de cours générée : ${key}`);
-  console.log(`Clés de sections disponibles pour ${key} :`, Object.keys(sections));
   if (Object.keys(sections).length === 0) {
     console.warn(`Aucune section trouvée pour la clé de cours : ${key}`);
   }

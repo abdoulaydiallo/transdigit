@@ -18,17 +18,20 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
+import { useSession } from "@/lib/auth-client";
 
-// This is sample data.
-const data = {
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { data: session } = useSession();
+
+  const data = {
   user: {
-    name: "Abdoulaye Diallo",
-    email: "contact@goulotech.com",
-    avatar: "/img/logo.png",
+    name: session?.user?.name || "Abdoulaye Diallo",
+    email: session?.user?.email || "contact@goulotech.com",
+    avatar: session?.user?.image || "/img/logo.png",
   },
   teams: [
     {
-      name: "Goulotech",
+      name: "TransDigit",
       logo: GalleryVerticalEnd,
       plan: "Enterprise",
     },
@@ -56,8 +59,6 @@ const data = {
   ],
   
 }
-
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>

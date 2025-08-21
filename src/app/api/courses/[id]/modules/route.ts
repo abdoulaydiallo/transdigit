@@ -16,7 +16,7 @@ type ApiResponse<T> =
 // GET /api/courses/:id/modules - Get all modules for a course
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<ApiResponse<CourseModule[]>>> {
   try {
     // Attendre les paramètres dynamiques
