@@ -270,7 +270,6 @@ export function ApplicationForm({
         <Button
           type="submit"
           size="lg"
-          className=" bg-primary cursor-pointer text-white px-4 py-2 rounded-md flex items-center gap-2"
           aria-label="Soumettre la candidature"
         >
           Commencer <ArrowRight size={18} />

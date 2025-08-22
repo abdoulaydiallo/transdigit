@@ -32,7 +32,7 @@ export default function ApplyPage() {
             <div className="flex items-center mb-3">
               <Image
                 alt="Icône de validation"
-                src="/img/check-red.svg"
+                src="https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/check-red.svg"
                 width={14}
                 height={14}
               />
@@ -43,7 +43,7 @@ export default function ApplyPage() {
             <div className="flex items-center mb-3">
               <Image
                 alt="Icône de validation"
-                src="/img/check-red.svg"
+                src="https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/check-red.svg"
                 width={14}
                 height={14}
               />
@@ -54,7 +54,7 @@ export default function ApplyPage() {
             <div className="flex items-center">
               <Image
                 alt="Icône de validation"
-                src="/img/check-red.svg"
+                src="https://raw.githubusercontent.com/abdoulaydiallo/design/refs/heads/main/assets/icons/check-red.svg"
                 width={14}
                 height={14}
               />
